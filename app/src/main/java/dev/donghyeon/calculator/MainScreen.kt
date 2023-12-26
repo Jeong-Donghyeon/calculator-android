@@ -13,10 +13,10 @@ fun MainScreen(viewModel: MainViewModel) = CompositionLocalProvider(
     content = {
         NavHost(
             navController = LocalNavController.current,
-            startDestination = "GeneralCalculator"
+            startDestination = "General"
         ) {
-            composable("GeneralCalculator") {
-                GeneralCalculatorScreen()
+            composable("General") {
+                GeneralScreen()
             }
         }
     }
