@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator
+package dev.donghyeon.calculator.general
 
 data class GeneralData(
     val calculation: String = "",

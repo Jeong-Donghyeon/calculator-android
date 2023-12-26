@@ -5,6 +5,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dev.donghyeon.calculator.general.GeneralScreen
+import dev.donghyeon.calculator.percent.PercentScreen
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) = CompositionLocalProvider(
@@ -13,10 +15,13 @@ fun MainScreen(viewModel: MainViewModel) = CompositionLocalProvider(
     content = {
         NavHost(
             navController = LocalNavController.current,
-            startDestination = "General"
+            startDestination = "Percent"
         ) {
             composable("General") {
                 GeneralScreen()
+            }
+            composable("Percent") {
+                PercentScreen()
             }
         }
     }

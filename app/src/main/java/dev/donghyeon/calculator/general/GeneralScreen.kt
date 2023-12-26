@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator
+package dev.donghyeon.calculator.general
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,9 +36,9 @@ fun Preview_GeneralScreen() = GeneralScreen(
 @Composable
 fun GeneralScreen() {
     val viewModel: GeneralViewModel = hiltViewModel()
-    val generalState by viewModel.generalState.collectAsState()
+    val state by viewModel.generalState.collectAsState()
     GeneralScreen(
-        state = generalState,
+        state = state,
         action = viewModel
     )
 }
