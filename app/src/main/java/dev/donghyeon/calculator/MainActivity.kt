@@ -12,7 +12,6 @@ import dev.donghyeon.calculator.theme.Black
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

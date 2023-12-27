@@ -9,14 +9,16 @@ interface GeneralAction {
     fun input(s: String)
 }
 
-class GeneralViewModel @Inject constructor() : BaseViewModel(), GeneralAction {
+class GeneralViewModel
+    @Inject
+    constructor() : BaseViewModel(), GeneralAction {
+        private val _generalState = MutableStateFlow(GeneralData())
+        val generalState: StateFlow<GeneralData> = _generalState
 
-    private val _generalState = MutableStateFlow(GeneralData())
-    val generalState: StateFlow<GeneralData> = _generalState
-
-    override fun input(s: String)  {
-        _generalState.value = generalState.value.let {
-            it.copy(calculation = it.calculation + s)
+        override fun input(s: String) {
+            _generalState.value =
+                generalState.value.let {
+                    it.copy(calculation = it.calculation + s)
+                }
         }
     }
-}

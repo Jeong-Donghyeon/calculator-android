@@ -33,7 +33,7 @@ fun BottonView(
     textColor: Color = White,
     shape: Shape = RoundedCornerShape(5.dp),
     border: BorderStroke = BorderStroke(0.dp, Color.Transparent),
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = Modifier.fillMaxWidth().height(height).then(modifier),
@@ -41,15 +41,16 @@ fun BottonView(
         border = border,
         onClick = onClick,
         contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = background,
-            contentColor = textColor
-        ),
-        elevation = null
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = background,
+                contentColor = textColor,
+            ),
+        elevation = null,
     ) {
         Text(
             text = text,
-            style = TsBold.copy(textColor, 24.sp)
+            style = TsBold.copy(textColor, 24.sp),
         )
     }
 }

@@ -7,6 +7,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("com.google.android.gms.oss-licenses-plugin")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {

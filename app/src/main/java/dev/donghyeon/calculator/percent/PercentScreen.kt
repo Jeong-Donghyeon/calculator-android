@@ -28,14 +28,16 @@ import dev.donghyeon.calculator.view.BottonView
 
 @Preview
 @Composable
-fun Preview_PercentScreen() = PercentScreen(
-    state = PercentData(
-        value1 = "100",
-        value2 = "50",
-        valueFlag = false,
-        result = "50"
+fun Preview_PercentScreen() =
+    PercentScreen(
+        state =
+            PercentData(
+                value1 = "100",
+                value2 = "50",
+                valueFlag = false,
+                result = "50",
+            ),
     )
-)
 
 @Composable
 fun PercentScreen() {
@@ -43,54 +45,56 @@ fun PercentScreen() {
     val state by viewModel.percentState.collectAsState()
     PercentScreen(
         state = state,
-        action = viewModel
+        action = viewModel,
     )
 }
 
 @Composable
 fun PercentScreen(
     state: PercentData,
-    action: PercentAction? = null
+    action: PercentAction? = null,
 ) = Column(
-    modifier = Modifier
-        .background(Black)
-        .fillMaxSize()
-        .padding(10.dp)
-        .padding(bottom = 20.dp)
+    modifier =
+        Modifier
+            .background(Black)
+            .fillMaxSize()
+            .padding(10.dp)
+            .padding(bottom = 20.dp),
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .weight(1f),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Row {
             Text(
                 text = "전체값  ",
-                style = TsExtraBold.copy(White, 16.sp)
+                style = TsExtraBold.copy(White, 16.sp),
             )
             Text(
                 text = state.value1,
-                style = TsExtraBold.copy(White, 16.sp)
+                style = TsExtraBold.copy(White, 16.sp),
             )
             Text(
                 text = "  의  ",
-                style = TsExtraBold.copy(White, 16.sp)
+                style = TsExtraBold.copy(White, 16.sp),
             )
             Text(
                 text = state.value2,
-                style = TsExtraBold.copy(White, 16.sp)
+                style = TsExtraBold.copy(White, 16.sp),
             )
             Text(
                 text = " % 는  얼마?",
-                style = TsExtraBold.copy(White, 16.sp)
+                style = TsExtraBold.copy(White, 16.sp),
             )
         }
         Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = state.result,
-            style = TsExtraBold.copy(White, 20.sp)
+            style = TsExtraBold.copy(White, 20.sp),
         )
     }
     Row {
@@ -99,7 +103,7 @@ fun PercentScreen(
                 BottonView(
                     modifier = Modifier.weight(1f).fillMaxHeight().padding(2.dp),
                     onClick = { action?.input("c") },
-                    text = "c"
+                    text = "c",
                 )
                 Box(modifier = Modifier.weight(2f).fillMaxHeight())
             }
@@ -114,7 +118,7 @@ fun PercentScreen(
                         BottonView(
                             modifier = Modifier.weight(1f).fillMaxHeight().padding(2.dp),
                             onClick = { action?.input(it) },
-                            text = it
+                            text = it,
                         )
                     }
                 }
@@ -124,17 +128,17 @@ fun PercentScreen(
             BottonView(
                 modifier = Modifier.fillMaxWidth().weight(1f).padding(2.dp),
                 onClick = { action?.input("<") },
-                text = "<"
+                text = "<",
             )
             BottonView(
                 modifier = Modifier.fillMaxWidth().weight(2f).padding(2.dp),
                 onClick = { action?.input("value1") },
-                text = "값1"
+                text = "값1",
             )
             BottonView(
                 modifier = Modifier.fillMaxWidth().weight(2f).padding(2.dp),
                 onClick = { action?.input("value2") },
-                text = "값2"
+                text = "값2",
             )
         }
     }
