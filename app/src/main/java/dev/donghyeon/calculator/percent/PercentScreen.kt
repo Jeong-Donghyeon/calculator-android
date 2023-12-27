@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.theme.Black
 import dev.donghyeon.calculator.theme.TsExtraBold
 import dev.donghyeon.calculator.theme.White
+import dev.donghyeon.calculator.view.BottonView
 
 @Preview
 @Composable
@@ -94,12 +94,13 @@ fun PercentScreen(
         )
     }
     Row {
-        Column(modifier = Modifier.weight(3f).height(300.dp)) {
+        Column(modifier = Modifier.weight(3f).height(350.dp)) {
             Row(modifier = Modifier.weight(1f)) {
-                Button(
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
-                    onClick = { action?.input("c") }
-                ) { Text(text = "c") }
+                BottonView(
+                    modifier = Modifier.weight(1f).fillMaxHeight().padding(2.dp),
+                    onClick = { action?.input("c") },
+                    text = "c"
+                )
                 Box(modifier = Modifier.weight(2f).fillMaxHeight())
             }
             listOf(
@@ -110,27 +111,31 @@ fun PercentScreen(
             ).forEach {
                 Row(modifier = Modifier.weight(1f)) {
                     it.forEach {
-                        Button(
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            onClick = { action?.input(it) }
-                        ) { Text(text = it) }
+                        BottonView(
+                            modifier = Modifier.weight(1f).fillMaxHeight().padding(2.dp),
+                            onClick = { action?.input(it) },
+                            text = it
+                        )
                     }
                 }
             }
         }
-        Column(modifier = Modifier.weight(1f).height(300.dp)) {
-            Button(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                onClick = { action?.input("<") }
-            ) { Text(text = "<") }
-            Button(
-                modifier = Modifier.fillMaxWidth().weight(2f),
-                onClick = { action?.input("value1") }
-            ) { Text(text = "값1") }
-            Button(
-                modifier = Modifier.fillMaxWidth().weight(2f),
-                onClick = { action?.input("value2") }
-            ) { Text(text = "값2") }
+        Column(modifier = Modifier.weight(1f).height(350.dp)) {
+            BottonView(
+                modifier = Modifier.fillMaxWidth().weight(1f).padding(2.dp),
+                onClick = { action?.input("<") },
+                text = "<"
+            )
+            BottonView(
+                modifier = Modifier.fillMaxWidth().weight(2f).padding(2.dp),
+                onClick = { action?.input("value1") },
+                text = "값1"
+            )
+            BottonView(
+                modifier = Modifier.fillMaxWidth().weight(2f).padding(2.dp),
+                onClick = { action?.input("value2") },
+                text = "값2"
+            )
         }
     }
 }
