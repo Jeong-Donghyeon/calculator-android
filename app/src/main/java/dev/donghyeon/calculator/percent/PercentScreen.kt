@@ -49,6 +49,8 @@ fun PercentScreen() {
     )
 }
 
+const val RATIO_KEYBOARD = 3f
+
 @Composable
 fun PercentScreen(
     state: PercentData,
@@ -98,7 +100,7 @@ fun PercentScreen(
         )
     }
     Row {
-        Column(modifier = Modifier.weight(3f).height(350.dp)) {
+        Column(modifier = Modifier.weight(RATIO_KEYBOARD).height(350.dp)) {
             Row(modifier = Modifier.weight(1f)) {
                 BottonView(
                     modifier = Modifier.weight(1f).fillMaxHeight().padding(2.dp),
