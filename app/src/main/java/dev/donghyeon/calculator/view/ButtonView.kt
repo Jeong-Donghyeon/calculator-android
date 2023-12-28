@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -28,9 +29,9 @@ fun Preview_BottonView() = BottonView(text = "0", onClick = {})
 fun BottonView(
     modifier: Modifier = Modifier,
     text: String,
+    style: TextStyle = TsBold.copy(White, 24.sp),
     height: Dp = 70.dp,
     background: Color = DarkGray,
-    textColor: Color = White,
     shape: Shape = RoundedCornerShape(5.dp),
     border: BorderStroke = BorderStroke(0.dp, Color.Transparent),
     onClick: () -> Unit,
@@ -44,13 +45,13 @@ fun BottonView(
         colors =
             ButtonDefaults.buttonColors(
                 containerColor = background,
-                contentColor = textColor,
+                contentColor = style.color,
             ),
         elevation = null,
     ) {
         Text(
             text = text,
-            style = TsBold.copy(textColor, 24.sp),
+            style = style,
         )
     }
 }

@@ -5,4 +5,5 @@ data class PercentData(
     val value2: String = "",
     val valueFlag: Boolean = false,
     val result: String = "",
+    val updown: Boolean = false,
 )
