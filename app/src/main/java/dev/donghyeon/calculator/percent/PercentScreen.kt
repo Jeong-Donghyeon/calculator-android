@@ -32,13 +32,7 @@ import dev.donghyeon.calculator.view.BottonView
 @Composable
 fun Preview_PercentScreen() =
     PercentScreen(
-        state =
-            PercentData(
-                value1 = "100",
-                value2 = "50",
-                valueFlag = false,
-                result = "50",
-            ),
+        state = PercentData(),
     )
 
 @Composable
@@ -79,7 +73,7 @@ fun PercentScreen(
             KeyboardLeftView(action = action)
         }
         Column(modifier = Modifier.weight(1f)) {
-            KeyboardRightView(action = action)
+            KeyboardRightView(state = state, action = action)
         }
     }
 }
@@ -94,29 +88,63 @@ private fun Calculate1View(state: PercentData) =
         Row {
             Text(
                 text = "전체값  ",
-                style = TsExtraBold.copy(Blue, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 1) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value1,
-                style = TsExtraBold.copy(Yellow, 17.sp),
+                text = state.calculate1.value1,
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 1 && state.calculate1.valueSelect == 1) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
                 text = "  의  ",
-                style = TsExtraBold.copy(Blue, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 1) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value2,
-                style = TsExtraBold.copy(White, 17.sp),
+                text = state.calculate1.value2 + " %",
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 1 && state.calculate1.valueSelect == 2) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = " % 는  얼마?",
-                style = TsExtraBold.copy(Blue, 17.sp),
+                text = " 는  얼마?",
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 1) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = state.result,
-            style = TsExtraBold.copy(Green, 20.sp),
+            text = state.calculate1.result,
+            style =
+                TsExtraBold.copy(
+                    color = if (state.calculateSelect == 1) Green else White,
+                    fontSize = 20.sp,
+                ),
         )
     }
 
@@ -130,29 +158,63 @@ private fun Calculate2View(state: PercentData) =
         Row {
             Text(
                 text = "전체값  ",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 2) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value1,
-                style = TsExtraBold.copy(White, 17.sp),
+                text = state.calculate2.value1,
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 2 && state.calculate2.valueSelect == 1) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
                 text = "  의  ",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 2) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value2,
-                style = TsExtraBold.copy(White, 17.sp),
+                text = state.calculate2.value2,
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 2 && state.calculate2.valueSelect == 2) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
                 text = " 은  몇 % ?",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 2) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = state.result + " %",
-            style = TsExtraBold.copy(White, 20.sp),
+            text = state.calculate2.result,
+            style =
+                TsExtraBold.copy(
+                    color = if (state.calculateSelect == 2) Green else White,
+                    fontSize = 20.sp,
+                ),
         )
     }
 
@@ -166,30 +228,63 @@ private fun Calculate3View(state: PercentData) =
         Row {
             Text(
                 text = "전체값  ",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 3) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value1,
-                style = TsExtraBold.copy(White, 17.sp),
+                text = state.calculate3.value1,
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 3 && state.calculate3.valueSelect == 1) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
                 text = "  이(가)  ",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 3) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value2,
-                style = TsExtraBold.copy(White, 17.sp),
+                text = state.calculate3.value2,
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 3 && state.calculate3.valueSelect == 2) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
                 text = " 으로 변하면 ?",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 3) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        val updownStr = if (state.updown) "증가" else "감소"
         Text(
-            text = state.result + " % $updownStr",
-            style = TsExtraBold.copy(White, 20.sp),
+            text = state.calculate3.result,
+            style =
+                TsExtraBold.copy(
+                    color = if (state.calculateSelect == 3) Green else White,
+                    fontSize = 20.sp,
+                ),
         )
     }
 
@@ -203,29 +298,63 @@ private fun Calculate4View(state: PercentData) =
         Row {
             Text(
                 text = "전체값  ",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 4) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value1,
-                style = TsExtraBold.copy(White, 17.sp),
+                text = state.calculate4.value1,
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 4 && state.calculate4.valueSelect == 1) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
                 text = "  이(가)  ",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 4) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
-                text = state.value2,
-                style = TsExtraBold.copy(White, 17.sp),
+                text = state.calculate4.value2,
+                style =
+                    TsExtraBold.copy(
+                        color =
+                            if (state.calculateSelect == 4 && state.calculate4.valueSelect == 2) {
+                                Yellow
+                            } else {
+                                White
+                            },
+                        fontSize = 17.sp,
+                    ),
             )
             Text(
                 text = " % 증가하면 ?",
-                style = TsExtraBold.copy(White, 17.sp),
+                style =
+                    TsExtraBold.copy(
+                        color = if (state.calculateSelect == 4) Blue else White,
+                        fontSize = 17.sp,
+                    ),
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = state.result,
-            style = TsExtraBold.copy(White, 20.sp),
+            text = state.calculate4.result,
+            style =
+                TsExtraBold.copy(
+                    color = if (state.calculateSelect == 4) Green else White,
+                    fontSize = 20.sp,
+                ),
         )
     }
 
@@ -239,7 +368,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                         .weight(1f)
                         .fillMaxHeight()
                         .padding(2.dp),
-                onClick = { action?.input("c") },
+                onClick = { action?.inputClear() },
                 text = "c",
             )
             BottonView(
@@ -248,7 +377,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                         .weight(2f)
                         .fillMaxHeight()
                         .padding(2.dp),
-                onClick = { action?.input("") },
+                onClick = { action?.inputCalculateSelect() },
                 text = "선택",
             )
         }
@@ -256,7 +385,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
             listOf("7", "8", "9"),
             listOf("4", "5", "6"),
             listOf("1", "2", "3"),
-            listOf("c", "0", "c"),
+            listOf("000", "0", "."),
         ).forEach {
             Row(modifier = Modifier.weight(1f)) {
                 it.forEach {
@@ -266,7 +395,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .padding(2.dp),
-                        onClick = { action?.input(it) },
+                        onClick = { action?.inputNumber(it) },
                         text = it,
                     )
                 }
@@ -275,33 +404,57 @@ fun KeyboardLeftView(action: PercentAction? = null) =
     }
 
 @Composable
-private fun KeyboardRightView(action: PercentAction? = null) =
-    Column(modifier = Modifier.height(350.dp)) {
-        BottonView(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(2.dp),
-            onClick = { action?.input("<") },
-            text = "<",
-        )
-        BottonView(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(2f)
-                    .padding(2.dp),
-            onClick = { action?.input("value1") },
-            text = "값1",
-        )
-        BottonView(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(2f)
-                    .padding(2.dp),
-            onClick = { action?.input("value2") },
-            text = "값2",
-        )
-    }
+private fun KeyboardRightView(
+    state: PercentData,
+    action: PercentAction? = null,
+) = Column(modifier = Modifier.height(350.dp)) {
+    BottonView(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(2.dp),
+        onClick = { action?.inputBack() },
+        text = "<",
+    )
+    BottonView(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .weight(2f)
+                .padding(2.dp),
+        onClick = { action?.inputValueSelect(num = 1) },
+        text = "값1",
+        style =
+            TsExtraBold.copy(
+                color =
+                    when (state.calculateSelect) {
+                        1 -> if (state.calculate1.valueSelect == 1) Yellow else White
+                        2 -> if (state.calculate2.valueSelect == 1) Yellow else White
+                        3 -> if (state.calculate3.valueSelect == 1) Yellow else White
+                        4 -> if (state.calculate4.valueSelect == 1) Yellow else White
+                        else -> White
+                    },
+            ),
+    )
+    BottonView(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .weight(2f)
+                .padding(2.dp),
+        onClick = { action?.inputValueSelect(num = 2) },
+        text = "값2",
+        style =
+            TsExtraBold.copy(
+                color =
+                    when (state.calculateSelect) {
+                        1 -> if (state.calculate1.valueSelect == 2) Yellow else White
+                        2 -> if (state.calculate2.valueSelect == 2) Yellow else White
+                        3 -> if (state.calculate3.valueSelect == 2) Yellow else White
+                        4 -> if (state.calculate4.valueSelect == 2) Yellow else White
+                        else -> White
+                    },
+            ),
+    )
+}
