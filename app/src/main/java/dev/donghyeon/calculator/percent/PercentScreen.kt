@@ -1,11 +1,11 @@
 package dev.donghyeon.calculator.percent
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,14 +25,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.common.TitleView
 import dev.donghyeon.calculator.common.ViewButtonNumber
 import dev.donghyeon.calculator.common.ViewButtonValue
+import dev.donghyeon.calculator.common.ViewScrollTab
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_PercentScreen() = PercentScreen(
-    state = PercentData(),
-)
+fun Preview_PercentScreen() =
+    PercentScreen(
+        state = PercentData(),
+    )
 
 @Composable
 fun PercentScreen() {
@@ -47,31 +52,32 @@ const val RATIO_KEYBOARD = 3f
 fun PercentScreen(
     state: PercentData,
     action: PercentAction? = null,
-) = Column {
+) = Column(modifier = Modifier.background(ColorSet.container)) {
     TitleView(title = "퍼센트 계산기")
     Column(
-        modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(10.dp)
-            .padding(bottom = 20.dp),
+        modifier = Modifier.weight(1f),
+        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            Calculate1View(state = state)
-            Calculate2View(state = state)
-            Calculate3View(state = state)
-            Calculate4View(state = state)
+        Calculate11View(state = state)
+    }
+    var tab by remember { mutableIntStateOf(0) }
+    ViewScrollTab(
+        modifier = Modifier.fillMaxWidth(),
+        tabs = listOf("비율값", "일부값", "증감값", "증감율"),
+        index = tab,
+        onTab = { tab = it },
+    )
+    Row(
+        modifier =
+            Modifier
+                .padding(10.dp)
+                .padding(bottom = 10.dp),
+    ) {
+        Column(modifier = Modifier.weight(RATIO_KEYBOARD)) {
+            KeyboardLeftView(action = action)
         }
-        Row {
-            Column(modifier = Modifier.weight(RATIO_KEYBOARD)) {
-                KeyboardLeftView(action = action)
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                KeyboardRightView(state = state, action = action)
-            }
+        Column(modifier = Modifier.weight(1f)) {
+            KeyboardRightView(state = state, action = action)
         }
     }
 }
@@ -87,7 +93,7 @@ private fun Calculate1View(state: PercentData) =
             Text(
                 text = "전체값  ",
                 style =
-                TextSet.extraBold.copy(
+                    TextSet.extraBold.copy(
                         color = if (state.calculateSelect == 1) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
@@ -95,7 +101,7 @@ private fun Calculate1View(state: PercentData) =
             Text(
                 text = state.calculate1.value1,
                 style =
-                TextSet.extraBold.copy(
+                    TextSet.extraBold.copy(
                         color =
                             if (state.calculateSelect == 1 && state.calculate1.valueSelect == 1) {
                                 ColorSet.select
@@ -362,21 +368,22 @@ fun KeyboardLeftView(action: PercentAction? = null) =
         Row(modifier = Modifier.weight(1f)) {
             ViewButtonNumber(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .padding(2.dp),
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .padding(2.dp),
                 onClick = { action?.inputClear() },
                 text = "c",
             )
-            ViewButtonNumber(
+            ViewButtonValue(
                 modifier =
-                Modifier
-                    .weight(2f)
-                    .fillMaxHeight()
-                    .padding(2.dp),
+                    Modifier
+                        .weight(2f)
+                        .fillMaxHeight()
+                        .padding(2.dp),
                 onClick = { action?.inputCalculateSelect() },
-                text = "선택",
+                text = "메뉴",
+                style = TextSet.bold.copy(ColorSet.text, 20.sp),
             )
         }
         listOf(
@@ -389,10 +396,10 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                 it.forEach {
                     ViewButtonNumber(
                         modifier =
-                        Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .padding(2.dp),
+                            Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .padding(2.dp),
                         onClick = { action?.inputNumber(it) },
                         text = it,
                     )
@@ -408,19 +415,19 @@ private fun KeyboardRightView(
 ) = Column(modifier = Modifier.height(350.dp)) {
     ViewButtonNumber(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .weight(1f)
-            .padding(2.dp),
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(2.dp),
         onClick = { action?.inputBack() },
         text = "<",
     )
     ViewButtonValue(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .weight(2f)
-            .padding(2.dp),
+            Modifier
+                .fillMaxWidth()
+                .weight(2f)
+                .padding(2.dp),
         onClick = { action?.inputValueSelect(num = 1) },
         text = "값1",
         style =
@@ -433,6 +440,7 @@ private fun KeyboardRightView(
                         4 -> if (state.calculate4.valueSelect == 1) ColorSet.select else ColorSet.text
                         else -> ColorSet.text
                     },
+                24.sp,
             ),
     )
     ViewButtonValue(
@@ -453,6 +461,15 @@ private fun KeyboardRightView(
                         4 -> if (state.calculate4.valueSelect == 2) ColorSet.select else ColorSet.text
                         else -> ColorSet.text
                     },
+                24.sp,
             ),
     )
 }
+
+@Preview
+@Composable
+fun Preview_Calculate11View() {
+}
+
+@Composable
+fun Calculate11View(state: PercentData) = Column {}

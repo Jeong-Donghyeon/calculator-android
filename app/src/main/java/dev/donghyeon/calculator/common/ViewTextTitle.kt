@@ -16,22 +16,23 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_TitleView() = TitleView(
-    title = "일반 계산기"
-)
+fun Preview_TitleView() =
+    TitleView(
+        title = "일반 계산기",
+    )
 
 @Composable
-fun TitleView(
-    title: String
-) = Box(
-    modifier = Modifier
-        .background(ColorSet.container)
-        .fillMaxWidth()
-        .height(50.dp),
-    contentAlignment = Alignment.Center
-) {
-    Text(
-        text = title,
-        style = TextSet.extraBold.copy(ColorSet.text, 20.sp)
-    )
-}
+fun TitleView(title: String) =
+    Box(
+        modifier =
+            Modifier
+                .background(ColorSet.container)
+                .fillMaxWidth()
+                .height(50.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = title,
+            style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+        )
+    }

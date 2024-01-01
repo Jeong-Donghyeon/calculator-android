@@ -17,10 +17,11 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewButtonNumber() = ViewButtonNumber(
-    text = "0",
-    onClick = {},
-)
+fun Preview_ViewButtonNumber() =
+    ViewButtonNumber(
+        text = "0",
+        onClick = {},
+    )
 
 @Composable
 fun ViewButtonNumber(
@@ -28,9 +29,10 @@ fun ViewButtonNumber(
     text: String,
     onClick: () -> Unit,
 ) = Button(
-    modifier = Modifier
-        .height(70.dp)
-        .then(modifier),
+    modifier =
+        Modifier
+            .height(70.dp)
+            .then(modifier),
     shape = RoundedCornerShape(5.dp),
     border = BorderStroke(0.dp, ColorSet.transparent),
     onClick = onClick,

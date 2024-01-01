@@ -18,11 +18,12 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewButtonValue() = ViewButtonValue(
-    text = "0",
-    style = TextSet.bold.copy(ColorSet.text, 24.sp),
-    onClick = {},
-)
+fun Preview_ViewButtonValue() =
+    ViewButtonValue(
+        text = "0",
+        style = TextSet.bold.copy(ColorSet.text, 24.sp),
+        onClick = {},
+    )
 
 @Composable
 fun ViewButtonValue(
@@ -31,9 +32,10 @@ fun ViewButtonValue(
     style: TextStyle,
     onClick: () -> Unit,
 ) = Button(
-    modifier = Modifier
-        .height(70.dp)
-        .then(modifier),
+    modifier =
+        Modifier
+            .height(70.dp)
+            .then(modifier),
     shape = RoundedCornerShape(5.dp),
     border = BorderStroke(0.dp, ColorSet.transparent),
     onClick = onClick,
@@ -47,6 +49,6 @@ fun ViewButtonValue(
 ) {
     Text(
         text = text,
-        style = style
+        style = style,
     )
 }
