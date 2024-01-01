@@ -2,6 +2,7 @@ package dev.donghyeon.calculator.percent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,15 +10,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,18 +54,20 @@ fun PercentScreen(
     action: PercentAction? = null,
 ) = Column(modifier = Modifier.background(ColorSet.container)) {
     TitleView(title = "퍼센트 계산기")
-    Column(
-        modifier = Modifier.weight(1f),
-        verticalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        Calculate11View(state = state)
+    Column(modifier = Modifier.weight(1f)) {
+        when (state.tab + 1) {
+            1 -> Calculate1View(state = state)
+            2 -> {}
+            3 -> {}
+            4 -> {}
+            else -> {}
+        }
     }
-    var tab by remember { mutableIntStateOf(0) }
     ViewScrollTab(
         modifier = Modifier.fillMaxWidth(),
         tabs = listOf("비율값", "일부값", "증감값", "증감율"),
-        index = tab,
-        onTab = { tab = it },
+        index = state.tab,
+        onTab = { action?.inputTab(it) },
     )
     Row(
         modifier =
@@ -83,76 +85,6 @@ fun PercentScreen(
 }
 
 @Composable
-private fun Calculate1View(state: PercentData) =
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Row {
-            Text(
-                text = "전체값  ",
-                style =
-                    TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 1) ColorSet.blue else ColorSet.text,
-                        fontSize = 17.sp,
-                    ),
-            )
-            Text(
-                text = state.calculate1.value1,
-                style =
-                    TextSet.extraBold.copy(
-                        color =
-                            if (state.calculateSelect == 1 && state.calculate1.valueSelect == 1) {
-                                ColorSet.select
-                            } else {
-                                ColorSet.text
-                            },
-                        fontSize = 17.sp,
-                    ),
-            )
-            Text(
-                text = "  의  ",
-                style =
-                    TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 1) ColorSet.blue else ColorSet.text,
-                        fontSize = 17.sp,
-                    ),
-            )
-            Text(
-                text = state.calculate1.value2 + " %",
-                style =
-                    TextSet.extraBold.copy(
-                        color =
-                            if (state.calculateSelect == 1 && state.calculate1.valueSelect == 2) {
-                                ColorSet.select
-                            } else {
-                                ColorSet.text
-                            },
-                        fontSize = 17.sp,
-                    ),
-            )
-            Text(
-                text = " 는  얼마?",
-                style =
-                    TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 1) ColorSet.blue else ColorSet.text,
-                        fontSize = 17.sp,
-                    ),
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = state.calculate1.result,
-            style =
-                TextSet.extraBold.copy(
-                    color = if (state.calculateSelect == 1) ColorSet.result else ColorSet.text,
-                    fontSize = 20.sp,
-                ),
-        )
-    }
-
-@Composable
 private fun Calculate2View(state: PercentData) =
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -164,7 +96,7 @@ private fun Calculate2View(state: PercentData) =
                 text = "전체값  ",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 2) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 2) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -173,7 +105,7 @@ private fun Calculate2View(state: PercentData) =
                 style =
                     TextSet.extraBold.copy(
                         color =
-                            if (state.calculateSelect == 2 && state.calculate2.valueSelect == 1) {
+                            if (state.tab + 1 == 2 && state.calculate2.valueSelect == 1) {
                                 ColorSet.select
                             } else {
                                 ColorSet.text
@@ -185,7 +117,7 @@ private fun Calculate2View(state: PercentData) =
                 text = "  의  ",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 2) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 2) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -194,7 +126,7 @@ private fun Calculate2View(state: PercentData) =
                 style =
                     TextSet.extraBold.copy(
                         color =
-                            if (state.calculateSelect == 2 && state.calculate2.valueSelect == 2) {
+                            if (state.tab + 1 == 2 && state.calculate2.valueSelect == 2) {
                                 ColorSet.select
                             } else {
                                 ColorSet.text
@@ -206,7 +138,7 @@ private fun Calculate2View(state: PercentData) =
                 text = " 은  몇 % ?",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 2) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 2) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -216,7 +148,7 @@ private fun Calculate2View(state: PercentData) =
             text = state.calculate2.result,
             style =
                 TextSet.extraBold.copy(
-                    color = if (state.calculateSelect == 2) ColorSet.result else ColorSet.text,
+                    color = if (state.tab + 1 == 2) ColorSet.result else ColorSet.text,
                     fontSize = 20.sp,
                 ),
         )
@@ -234,7 +166,7 @@ private fun Calculate3View(state: PercentData) =
                 text = "전체값  ",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 3) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 3) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -243,7 +175,7 @@ private fun Calculate3View(state: PercentData) =
                 style =
                     TextSet.extraBold.copy(
                         color =
-                            if (state.calculateSelect == 3 && state.calculate3.valueSelect == 1) {
+                            if (state.tab + 1 == 3 && state.calculate3.valueSelect == 1) {
                                 ColorSet.select
                             } else {
                                 ColorSet.text
@@ -255,7 +187,7 @@ private fun Calculate3View(state: PercentData) =
                 text = "  이(가)  ",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 3) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 3) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -264,7 +196,7 @@ private fun Calculate3View(state: PercentData) =
                 style =
                     TextSet.extraBold.copy(
                         color =
-                            if (state.calculateSelect == 3 && state.calculate3.valueSelect == 2) {
+                            if (state.tab + 1 == 3 && state.calculate3.valueSelect == 2) {
                                 ColorSet.select
                             } else {
                                 ColorSet.text
@@ -276,7 +208,7 @@ private fun Calculate3View(state: PercentData) =
                 text = " 으로 변하면 ?",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 3) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 3) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -286,7 +218,7 @@ private fun Calculate3View(state: PercentData) =
             text = state.calculate3.result,
             style =
                 TextSet.extraBold.copy(
-                    color = if (state.calculateSelect == 3) ColorSet.result else ColorSet.text,
+                    color = if (state.tab + 1 == 3) ColorSet.result else ColorSet.text,
                     fontSize = 20.sp,
                 ),
         )
@@ -304,7 +236,7 @@ private fun Calculate4View(state: PercentData) =
                 text = "전체값  ",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 4) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 4) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -313,7 +245,7 @@ private fun Calculate4View(state: PercentData) =
                 style =
                     TextSet.extraBold.copy(
                         color =
-                            if (state.calculateSelect == 4 && state.calculate4.valueSelect == 1) {
+                            if (state.tab + 1 == 4 && state.calculate4.valueSelect == 1) {
                                 ColorSet.select
                             } else {
                                 ColorSet.text
@@ -325,7 +257,7 @@ private fun Calculate4View(state: PercentData) =
                 text = "  이(가)  ",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 4) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 4) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -334,7 +266,7 @@ private fun Calculate4View(state: PercentData) =
                 style =
                     TextSet.extraBold.copy(
                         color =
-                            if (state.calculateSelect == 4 && state.calculate4.valueSelect == 2) {
+                            if (state.tab + 1 == 4 && state.calculate4.valueSelect == 2) {
                                 ColorSet.select
                             } else {
                                 ColorSet.text
@@ -346,7 +278,7 @@ private fun Calculate4View(state: PercentData) =
                 text = " % 증가하면 ?",
                 style =
                     TextSet.extraBold.copy(
-                        color = if (state.calculateSelect == 4) ColorSet.blue else ColorSet.text,
+                        color = if (state.tab + 1 == 4) ColorSet.blue else ColorSet.text,
                         fontSize = 17.sp,
                     ),
             )
@@ -356,7 +288,7 @@ private fun Calculate4View(state: PercentData) =
             text = state.calculate4.result,
             style =
                 TextSet.extraBold.copy(
-                    color = if (state.calculateSelect == 4) ColorSet.result else ColorSet.text,
+                    color = if (state.tab + 1 == 4) ColorSet.result else ColorSet.text,
                     fontSize = 20.sp,
                 ),
         )
@@ -381,7 +313,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                         .weight(2f)
                         .fillMaxHeight()
                         .padding(2.dp),
-                onClick = { action?.inputCalculateSelect() },
+                onClick = {},
                 text = "메뉴",
                 style = TextSet.bold.copy(ColorSet.text, 20.sp),
             )
@@ -433,7 +365,7 @@ private fun KeyboardRightView(
         style =
             TextSet.extraBold.copy(
                 color =
-                    when (state.calculateSelect) {
+                    when (state.tab + 1) {
                         1 -> if (state.calculate1.valueSelect == 1) ColorSet.select else ColorSet.text
                         2 -> if (state.calculate2.valueSelect == 1) ColorSet.select else ColorSet.text
                         3 -> if (state.calculate3.valueSelect == 1) ColorSet.select else ColorSet.text
@@ -454,7 +386,7 @@ private fun KeyboardRightView(
         style =
             TextSet.extraBold.copy(
                 color =
-                    when (state.calculateSelect) {
+                    when (state.tab + 1) {
                         1 -> if (state.calculate1.valueSelect == 2) ColorSet.select else ColorSet.text
                         2 -> if (state.calculate2.valueSelect == 2) ColorSet.select else ColorSet.text
                         3 -> if (state.calculate3.valueSelect == 2) ColorSet.select else ColorSet.text
@@ -466,10 +398,182 @@ private fun KeyboardRightView(
     )
 }
 
-@Preview
 @Composable
-fun Preview_Calculate11View() {
-}
-
-@Composable
-fun Calculate11View(state: PercentData) = Column {}
+fun Calculate1View(state: PercentData) =
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier.width(320.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                modifier = Modifier.width(50.dp),
+                text = "V1",
+                style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+                textAlign = TextAlign.Center,
+            )
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .height(50.dp),
+            ) {
+                Box(modifier = Modifier.weight(1f))
+                Text(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(end = 10.dp),
+                    text = state.calculate1.value1,
+                    style =
+                        TextSet.extraBold.copy(
+                            color =
+                                if (state.tab + 1 == 1 && state.calculate1.valueSelect == 1) {
+                                    ColorSet.select
+                                } else {
+                                    ColorSet.text
+                                },
+                            fontSize = 26.sp,
+                        ),
+                    textAlign = TextAlign.End,
+                )
+                Box(
+                    modifier =
+                        Modifier
+                            .background(
+                                color =
+                                    if (state.tab + 1 == 1 && state.calculate1.valueSelect == 1) {
+                                        ColorSet.select
+                                    } else {
+                                        ColorSet.text
+                                    },
+                            )
+                            .fillMaxWidth(1f)
+                            .height(2.dp),
+                )
+            }
+            Column(
+                modifier =
+                    Modifier
+                        .width(60.dp)
+                        .height(50.dp)
+                        .padding(start = 5.dp),
+            ) {
+                Box(modifier = Modifier.weight(1f))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "의",
+                    style =
+                        TextSet.extraBold.copy(
+                            if (state.tab + 1 == 1 && state.calculate1.valueSelect == 1) {
+                                ColorSet.select
+                            } else {
+                                ColorSet.text
+                            },
+                            20.sp,
+                        ),
+                    textAlign = TextAlign.Start,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier.width(320.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                modifier = Modifier.width(50.dp),
+                text = "V2",
+                style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+                textAlign = TextAlign.Center,
+            )
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .height(50.dp),
+            ) {
+                Box(modifier = Modifier.weight(1f))
+                Text(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(end = 10.dp),
+                    text = state.calculate1.value2,
+                    style =
+                        TextSet.extraBold.copy(
+                            color =
+                                if (state.tab + 1 == 1 && state.calculate1.valueSelect == 2) {
+                                    ColorSet.select
+                                } else {
+                                    ColorSet.text
+                                },
+                            fontSize = 26.sp,
+                        ),
+                    textAlign = TextAlign.End,
+                )
+                Box(
+                    modifier =
+                        Modifier
+                            .background(
+                                color =
+                                    if (state.tab + 1 == 1 && state.calculate1.valueSelect == 2) {
+                                        ColorSet.select
+                                    } else {
+                                        ColorSet.text
+                                    },
+                            )
+                            .fillMaxWidth(1f)
+                            .height(2.dp),
+                )
+            }
+            Column(
+                modifier =
+                    Modifier
+                        .width(60.dp)
+                        .height(50.dp)
+                        .padding(start = 5.dp),
+            ) {
+                Box(modifier = Modifier.weight(1f))
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "% 는",
+                    style =
+                        TextSet.extraBold.copy(
+                            if (state.tab + 1 == 1 && state.calculate1.valueSelect == 2) {
+                                ColorSet.select
+                            } else {
+                                ColorSet.text
+                            },
+                            20.sp,
+                        ),
+                    textAlign = TextAlign.Start,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = state.calculate1.result,
+                    style = TextSet.extraBold.copy(ColorSet.result, 34.sp),
+                )
+            }
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "예) 100의 10% 는 10",
+                style = TextSet.extraBold.copy(ColorSet.text, 16.sp),
+            )
+        }
+    }

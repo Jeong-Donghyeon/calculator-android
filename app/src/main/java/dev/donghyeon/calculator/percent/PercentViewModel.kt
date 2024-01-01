@@ -9,7 +9,7 @@ import java.text.DecimalFormat
 import javax.inject.Inject
 
 interface PercentAction {
-    fun inputCalculateSelect()
+    fun inputTab(tab: Int)
 
     fun inputValueSelect(num: Int)
 
@@ -26,23 +26,14 @@ class PercentViewModel
         private val _percentState = MutableStateFlow(PercentData())
         val percentState: StateFlow<PercentData> = _percentState
 
-        override fun inputCalculateSelect() {
-            val state = percentState.value
-            _percentState.value =
-                state.copy(
-                    calculateSelect =
-                        if (state.calculateSelect < 4) {
-                            state.calculateSelect + 1
-                        } else {
-                            1
-                        },
-                )
+        override fun inputTab(tab: Int) {
+            _percentState.value = percentState.value.copy(tab = tab)
         }
 
         override fun inputValueSelect(num: Int) {
             val state = percentState.value
             _percentState.value =
-                when (state.calculateSelect) {
+                when (state.tab + 1) {
                     1 ->
                         when (num) {
                             1 -> state.copy(calculate1 = state.calculate1.copy(valueSelect = 1))
@@ -74,18 +65,18 @@ class PercentViewModel
         override fun inputClear() {
             val state = percentState.value
             _percentState.value =
-                when (state.calculateSelect) {
-                    1 -> state.copy(calculate1 = PercentData.Calculate(mode = 1))
-                    2 -> state.copy(calculate2 = PercentData.Calculate(mode = 2))
-                    3 -> state.copy(calculate3 = PercentData.Calculate(mode = 3))
-                    4 -> state.copy(calculate4 = PercentData.Calculate(mode = 4))
+                when (state.tab + 1) {
+                    1 -> state.copy(calculate1 = PercentData.Calculate(mode = 0))
+                    2 -> state.copy(calculate2 = PercentData.Calculate(mode = 1))
+                    3 -> state.copy(calculate3 = PercentData.Calculate(mode = 2))
+                    4 -> state.copy(calculate4 = PercentData.Calculate(mode = 3))
                     else -> state
                 }
         }
 
         override fun inputBack() {
             val state = percentState.value
-            when (state.calculateSelect) {
+            when (state.tab + 1) {
                 1 -> {
                     val newState =
                         state.copy(
@@ -188,7 +179,7 @@ class PercentViewModel
 
         override fun inputNumber(s: String) {
             val state = percentState.value
-            when (state.calculateSelect) {
+            when (state.tab + 1) {
                 1 ->
                     calculate1(
                         state.copy(
