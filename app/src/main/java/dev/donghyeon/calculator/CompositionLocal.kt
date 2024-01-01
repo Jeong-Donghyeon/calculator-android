@@ -10,5 +10,5 @@ val LocalViewModel =
 
 val LocalNavController =
     staticCompositionLocalOf<NavHostController> {
-        error("No navigation host controller provided")
+        error("No NavHostController provided")
     }

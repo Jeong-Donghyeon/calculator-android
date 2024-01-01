@@ -8,7 +8,6 @@ import androidx.activity.viewModels
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import dagger.hilt.android.AndroidEntryPoint
-import dev.donghyeon.calculator.theme.Black
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -16,9 +15,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            (LocalView.current.context as Activity).window.statusBarColor = Black.toArgb()
-            MainScreen(viewModel = viewModel)
-        }
+        setContent { MainScreen(viewModel = viewModel) }
     }
 }
