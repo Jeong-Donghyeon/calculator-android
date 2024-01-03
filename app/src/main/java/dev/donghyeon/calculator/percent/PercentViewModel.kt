@@ -1,357 +1,112 @@
 package dev.donghyeon.calculator.percent
 
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.donghyeon.calculator.BaseViewModel
+import dev.donghyeon.calculator.usecase.percent.PercentCalculate1UseCase
+import dev.donghyeon.calculator.usecase.percent.PercentCalculate2UseCase
+import dev.donghyeon.calculator.usecase.percent.PercentCalculate3UseCase
+import dev.donghyeon.calculator.usecase.percent.PercentCalculate4UseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.math.BigDecimal
-import java.math.RoundingMode
-import java.text.DecimalFormat
 import javax.inject.Inject
 
 interface PercentAction {
-    fun inputTab(tab: Int)
+    fun inputPercentSelect(select: PercentSelect)
 
-    fun inputValueSelect(num: Int)
+    fun inputValueSelect(select: ValueSelect)
 
-    fun inputClear()
-
-    fun inputBack()
-
-    fun inputNumber(s: String)
+    fun inputNumberKeyPad(key: NumberPadKey)
 }
 
+@HiltViewModel
 class PercentViewModel
     @Inject
-    constructor() : BaseViewModel(), PercentAction {
-        private val _percentState = MutableStateFlow(PercentData())
-        val percentState: StateFlow<PercentData> = _percentState
+    constructor(
+        private val percentCalculate1UseCase: PercentCalculate1UseCase,
+        private val percentCalculate2UseCase: PercentCalculate2UseCase,
+        private val percentCalculate3UseCase: PercentCalculate3UseCase,
+        private val percentCalculate4UseCase: PercentCalculate4UseCase,
+    ) : BaseViewModel(), PercentAction {
+        private val _state = MutableStateFlow(PercentData())
+        val state: StateFlow<PercentData> = _state
 
-        override fun inputTab(tab: Int) {
-            _percentState.value = percentState.value.copy(tab = tab)
+        override fun inputPercentSelect(select: PercentSelect) {
+            _state.value = state.value.copy(select = select)
         }
 
-        override fun inputValueSelect(num: Int) {
-            val state = percentState.value
-            _percentState.value =
-                when (state.tab + 1) {
-                    1 ->
-                        when (num) {
-                            1 -> state.copy(calculate1 = state.calculate1.copy(valueSelect = 1))
-                            2 -> state.copy(calculate1 = state.calculate1.copy(valueSelect = 2))
-                            else -> state
-                        }
-                    2 ->
-                        when (num) {
-                            1 -> state.copy(calculate2 = state.calculate2.copy(valueSelect = 1))
-                            2 -> state.copy(calculate2 = state.calculate2.copy(valueSelect = 2))
-                            else -> state
-                        }
-                    3 ->
-                        when (num) {
-                            1 -> state.copy(calculate3 = state.calculate3.copy(valueSelect = 1))
-                            2 -> state.copy(calculate3 = state.calculate3.copy(valueSelect = 2))
-                            else -> state
-                        }
-                    4 ->
-                        when (num) {
-                            1 -> state.copy(calculate4 = state.calculate4.copy(valueSelect = 1))
-                            2 -> state.copy(calculate4 = state.calculate4.copy(valueSelect = 2))
-                            else -> state
-                        }
-                    else -> state
+        override fun inputValueSelect(select: ValueSelect) {
+            _state.value =
+                state.value.let {
+                    when (it.select) {
+                        PercentSelect.CALCULATE2 -> it.copy(calculate2 = it.calculate2.copy(select = select))
+                        PercentSelect.CALCULATE3 -> it.copy(calculate3 = it.calculate3.copy(select = select))
+                        PercentSelect.CALCULATE4 -> it.copy(calculate4 = it.calculate4.copy(select = select))
+                        else -> it.copy(calculate1 = it.calculate1.copy(select = select))
+                    }
                 }
         }
 
-        override fun inputClear() {
-            val state = percentState.value
-            _percentState.value =
-                when (state.tab + 1) {
-                    1 -> state.copy(calculate1 = PercentData.Calculate(mode = 0))
-                    2 -> state.copy(calculate2 = PercentData.Calculate(mode = 1))
-                    3 -> state.copy(calculate3 = PercentData.Calculate(mode = 2))
-                    4 -> state.copy(calculate4 = PercentData.Calculate(mode = 3))
-                    else -> state
+        override fun inputNumberKeyPad(key: NumberPadKey) {
+            _state.value =
+                state.value.let {
+                    when (it.select) {
+                        PercentSelect.CALCULATE2 ->
+                            it.copy(
+                                calculate2 =
+                                    input(
+                                        key = key,
+                                        calculate = it.calculate2,
+                                    ),
+                            )
+                        PercentSelect.CALCULATE3 ->
+                            it.copy(
+                                calculate3 =
+                                    input(
+                                        key = key,
+                                        calculate = it.calculate3,
+                                    ),
+                            )
+
+                        PercentSelect.CALCULATE4 ->
+                            it.copy(
+                                calculate4 =
+                                    input(
+                                        key = key,
+                                        calculate = it.calculate4,
+                                    ),
+                            )
+
+                        else -> it.copy(calculate1 = input(key = key, calculate = it.calculate1))
+                    }
                 }
         }
 
-        override fun inputBack() {
-            val state = percentState.value
-            when (state.tab + 1) {
-                1 -> {
-                    val newState =
-                        state.copy(
-                            calculate1 =
-                                when (state.calculate1.valueSelect) {
-                                    1 ->
-                                        state.calculate1.copy(
-                                            value1 =
-                                                state.calculate1.value1.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    2 ->
-                                        state.calculate1.copy(
-                                            value2 =
-                                                state.calculate1.value2.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    else -> state.calculate1
-                                },
-                        )
-                    calculate1(newState)
+        private fun input(
+            key: NumberPadKey,
+            calculate: PercentData.Calculate,
+        ): PercentData.Calculate =
+            if (key == NumberPadKey.CLEAR) {
+                PercentData.Calculate()
+            } else {
+                val inputKey: (key: NumberPadKey, value: String) -> String = { k, v ->
+                    when (k) {
+                        NumberPadKey.BACK -> v.dropLast(1)
+                        else -> v + k.value
+                    }
                 }
-                2 -> {
-                    val newState =
-                        state.copy(
-                            calculate2 =
-                                when (state.calculate2.valueSelect) {
-                                    1 ->
-                                        state.calculate2.copy(
-                                            value1 =
-                                                state.calculate2.value1.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    2 ->
-                                        state.calculate2.copy(
-                                            value2 =
-                                                state.calculate2.value2.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    else -> state.calculate2
-                                },
-                        )
-                    calculate2(newState)
+                when (calculate.select) {
+                    ValueSelect.V2 -> calculate.copy(value2 = inputKey(key, calculate.value2))
+                    else -> calculate.copy(value1 = inputKey(key, calculate.value1))
+                }.let {
+                    it.copy(
+                        result =
+                            when (state.value.select) {
+                                PercentSelect.CALCULATE2 -> percentCalculate2UseCase(it.value1, it.value2)
+                                PercentSelect.CALCULATE3 -> percentCalculate3UseCase(it.value1, it.value2)
+                                PercentSelect.CALCULATE4 -> percentCalculate4UseCase(it.value1, it.value2)
+                                else -> percentCalculate1UseCase(it.value1, it.value2)
+                            },
+                    )
                 }
-                3 -> {
-                    val newState =
-                        state.copy(
-                            calculate3 =
-                                when (state.calculate3.valueSelect) {
-                                    1 ->
-                                        state.calculate3.copy(
-                                            value1 =
-                                                state.calculate3.value1.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    2 ->
-                                        state.calculate3.copy(
-                                            value2 =
-                                                state.calculate3.value2.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    else -> state.calculate3
-                                },
-                        )
-                    calculate3(newState)
-                }
-                4 -> {
-                    val newState =
-                        state.copy(
-                            calculate4 =
-                                when (state.calculate4.valueSelect) {
-                                    1 ->
-                                        state.calculate4.copy(
-                                            value1 =
-                                                state.calculate4.value1.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    2 ->
-                                        state.calculate4.copy(
-                                            value2 =
-                                                state.calculate4.value2.dropLast(1).let {
-                                                    if (it == "") "?" else it
-                                                },
-                                        )
-                                    else -> state.calculate4
-                                },
-                        )
-                    calculate4(newState)
-                }
-                else -> {}
             }
-        }
-
-        override fun inputNumber(s: String) {
-            val state = percentState.value
-            when (state.tab + 1) {
-                1 ->
-                    calculate1(
-                        state.copy(
-                            calculate1 =
-                                when (state.calculate1.valueSelect) {
-                                    1 -> state.calculate1.copy(value1 = state.calculate1.value1.replace("?", "") + s)
-                                    2 -> state.calculate1.copy(value2 = state.calculate1.value2.replace("?", "") + s)
-                                    else -> state.calculate1
-                                },
-                        ),
-                    )
-                2 ->
-                    calculate2(
-                        state.copy(
-                            calculate2 =
-                                when (state.calculate2.valueSelect) {
-                                    1 -> state.calculate2.copy(value1 = state.calculate2.value1.replace("?", "") + s)
-                                    2 -> state.calculate2.copy(value2 = state.calculate2.value2.replace("?", "") + s)
-                                    else -> state.calculate2
-                                },
-                        ),
-                    )
-                3 ->
-                    calculate3(
-                        state.copy(
-                            calculate3 =
-                                when (state.calculate3.valueSelect) {
-                                    1 -> state.calculate3.copy(value1 = state.calculate3.value1.replace("?", "") + s)
-                                    2 -> state.calculate3.copy(value2 = state.calculate3.value2.replace("?", "") + s)
-                                    else -> state.calculate3
-                                },
-                        ),
-                    )
-                4 ->
-                    calculate4(
-                        state.copy(
-                            calculate4 =
-                                when (state.calculate4.valueSelect) {
-                                    1 -> state.calculate4.copy(value1 = state.calculate4.value1.replace("?", "") + s)
-                                    2 -> state.calculate4.copy(value2 = state.calculate4.value2.replace("?", "") + s)
-                                    else -> state.calculate4
-                                },
-                        ),
-                    )
-                else -> {}
-            }
-        }
-
-        private fun calculate1(state: PercentData) {
-            val v1 = state.calculate1.value1.toBigDecimalOrNull()
-            val v2 = state.calculate1.value2.toBigDecimalOrNull()
-            val result =
-                if (v1 != null && v2 != null) {
-                    val p = v2.divide("100".toBigDecimal(), 2, RoundingMode.DOWN)
-                    v1.multiply(p).toString()
-                } else {
-                    null
-                }
-            _percentState.value =
-                if (result == null) {
-                    state.copy(calculate1 = state.calculate1.copy(result = "?"))
-                } else {
-                    state.copy(calculate1 = state.calculate1.copy(result = result.toScaleCommaString(scale = 2)))
-                }
-        }
-
-        private fun calculate2(state: PercentData) {
-            val v1 = state.calculate2.value1.toBigDecimalOrNull()
-            val v2 = state.calculate2.value2.toBigDecimalOrNull()
-            val result =
-                if (v1 != null && v2 != null) {
-                    v2.divide(v1, 2, RoundingMode.DOWN).multiply("100".toBigDecimal()).toString()
-                } else {
-                    null
-                }
-            _percentState.value =
-                if (result == null) {
-                    state.copy(calculate2 = state.calculate2.copy(result = "?"))
-                } else {
-                    state.copy(calculate2 = state.calculate2.copy(result = result.toScaleCommaString(scale = 2) + " %"))
-                }
-        }
-
-        private fun calculate3(state: PercentData) {
-            val v1 = state.calculate3.value1.toBigDecimalOrNull()
-            val v2 = state.calculate3.value2.toBigDecimalOrNull()
-            var updownStr = ""
-            val result =
-                if (v1 != null && v2 != null) {
-                    var updown = v1.minus(v2)
-                    updownStr =
-                        if (updown <= BigDecimal.ZERO) {
-                            "증가"
-                        } else {
-                            "감소"
-                        }
-                    updown = updown.abs()
-                    updown.divide(v1, 2, RoundingMode.DOWN).multiply("100".toBigDecimal()).toString()
-                } else {
-                    null
-                }
-            _percentState.value =
-                if (result == null) {
-                    state.copy(calculate3 = state.calculate3.copy(result = "?"))
-                } else {
-                    state.copy(calculate3 = state.calculate3.copy(result = result.toScaleCommaString(scale = 2) + " % $updownStr"))
-                }
-        }
-
-        private fun calculate4(state: PercentData) {
-            val v1 = state.calculate4.value1.toBigDecimalOrNull()
-            val v2 = state.calculate4.value2.toBigDecimalOrNull()
-            val result =
-                if (v1 != null && v2 != null) {
-                    val p = v2.divide("100".toBigDecimal(), 2, RoundingMode.DOWN)
-                    v1.multiply(p).plus(v1).toString()
-                } else {
-                    null
-                }
-            _percentState.value =
-                if (result == null) {
-                    state.copy(calculate4 = state.calculate4.copy(result = "?"))
-                } else {
-                    state.copy(calculate4 = state.calculate4.copy(result = result.toScaleCommaString(scale = 2)))
-                }
-        }
     }
-
-fun String.toCommaString(): String =
-    this.toBigIntegerOrNull()?.let { i ->
-        this.split(".").let {
-            if (it.count() > 1) {
-                DecimalFormat("#,###").format(i) + "." + it[1]
-            } else {
-                DecimalFormat("#,###").format(i)
-            }
-        }
-    } ?: this
-
-fun String.toScaleCommaString(scale: Int): String {
-    val minus = this.contains("-")
-    val value = this.replace("-", "")
-    val result =
-        value.split(".").let {
-            if (it.count() > 1) {
-                var rv =
-                    if (scale < it[1].count()) {
-                        it[1].substring(0, scale)
-                    } else {
-                        it[1]
-                    }
-                val lvV = it[0].toCommaString()
-                if (lvV.count() > 13) {
-                    lvV
-                } else {
-                    if (rv == "" || rv.all { v -> v == '0' }) {
-                        lvV
-                    } else {
-                        while (rv.last() == '0') {
-                            rv = rv.dropLast(1)
-                        }
-                        val v = "$lvV.$rv"
-                        if (v.count() > 15) {
-                            v.substring(0, 15)
-                        } else {
-                            v
-                        }
-                    }
-                }
-            } else {
-                value.toCommaString()
-            }
-        }
-    return if (minus) "-$result" else result
-}
