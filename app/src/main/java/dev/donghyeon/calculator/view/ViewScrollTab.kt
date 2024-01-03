@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator.common
+package dev.donghyeon.calculator.view
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing

@@ -22,10 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.donghyeon.calculator.common.TitleView
-import dev.donghyeon.calculator.common.ViewButtonNumber
-import dev.donghyeon.calculator.common.ViewButtonValue
-import dev.donghyeon.calculator.common.ViewScrollTab
+import dev.donghyeon.calculator.view.TitleView
+import dev.donghyeon.calculator.view.ViewButtonNumber
+import dev.donghyeon.calculator.view.ViewButtonValue
+import dev.donghyeon.calculator.view.ViewScrollTab
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 
@@ -305,7 +305,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                         .fillMaxHeight()
                         .padding(2.dp),
                 onClick = { action?.inputClear() },
-                text = "c",
+                text = "C",
             )
             ViewButtonValue(
                 modifier =
@@ -352,7 +352,8 @@ private fun KeyboardRightView(
                 .weight(1f)
                 .padding(2.dp),
         onClick = { action?.inputBack() },
-        text = "<",
+        text = "⌫",
+        size = 30.sp,
     )
     ViewButtonValue(
         modifier =
@@ -361,7 +362,7 @@ private fun KeyboardRightView(
                 .weight(2f)
                 .padding(2.dp),
         onClick = { action?.inputValueSelect(num = 1) },
-        text = "값1",
+        text = "V1",
         style =
             TextSet.extraBold.copy(
                 color =
@@ -382,7 +383,7 @@ private fun KeyboardRightView(
                 .weight(2f)
                 .padding(2.dp),
         onClick = { action?.inputValueSelect(num = 2) },
-        text = "값2",
+        text = "V2",
         style =
             TextSet.extraBold.copy(
                 color =

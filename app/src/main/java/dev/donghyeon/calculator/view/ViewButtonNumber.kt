@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator.common
+package dev.donghyeon.calculator.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,8 +9,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.donghyeon.calculator.theme.ColorSet
@@ -18,18 +18,17 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewButtonValue() =
-    ViewButtonValue(
+fun Preview_ViewButtonNumber() =
+    ViewButtonNumber(
         text = "0",
-        style = TextSet.bold.copy(ColorSet.text, 24.sp),
         onClick = {},
     )
 
 @Composable
-fun ViewButtonValue(
+fun ViewButtonNumber(
     modifier: Modifier = Modifier,
     text: String,
-    style: TextStyle,
+    size: TextUnit = 24.sp,
     onClick: () -> Unit,
 ) = Button(
     modifier =
@@ -49,6 +48,6 @@ fun ViewButtonValue(
 ) {
     Text(
         text = text,
-        style = style,
+        style = TextSet.bold.copy(ColorSet.text, size),
     )
 }
