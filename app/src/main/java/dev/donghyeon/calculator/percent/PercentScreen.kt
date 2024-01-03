@@ -22,12 +22,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.donghyeon.calculator.theme.ColorSet
+import dev.donghyeon.calculator.theme.TextSet
 import dev.donghyeon.calculator.view.TitleView
 import dev.donghyeon.calculator.view.ViewButtonNumber
 import dev.donghyeon.calculator.view.ViewButtonValue
 import dev.donghyeon.calculator.view.ViewScrollTab
-import dev.donghyeon.calculator.theme.ColorSet
-import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
