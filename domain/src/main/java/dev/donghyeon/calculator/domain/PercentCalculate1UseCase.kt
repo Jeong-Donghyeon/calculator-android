@@ -14,8 +14,10 @@ class PercentCalculate1UseCase
         ): String {
             val value1 = v1.toBigDecimalOrNull() ?: return "?"
             val value2 = v2.toBigDecimalOrNull() ?: return "?"
-            val value = value2.divide("100".toBigDecimal(), 4, RoundingMode.DOWN)
-            val result = value1.multiply(value).toString()
+            val result =
+                value1.multiply(value2)
+                    .divide("100".toBigDecimal(), 10, RoundingMode.DOWN)
+                    .toString()
             return numberFormatString(result)
         }
     }

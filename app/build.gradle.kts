@@ -81,11 +81,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
 
-    detekt {
-        buildUponDefaultConfig = true
-        config.setFrom(files("$rootDir/detekt-config.yml"))
-    }
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/detekt-config.yml"))
 }
 
 dependencies {
