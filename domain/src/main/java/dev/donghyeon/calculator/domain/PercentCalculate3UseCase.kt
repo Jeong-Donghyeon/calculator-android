@@ -1,6 +1,5 @@
-package dev.donghyeon.calculator.usecase.percent
+package dev.donghyeon.calculator.domain
 
-import dev.donghyeon.calculator.usecase.NumberFormatString
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject

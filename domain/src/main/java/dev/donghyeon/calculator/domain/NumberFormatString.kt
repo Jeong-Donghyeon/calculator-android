@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator.usecase
+package dev.donghyeon.calculator.domain
 
 import java.text.DecimalFormat
 import javax.inject.Inject

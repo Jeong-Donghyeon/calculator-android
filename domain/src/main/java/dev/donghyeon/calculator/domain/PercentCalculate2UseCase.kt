@@ -1,10 +1,9 @@
-package dev.donghyeon.calculator.usecase.percent
+package dev.donghyeon.calculator.domain
 
-import dev.donghyeon.calculator.usecase.NumberFormatString
 import java.math.RoundingMode
 import javax.inject.Inject
 
-class PercentCalculate1UseCase
+class PercentCalculate2UseCase
     @Inject
     constructor(
         private val numberFormatString: NumberFormatString,
@@ -15,8 +14,9 @@ class PercentCalculate1UseCase
         ): String {
             val value1 = v1.toBigDecimalOrNull() ?: return "?"
             val value2 = v2.toBigDecimalOrNull() ?: return "?"
-            val value = value2.divide("100".toBigDecimal(), 4, RoundingMode.DOWN)
-            val result = value1.multiply(value).toString()
-            return numberFormatString(result)
+            val result =
+                value2.divide(value1, 4, RoundingMode.DOWN)
+                    .multiply("100".toBigDecimal()).toString()
+            return numberFormatString(result) + "%"
         }
     }

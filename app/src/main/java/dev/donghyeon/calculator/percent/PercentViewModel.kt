@@ -2,10 +2,10 @@ package dev.donghyeon.calculator.percent
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.donghyeon.calculator.BaseViewModel
-import dev.donghyeon.calculator.usecase.percent.PercentCalculate1UseCase
-import dev.donghyeon.calculator.usecase.percent.PercentCalculate2UseCase
-import dev.donghyeon.calculator.usecase.percent.PercentCalculate3UseCase
-import dev.donghyeon.calculator.usecase.percent.PercentCalculate4UseCase
+import dev.donghyeon.calculator.domain.PercentCalculate1UseCase
+import dev.donghyeon.calculator.domain.PercentCalculate2UseCase
+import dev.donghyeon.calculator.domain.PercentCalculate3UseCase
+import dev.donghyeon.calculator.domain.PercentCalculate4UseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
