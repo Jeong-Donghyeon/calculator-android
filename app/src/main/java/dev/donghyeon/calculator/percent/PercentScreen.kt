@@ -63,19 +63,28 @@ fun PercentScreen(
             PercentSelect.CALCULATE4 -> Calculate4View(state = state)
         }
     }
-    ViewScrollTab(
-        modifier = Modifier.fillMaxWidth(),
-        tabs = PercentSelect.entries.map { it.value },
-        index = state.select.ordinal,
-        onTab = {
-            when (it) {
-                0 -> action?.inputPercentSelect(PercentSelect.CALCULATE1)
-                1 -> action?.inputPercentSelect(PercentSelect.CALCULATE2)
-                2 -> action?.inputPercentSelect(PercentSelect.CALCULATE3)
-                3 -> action?.inputPercentSelect(PercentSelect.CALCULATE4)
-            }
-        },
-    )
+    Row(verticalAlignment = Alignment.Bottom) {
+        ViewButtonNumber(
+            modifier = Modifier.padding(start = 10.dp),
+            text = "메뉴",
+            height = 40.dp,
+            size = 20.sp,
+            onClick = {},
+        )
+        ViewScrollTab(
+            modifier = Modifier.fillMaxWidth(),
+            tabs = PercentSelect.entries.map { it.value },
+            index = state.select.ordinal,
+            onTab = {
+                when (it) {
+                    0 -> action?.inputPercentSelect(PercentSelect.CALCULATE1)
+                    1 -> action?.inputPercentSelect(PercentSelect.CALCULATE2)
+                    2 -> action?.inputPercentSelect(PercentSelect.CALCULATE3)
+                    3 -> action?.inputPercentSelect(PercentSelect.CALCULATE4)
+                }
+            },
+        )
+    }
     Row(
         modifier =
             Modifier
@@ -934,12 +943,22 @@ fun KeyboardLeftView(action: PercentAction? = null) =
             ViewButtonValue(
                 modifier =
                     Modifier
-                        .weight(2f)
+                        .weight(1f)
                         .fillMaxHeight()
                         .padding(2.dp),
                 onClick = {},
-                text = "메뉴",
-                style = TextSet.bold.copy(ColorSet.text, 20.sp),
+                text = "<-",
+                style = TextSet.bold.copy(ColorSet.text, 26.sp),
+            )
+            ViewButtonValue(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .padding(2.dp),
+                onClick = {},
+                text = "->",
+                style = TextSet.bold.copy(ColorSet.text, 26.sp),
             )
         }
         listOf(
@@ -977,7 +996,7 @@ private fun KeyboardRightView(
                 .padding(2.dp),
         onClick = { action?.inputNumberKeyPad(NumberPadKey.BACK) },
         text = "⌫",
-        size = 30.sp,
+        size = 26.sp,
     )
     ViewButtonValue(
         modifier =

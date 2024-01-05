@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,12 +29,13 @@ fun Preview_ViewButtonNumber() =
 fun ViewButtonNumber(
     modifier: Modifier = Modifier,
     text: String,
+    height: Dp = 70.dp,
     size: TextUnit = 24.sp,
     onClick: () -> Unit,
 ) = Button(
     modifier =
         Modifier
-            .height(70.dp)
+            .height(height)
             .then(modifier),
     shape = RoundedCornerShape(5.dp),
     border = BorderStroke(0.dp, ColorSet.transparent),
