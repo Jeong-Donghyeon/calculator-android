@@ -44,48 +44,28 @@ class PercentViewModel
                             it.copy(
                                 calculate2 =
                                     it.calculate2.copy(
-                                        select =
-                                            if (it.calculate2.select == select) {
-                                                ValueSelect.NONE
-                                            } else {
-                                                select
-                                            },
+                                        select = select,
                                     ),
                             )
                         PercentSelect.CALCULATE3 ->
                             it.copy(
                                 calculate3 =
                                     it.calculate3.copy(
-                                        select =
-                                            if (it.calculate3.select == select) {
-                                                ValueSelect.NONE
-                                            } else {
-                                                select
-                                            },
+                                        select = select,
                                     ),
                             )
                         PercentSelect.CALCULATE4 ->
                             it.copy(
                                 calculate4 =
                                     it.calculate4.copy(
-                                        select =
-                                            if (it.calculate4.select == select) {
-                                                ValueSelect.NONE
-                                            } else {
-                                                select
-                                            },
+                                        select = select,
                                     ),
                             )
                         else ->
                             it.copy(
                                 calculate1 =
                                     it.calculate1.copy(
-                                        select =
-                                            if (it.calculate1.select == select) {
-                                                ValueSelect.NONE
-                                            } else {
-                                                select
-                                            },
+                                        select = select,
                                     ),
                             )
                     }
@@ -192,7 +172,6 @@ class PercentViewModel
                             }
                         }
                     }
-
                     when (calculate.select) {
                         ValueSelect.V1 -> {
                             val inputTxt = inputKey(key, calculate.v1)
@@ -201,7 +180,7 @@ class PercentViewModel
                                     if (key == NumberPadKey.BACK) {
                                         if (it == 0) 0 else it - 1
                                     } else {
-                                        it + 1
+                                        it + key.value.count()
                                     }
                                 }
                             calculate.copy(
@@ -219,7 +198,7 @@ class PercentViewModel
                                     if (key == NumberPadKey.BACK) {
                                         if (it == 0) 0 else it - 1
                                     } else {
-                                        it + 1
+                                        it + key.value.count()
                                     }
                                 }
                             calculate.copy(

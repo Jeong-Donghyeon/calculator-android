@@ -19,8 +19,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,10 +62,18 @@ fun PercentScreen(
     action: PercentAction? = null,
 ) {
     val keyboardHeight = 350.dp
+    val focusManager = LocalFocusManager.current
+    val v1Focus = remember { FocusRequester() }
+    val v2Focus = remember { FocusRequester() }
     Column(modifier = Modifier.background(ColorSet.container)) {
         TitleView(title = "퍼센트 계산기")
         Box(modifier = Modifier.weight(1f)) {
-            CalculateView(state = state)
+            CalculateView(
+                state = state,
+                action = action,
+                v1Focus = v1Focus,
+                v2Focus = v2Focus,
+            )
         }
         Row(verticalAlignment = Alignment.Bottom) {
             ViewButtonNumber(
@@ -101,9 +111,12 @@ fun PercentScreen(
             }
             Column(modifier = Modifier.weight(1f)) {
                 KeyboardRightView(
-                    height = keyboardHeight,
                     state = state,
                     action = action,
+                    height = keyboardHeight,
+                    v1Focus = v1Focus,
+                    v2Focus = v2Focus,
+                    focusManager = focusManager,
                 )
             }
         }
@@ -111,13 +124,15 @@ fun PercentScreen(
 }
 
 @Composable
-fun CalculateView(state: PercentData) {
+fun CalculateView(
+    state: PercentData,
+    action: PercentAction? = null,
+    v1Focus: FocusRequester,
+    v2Focus: FocusRequester,
+) {
     val fieldTotalWith: Dp = 320.dp
     val fieldLeft: Dp = 50.dp
     val fieldRight: Dp = 60.dp
-    val focusManager = LocalFocusManager.current
-    val v1Focus = remember { FocusRequester() }
-    val v2Focus = remember { FocusRequester() }
     val guideStrList =
         when (state.select) {
             PercentSelect.CALCULATE1 ->
@@ -180,7 +195,10 @@ fun CalculateView(state: PercentData) {
                 modifier =
                     Modifier
                         .weight(1f)
-                        .focusRequester(v1Focus),
+                        .focusRequester(v1Focus)
+                        .onFocusChanged {
+                            if (it.isFocused) action?.inputValueSelect(ValueSelect.V1)
+                        },
                 value = calculate.v1,
                 color = v1Color,
                 onValueChange = {},
@@ -213,7 +231,10 @@ fun CalculateView(state: PercentData) {
                 modifier =
                     Modifier
                         .weight(1f)
-                        .focusRequester(v2Focus),
+                        .focusRequester(v2Focus)
+                        .onFocusChanged {
+                            if (it.isFocused) action?.inputValueSelect(ValueSelect.V2)
+                        },
                 value = calculate.v2,
                 color = v2Color,
                 onValueChange = {},
@@ -260,12 +281,8 @@ fun CalculateView(state: PercentData) {
             )
         }
     }
-    LaunchedEffect(calculate.select) {
-        when (calculate.select) {
-            ValueSelect.V1 -> v1Focus.requestFocus()
-            ValueSelect.V2 -> v2Focus.requestFocus()
-            else -> focusManager.clearFocus()
-        }
+    LaunchedEffect(Unit) {
+        v1Focus.requestFocus()
     }
 }
 
@@ -331,22 +348,25 @@ fun KeyboardLeftView(
 
 @Composable
 private fun KeyboardRightView(
-    height: Dp,
     state: PercentData,
     action: PercentAction? = null,
+    height: Dp,
+    v1Focus: FocusRequester,
+    v2Focus: FocusRequester,
+    focusManager: FocusManager,
 ) {
-    val (v1Color, v2Color) =
+    val calculate =
         when (state.select) {
             PercentSelect.CALCULATE1 -> state.calculate1
             PercentSelect.CALCULATE2 -> state.calculate2
             PercentSelect.CALCULATE3 -> state.calculate3
             PercentSelect.CALCULATE4 -> state.calculate4
-        }.let {
-            when (it.select) {
-                ValueSelect.V1 -> ColorSet.select to ColorSet.text
-                ValueSelect.V2 -> ColorSet.text to ColorSet.select
-                else -> ColorSet.text to ColorSet.text
-            }
+        }
+    val (v1Color, v2Color) =
+        when (calculate.select) {
+            ValueSelect.V1 -> ColorSet.select to ColorSet.text
+            ValueSelect.V2 -> ColorSet.text to ColorSet.select
+            else -> ColorSet.text to ColorSet.text
         }
     Column(modifier = Modifier.height(height)) {
         ViewButtonNumber(
@@ -365,7 +385,14 @@ private fun KeyboardRightView(
                     .fillMaxWidth()
                     .weight(2f)
                     .padding(2.dp),
-            onClick = { action?.inputValueSelect(ValueSelect.V1) },
+            onClick = {
+                if (calculate.select == ValueSelect.V1) {
+                    focusManager.clearFocus()
+                    action?.inputValueSelect(ValueSelect.NONE)
+                } else {
+                    v1Focus.requestFocus()
+                }
+            },
             text = "V1",
             style = TextSet.extraBold.copy(color = v1Color, 24.sp),
         )
@@ -375,7 +402,14 @@ private fun KeyboardRightView(
                     .fillMaxWidth()
                     .weight(2f)
                     .padding(2.dp),
-            onClick = { action?.inputValueSelect(ValueSelect.V2) },
+            onClick = {
+                if (calculate.select == ValueSelect.V2) {
+                    focusManager.clearFocus()
+                    action?.inputValueSelect(ValueSelect.NONE)
+                } else {
+                    v2Focus.requestFocus()
+                }
+            },
             text = "V2",
             style = TextSet.extraBold.copy(color = v2Color, 24.sp),
         )
