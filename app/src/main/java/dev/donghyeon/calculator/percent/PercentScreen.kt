@@ -14,12 +14,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +34,7 @@ import dev.donghyeon.calculator.view.TitleView
 import dev.donghyeon.calculator.view.ViewButtonNumber
 import dev.donghyeon.calculator.view.ViewButtonValue
 import dev.donghyeon.calculator.view.ViewScrollTab
+import dev.donghyeon.calculator.view.ViewTextField
 
 @Preview
 @Composable
@@ -57,7 +63,7 @@ fun PercentScreen(
     TitleView(title = "퍼센트 계산기")
     Column(modifier = Modifier.weight(1f)) {
         when (state.select) {
-            PercentSelect.CALCULATE1 -> Calculate1View(state = state)
+            PercentSelect.CALCULATE1 -> Calculate11View(state = state)
             PercentSelect.CALCULATE2 -> Calculate2View(state = state)
             PercentSelect.CALCULATE3 -> Calculate3View(state = state)
             PercentSelect.CALCULATE4 -> Calculate4View(state = state)
@@ -96,6 +102,135 @@ fun PercentScreen(
         }
         Column(modifier = Modifier.weight(1f)) {
             KeyboardRightView(state = state, action = action)
+        }
+    }
+}
+
+@Composable
+fun Calculate11View(state: PercentData) {
+    val fieldTotalWith: Dp = 320.dp
+    val fieldLeft: Dp = 50.dp
+    val fieldRight: Dp = 60.dp
+    val v1Focus = remember { FocusRequester() }
+    val v2Focus = remember { FocusRequester() }
+    val guideStrList =
+        when (state.select) {
+            PercentSelect.CALCULATE1 ->
+                listOf(
+                    "의",
+                    "% 는",
+                    "예) 100 의 10% 는 10",
+                )
+            PercentSelect.CALCULATE2 ->
+                listOf(
+                    "의",
+                    "은",
+                    "예) 100 의 10 은 10%",
+                )
+            PercentSelect.CALCULATE3 ->
+                listOf(
+                    "이/가",
+                    "(으)로\n변하면",
+                    "예) 100 이 10 으로 변하면 90% 감소",
+                )
+            PercentSelect.CALCULATE4 ->
+                listOf(
+                    "이/가",
+                    "%\n증가하면",
+                    "예) 100 이 10% 증가하면 1000",
+                )
+        }
+    val calculate =
+        when (state.select) {
+            PercentSelect.CALCULATE1 -> state.calculate1
+            PercentSelect.CALCULATE2 -> state.calculate2
+            PercentSelect.CALCULATE3 -> state.calculate3
+            PercentSelect.CALCULATE4 -> state.calculate4
+        }
+    val (v1Color, v2Color) =
+        if (calculate.select == ValueSelect.V1) {
+            ColorSet.select to ColorSet.text
+        } else {
+            ColorSet.text to ColorSet.select
+        }
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Row(
+            modifier = Modifier.width(fieldTotalWith),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                modifier = Modifier.width(fieldLeft),
+                text = "V1",
+                style = TextSet.extraBold.copy(v1Color, 24.sp),
+                textAlign = TextAlign.Center,
+            )
+            ViewTextField(
+                modifier = Modifier.weight(1f).focusRequester(v1Focus),
+                value = calculate.v1,
+                color = v1Color,
+                onValueChange = {},
+            )
+            Text(
+                modifier = Modifier.width(fieldRight).padding(start = 10.dp),
+                text = guideStrList[0],
+                style = TextSet.extraBold.copy(v1Color, 20.sp),
+                textAlign = TextAlign.Start,
+            )
+        }
+        Row(
+            modifier = Modifier.width(fieldTotalWith),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                modifier = Modifier.width(fieldLeft),
+                text = "V2",
+                style = TextSet.extraBold.copy(v2Color, 24.sp),
+                textAlign = TextAlign.Center,
+            )
+            ViewTextField(
+                modifier = Modifier.weight(1f).focusRequester(v2Focus),
+                value = calculate.v2,
+                color = v2Color,
+                onValueChange = {},
+            )
+            Text(
+                modifier = Modifier.width(fieldRight).padding(start = 10.dp),
+                text = guideStrList[1],
+                style = TextSet.extraBold.copy(v2Color, 20.sp),
+                textAlign = TextAlign.Start,
+            )
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = calculate.result,
+                    style = TextSet.extraBold.copy(ColorSet.result, 34.sp),
+                )
+            }
+            Text(
+                modifier = Modifier.weight(1f),
+                text = guideStrList[2],
+                style = TextSet.extraBold.copy(ColorSet.text, 16.sp),
+            )
+        }
+    }
+    LaunchedEffect(calculate.select) {
+        if (calculate.select == ValueSelect.V2) {
+            v2Focus.requestFocus()
+        } else {
+            v1Focus.requestFocus()
         }
     }
 }
@@ -946,7 +1081,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                         .weight(1f)
                         .fillMaxHeight()
                         .padding(2.dp),
-                onClick = {},
+                onClick = { action?.inputNumberKeyPad(NumberPadKey.LEFT) },
                 text = "<-",
                 style = TextSet.bold.copy(ColorSet.text, 26.sp),
             )
@@ -956,7 +1091,7 @@ fun KeyboardLeftView(action: PercentAction? = null) =
                         .weight(1f)
                         .fillMaxHeight()
                         .padding(2.dp),
-                onClick = {},
+                onClick = { action?.inputNumberKeyPad(NumberPadKey.RIGHT) },
                 text = "->",
                 style = TextSet.bold.copy(ColorSet.text, 26.sp),
             )

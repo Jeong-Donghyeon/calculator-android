@@ -1,5 +1,7 @@
 package dev.donghyeon.calculator.percent
 
+import androidx.compose.ui.text.input.TextFieldValue
+
 data class PercentData(
     val select: PercentSelect = PercentSelect.CALCULATE1,
     val calculate1: Calculate = Calculate(),
@@ -9,6 +11,8 @@ data class PercentData(
 ) {
     data class Calculate(
         val select: ValueSelect = ValueSelect.V1,
+        val v1: TextFieldValue = TextFieldValue(),
+        val v2: TextFieldValue = TextFieldValue(),
         val value1: String = "",
         val value2: String = "",
         val result: String = "?",
@@ -39,4 +43,6 @@ enum class NumberPadKey(val value: String) {
     DECIMAL("."),
     BACK("back"),
     CLEAR("clear"),
+    LEFT("left"),
+    RIGHT("right"),
 }
