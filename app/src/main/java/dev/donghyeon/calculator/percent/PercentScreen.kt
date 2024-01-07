@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -114,6 +115,7 @@ fun CalculateView(state: PercentData) {
     val fieldTotalWith: Dp = 320.dp
     val fieldLeft: Dp = 50.dp
     val fieldRight: Dp = 60.dp
+    val focusManager = LocalFocusManager.current
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
     val guideStrList =
@@ -151,10 +153,10 @@ fun CalculateView(state: PercentData) {
             PercentSelect.CALCULATE4 -> state.calculate4
         }
     val (v1Color, v2Color) =
-        if (calculate.select == ValueSelect.V1) {
-            ColorSet.select to ColorSet.text
-        } else {
-            ColorSet.text to ColorSet.select
+        when (calculate.select) {
+            ValueSelect.V1 -> ColorSet.select to ColorSet.text
+            ValueSelect.V2 -> ColorSet.text to ColorSet.select
+            else -> ColorSet.text to ColorSet.text
         }
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -259,10 +261,10 @@ fun CalculateView(state: PercentData) {
         }
     }
     LaunchedEffect(calculate.select) {
-        if (calculate.select == ValueSelect.V2) {
-            v2Focus.requestFocus()
-        } else {
-            v1Focus.requestFocus()
+        when (calculate.select) {
+            ValueSelect.V1 -> v1Focus.requestFocus()
+            ValueSelect.V2 -> v2Focus.requestFocus()
+            else -> focusManager.clearFocus()
         }
     }
 }
@@ -340,10 +342,10 @@ private fun KeyboardRightView(
             PercentSelect.CALCULATE3 -> state.calculate3
             PercentSelect.CALCULATE4 -> state.calculate4
         }.let {
-            if (it.select == ValueSelect.V1) {
-                ColorSet.select to ColorSet.text
-            } else {
-                ColorSet.text to ColorSet.select
+            when (it.select) {
+                ValueSelect.V1 -> ColorSet.select to ColorSet.text
+                ValueSelect.V2 -> ColorSet.text to ColorSet.select
+                else -> ColorSet.text to ColorSet.text
             }
         }
     Column(modifier = Modifier.height(height)) {

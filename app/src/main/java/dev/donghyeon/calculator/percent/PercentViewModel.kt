@@ -40,10 +40,54 @@ class PercentViewModel
             _state.value =
                 state.value.let {
                     when (it.select) {
-                        PercentSelect.CALCULATE2 -> it.copy(calculate2 = it.calculate2.copy(select = select))
-                        PercentSelect.CALCULATE3 -> it.copy(calculate3 = it.calculate3.copy(select = select))
-                        PercentSelect.CALCULATE4 -> it.copy(calculate4 = it.calculate4.copy(select = select))
-                        else -> it.copy(calculate1 = it.calculate1.copy(select = select))
+                        PercentSelect.CALCULATE2 ->
+                            it.copy(
+                                calculate2 =
+                                    it.calculate2.copy(
+                                        select =
+                                            if (it.calculate2.select == select) {
+                                                ValueSelect.NONE
+                                            } else {
+                                                select
+                                            },
+                                    ),
+                            )
+                        PercentSelect.CALCULATE3 ->
+                            it.copy(
+                                calculate3 =
+                                    it.calculate3.copy(
+                                        select =
+                                            if (it.calculate3.select == select) {
+                                                ValueSelect.NONE
+                                            } else {
+                                                select
+                                            },
+                                    ),
+                            )
+                        PercentSelect.CALCULATE4 ->
+                            it.copy(
+                                calculate4 =
+                                    it.calculate4.copy(
+                                        select =
+                                            if (it.calculate4.select == select) {
+                                                ValueSelect.NONE
+                                            } else {
+                                                select
+                                            },
+                                    ),
+                            )
+                        else ->
+                            it.copy(
+                                calculate1 =
+                                    it.calculate1.copy(
+                                        select =
+                                            if (it.calculate1.select == select) {
+                                                ValueSelect.NONE
+                                            } else {
+                                                select
+                                            },
+                                    ),
+                            )
                     }
                 }
         }
@@ -88,36 +132,49 @@ class PercentViewModel
             calculate: PercentData.Calculate,
         ): PercentData.Calculate =
             when (key) {
-                NumberPadKey.CLEAR -> PercentData.Calculate()
+                NumberPadKey.CLEAR ->
+                    when (calculate.select) {
+                        ValueSelect.V1 -> calculate.copy(v1 = TextFieldValue(), result = "?")
+                        ValueSelect.V2 -> calculate.copy(v2 = TextFieldValue(), result = "?")
+                        else -> PercentData.Calculate()
+                    }
                 NumberPadKey.LEFT ->
-                    if (calculate.select == ValueSelect.V2) {
-                        val index =
-                            calculate.v2.selection.start.let {
-                                if (it == 0) 0 else it - 1
-                            }
-                        calculate.copy(
-                            v2 = calculate.v2.copy(selection = TextRange(index)),
-                        )
-                    } else {
-                        val index =
-                            calculate.v1.selection.start.let {
-                                if (it == 0) 0 else it - 1
-                            }
-                        calculate.copy(
-                            v1 = calculate.v1.copy(selection = TextRange(index)),
-                        )
+                    when (calculate.select) {
+                        ValueSelect.V1 -> {
+                            val index =
+                                calculate.v1.selection.start.let {
+                                    if (it == 0) 0 else it - 1
+                                }
+                            calculate.copy(
+                                v1 = calculate.v1.copy(selection = TextRange(index)),
+                            )
+                        }
+                        ValueSelect.V2 -> {
+                            val index =
+                                calculate.v2.selection.start.let {
+                                    if (it == 0) 0 else it - 1
+                                }
+                            calculate.copy(
+                                v2 = calculate.v2.copy(selection = TextRange(index)),
+                            )
+                        }
+                        else -> calculate
                     }
                 NumberPadKey.RIGHT ->
-                    if (calculate.select == ValueSelect.V2) {
-                        val index = calculate.v2.selection.start + 1
-                        calculate.copy(
-                            v2 = calculate.v2.copy(selection = TextRange(index)),
-                        )
-                    } else {
-                        val index = calculate.v1.selection.start + 1
-                        calculate.copy(
-                            v1 = calculate.v1.copy(selection = TextRange(index)),
-                        )
+                    when (calculate.select) {
+                        ValueSelect.V1 -> {
+                            val index = calculate.v1.selection.start + 1
+                            calculate.copy(
+                                v1 = calculate.v1.copy(selection = TextRange(index)),
+                            )
+                        }
+                        ValueSelect.V2 -> {
+                            val index = calculate.v2.selection.start + 1
+                            calculate.copy(
+                                v2 = calculate.v2.copy(selection = TextRange(index)),
+                            )
+                        }
+                        else -> calculate
                     }
                 else -> {
                     val inputKey: (key: NumberPadKey, value: TextFieldValue) -> String = { k, v ->
@@ -137,6 +194,24 @@ class PercentViewModel
                     }
 
                     when (calculate.select) {
+                        ValueSelect.V1 -> {
+                            val inputTxt = inputKey(key, calculate.v1)
+                            val index =
+                                calculate.v1.selection.start.let {
+                                    if (key == NumberPadKey.BACK) {
+                                        if (it == 0) 0 else it - 1
+                                    } else {
+                                        it + 1
+                                    }
+                                }
+                            calculate.copy(
+                                v1 =
+                                    calculate.v1.copy(
+                                        text = inputTxt,
+                                        selection = TextRange(index),
+                                    ),
+                            )
+                        }
                         ValueSelect.V2 -> {
                             val inputTxt = inputKey(key, calculate.v2)
                             val index =
@@ -155,24 +230,7 @@ class PercentViewModel
                                     ),
                             )
                         }
-                        else -> {
-                            val inputTxt = inputKey(key, calculate.v1)
-                            val index =
-                                calculate.v1.selection.start.let {
-                                    if (key == NumberPadKey.BACK) {
-                                        if (it == 0) 0 else it - 1
-                                    } else {
-                                        it + 1
-                                    }
-                                }
-                            calculate.copy(
-                                v1 =
-                                    calculate.v1.copy(
-                                        text = inputTxt,
-                                        selection = TextRange(index),
-                                    ),
-                            )
-                        }
+                        else -> calculate
                     }.let {
                         it.copy(
                             result =
