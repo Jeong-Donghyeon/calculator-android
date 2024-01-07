@@ -1,6 +1,7 @@
 package dev.donghyeon.calculator.percent
 
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.donghyeon.calculator.BaseViewModel
 import dev.donghyeon.calculator.domain.PercentCalculate1UseCase
@@ -90,95 +91,85 @@ class PercentViewModel
                 NumberPadKey.CLEAR -> PercentData.Calculate()
                 NumberPadKey.LEFT ->
                     if (calculate.select == ValueSelect.V2) {
+                        val index =
+                            calculate.v2.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
                         calculate.copy(
-                            value2 = calculate.value2,
-                            v2 =
-                                calculate.v2.copy(
-                                    text = calculate.value2,
-                                    selection =
-                                        TextRange(
-                                            start = calculate.v2.selection.start - 1,
-                                            end = calculate.v2.selection.end - 1,
-                                        ),
-                                ),
+                            v2 = calculate.v2.copy(selection = TextRange(index)),
                         )
                     } else {
+                        val index =
+                            calculate.v1.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
                         calculate.copy(
-                            value1 = calculate.value1,
-                            v1 =
-                                calculate.v1.copy(
-                                    text = calculate.value1,
-                                    selection =
-                                        TextRange(
-                                            start = calculate.v1.selection.start - 1,
-                                            end = calculate.v1.selection.end - 1,
-                                        ),
-                                ),
+                            v1 = calculate.v1.copy(selection = TextRange(index)),
                         )
                     }
                 NumberPadKey.RIGHT ->
                     if (calculate.select == ValueSelect.V2) {
+                        val index = calculate.v2.selection.start + 1
                         calculate.copy(
-                            value2 = calculate.value2,
-                            v2 =
-                                calculate.v2.copy(
-                                    text = calculate.value2,
-                                    selection =
-                                        TextRange(
-                                            start = calculate.v2.selection.start + 1,
-                                            end = calculate.v2.selection.end + 1,
-                                        ),
-                                ),
+                            v2 = calculate.v2.copy(selection = TextRange(index)),
                         )
                     } else {
+                        val index = calculate.v1.selection.start + 1
                         calculate.copy(
-                            value1 = calculate.value1,
-                            v1 =
-                                calculate.v1.copy(
-                                    text = calculate.value1,
-                                    selection =
-                                        TextRange(
-                                            start = calculate.v1.selection.start + 1,
-                                            end = calculate.v1.selection.end + 1,
-                                        ),
-                                ),
+                            v1 = calculate.v1.copy(selection = TextRange(index)),
                         )
                     }
                 else -> {
-                    val inputKey: (key: NumberPadKey, value: String) -> String = { k, v ->
-                        when (k) {
-                            NumberPadKey.BACK -> v.dropLast(1)
-                            else -> v + k.value
+                    val inputKey: (key: NumberPadKey, value: TextFieldValue) -> String = { k, v ->
+                        StringBuilder(v.text).let {
+                            val index = v.selection.start
+                            when (k) {
+                                NumberPadKey.BACK -> {
+                                    if (index == 0) {
+                                        it.toString()
+                                    } else {
+                                        it.delete(index - 1, index).toString()
+                                    }
+                                }
+                                else -> it.insert(index, k.value).toString()
+                            }
                         }
                     }
+
                     when (calculate.select) {
                         ValueSelect.V2 -> {
-                            val inputTxt = inputKey(key, calculate.value2)
+                            val inputTxt = inputKey(key, calculate.v2)
+                            val index =
+                                calculate.v2.selection.start.let {
+                                    if (key == NumberPadKey.BACK) {
+                                        if (it == 0) 0 else it - 1
+                                    } else {
+                                        it + 1
+                                    }
+                                }
                             calculate.copy(
-                                value2 = inputTxt,
                                 v2 =
                                     calculate.v2.copy(
                                         text = inputTxt,
-                                        selection =
-                                            TextRange(
-                                                start = calculate.v2.selection.start + 1,
-                                                end = calculate.v2.selection.end + 1,
-                                            ),
+                                        selection = TextRange(index),
                                     ),
                             )
                         }
                         else -> {
-                            val inputTxt = inputKey(key, calculate.value1)
+                            val inputTxt = inputKey(key, calculate.v1)
+                            val index =
+                                calculate.v1.selection.start.let {
+                                    if (key == NumberPadKey.BACK) {
+                                        if (it == 0) 0 else it - 1
+                                    } else {
+                                        it + 1
+                                    }
+                                }
                             calculate.copy(
-                                value1 = inputTxt,
                                 v1 =
                                     calculate.v1.copy(
                                         text = inputTxt,
-                                        selection =
-                                            TextRange(
-                                                start = calculate.v1.selection.start + 1,
-                                                end = calculate.v1.selection.end + 1,
-                                            ),
+                                        selection = TextRange(index),
                                     ),
                             )
                         }
@@ -186,10 +177,10 @@ class PercentViewModel
                         it.copy(
                             result =
                                 when (state.value.select) {
-                                    PercentSelect.CALCULATE2 -> percentCalculate2UseCase(it.value1, it.value2)
-                                    PercentSelect.CALCULATE3 -> percentCalculate3UseCase(it.value1, it.value2)
-                                    PercentSelect.CALCULATE4 -> percentCalculate4UseCase(it.value1, it.value2)
-                                    else -> percentCalculate1UseCase(it.value1, it.value2)
+                                    PercentSelect.CALCULATE2 -> percentCalculate2UseCase(it.v1.text, it.v2.text)
+                                    PercentSelect.CALCULATE3 -> percentCalculate3UseCase(it.v1.text, it.v2.text)
+                                    PercentSelect.CALCULATE4 -> percentCalculate4UseCase(it.v1.text, it.v2.text)
+                                    else -> percentCalculate1UseCase(it.v1.text, it.v2.text)
                                 },
                         )
                     }

@@ -166,19 +166,28 @@ fun CalculateView(state: PercentData) {
             horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                modifier = Modifier.width(fieldLeft).padding(top = 5.dp),
+                modifier =
+                    Modifier
+                        .width(fieldLeft)
+                        .padding(top = 5.dp),
                 text = "V1",
                 style = TextSet.extraBold.copy(v1Color, 24.sp),
                 textAlign = TextAlign.Center,
             )
             ViewTextField(
-                modifier = Modifier.weight(1f).focusRequester(v1Focus),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .focusRequester(v1Focus),
                 value = calculate.v1,
                 color = v1Color,
                 onValueChange = {},
             )
             Text(
-                modifier = Modifier.width(fieldRight).padding(top = 5.dp, start = 10.dp),
+                modifier =
+                    Modifier
+                        .width(fieldRight)
+                        .padding(top = 5.dp, start = 10.dp),
                 text = guideStrList[0],
                 style = TextSet.extraBold.copy(v1Color, 20.sp),
                 textAlign = TextAlign.Start,
@@ -190,13 +199,19 @@ fun CalculateView(state: PercentData) {
             horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                modifier = Modifier.width(fieldLeft).padding(top = 5.dp),
+                modifier =
+                    Modifier
+                        .width(fieldLeft)
+                        .padding(top = 5.dp),
                 text = "V2",
                 style = TextSet.extraBold.copy(v2Color, 24.sp),
                 textAlign = TextAlign.Center,
             )
             ViewTextField(
-                modifier = Modifier.weight(1f).focusRequester(v2Focus),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .focusRequester(v2Focus),
                 value = calculate.v2,
                 color = v2Color,
                 onValueChange = {},
@@ -208,7 +223,10 @@ fun CalculateView(state: PercentData) {
                     else -> 20.sp
                 }
             Text(
-                modifier = Modifier.width(fieldRight).padding(top = 5.dp, start = 10.dp),
+                modifier =
+                    Modifier
+                        .width(fieldRight)
+                        .padding(top = 5.dp, start = 10.dp),
                 text = guideStrList[1],
                 style =
                     TextSet.extraBold.copy(
