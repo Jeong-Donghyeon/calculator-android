@@ -84,7 +84,6 @@ class PercentViewModel
                     when (calculate.select) {
                         ValueSelect.V1 -> calculate.copy(v1 = TextFieldValue(), result = "?")
                         ValueSelect.V2 -> calculate.copy(v2 = TextFieldValue(), result = "?")
-                        else -> PercentData.Calculate()
                     }
                 NumberPadKey.LEFT ->
                     when (calculate.select) {
@@ -102,7 +101,6 @@ class PercentViewModel
                                 }
                             calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
                         }
-                        else -> calculate
                     }
                 NumberPadKey.RIGHT ->
                     when (calculate.select) {
@@ -114,7 +112,6 @@ class PercentViewModel
                             val index = calculate.v2.selection.start + 1
                             calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
                         }
-                        else -> calculate
                     }
                 else -> {
                     val decimalMessage = "소수점은 하나만 입력하세요"
@@ -182,7 +179,6 @@ class PercentViewModel
                                 calculate.copy(v2 = v2)
                             }
                         }
-                        else -> calculate
                     }.let {
                         val result =
                             when (state.value.select) {

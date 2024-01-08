@@ -19,11 +19,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -73,7 +71,6 @@ fun PercentScreen(
     action: PercentAction? = null,
 ) {
     val keyboardHeight = 350.dp
-    val focusManager = LocalFocusManager.current
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
     Column(modifier = Modifier.background(ColorSet.container)) {
@@ -84,7 +81,6 @@ fun PercentScreen(
                 action = action,
                 v1Focus = v1Focus,
                 v2Focus = v2Focus,
-                focusManager = focusManager,
             )
         }
         Row(verticalAlignment = Alignment.Bottom) {
@@ -117,10 +113,8 @@ fun PercentScreen(
         ) {
             Column(modifier = Modifier.weight(3f)) {
                 KeyboardLeftView(
-                    state = state,
                     action = action,
                     height = keyboardHeight,
-                    v1Focus = v1Focus,
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -130,7 +124,6 @@ fun PercentScreen(
                     height = keyboardHeight,
                     v1Focus = v1Focus,
                     v2Focus = v2Focus,
-                    focusManager = focusManager,
                 )
             }
         }
@@ -143,7 +136,6 @@ fun CalculateView(
     action: PercentAction? = null,
     v1Focus: FocusRequester,
     v2Focus: FocusRequester,
-    focusManager: FocusManager,
 ) {
     val fieldTotalWith: Dp = 320.dp
     val fieldLeft: Dp = 50.dp
@@ -186,7 +178,6 @@ fun CalculateView(
         when (calculate.select) {
             ValueSelect.V1 -> ColorSet.select to ColorSet.text
             ValueSelect.V2 -> ColorSet.text to ColorSet.select
-            else -> ColorSet.text to ColorSet.text
         }
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -308,25 +299,15 @@ fun CalculateView(
         when (calculate.select) {
             ValueSelect.V1 -> v1Focus.requestFocus()
             ValueSelect.V2 -> v2Focus.requestFocus()
-            else -> focusManager.clearFocus()
         }
     }
 }
 
 @Composable
 fun KeyboardLeftView(
-    state: PercentData,
     action: PercentAction? = null,
     height: Dp,
-    v1Focus: FocusRequester,
 ) {
-    val calculate =
-        when (state.select) {
-            PercentSelect.CALCULATE1 -> state.calculate1
-            PercentSelect.CALCULATE2 -> state.calculate2
-            PercentSelect.CALCULATE3 -> state.calculate3
-            PercentSelect.CALCULATE4 -> state.calculate4
-        }
     Column(modifier = Modifier.height(height)) {
         Row(modifier = Modifier.weight(1f)) {
             ViewButtonNumber(
@@ -337,9 +318,6 @@ fun KeyboardLeftView(
                         .padding(2.dp),
                 onClick = {
                     action?.inputNumberKeyPad(NumberPadKey.CLEAR)
-                    if (calculate.select == ValueSelect.NONE) {
-                        v1Focus.requestFocus()
-                    }
                 },
                 text = "C",
             )
@@ -394,7 +372,6 @@ private fun KeyboardRightView(
     height: Dp,
     v1Focus: FocusRequester,
     v2Focus: FocusRequester,
-    focusManager: FocusManager,
 ) {
     val calculate =
         when (state.select) {
@@ -407,7 +384,6 @@ private fun KeyboardRightView(
         when (calculate.select) {
             ValueSelect.V1 -> ColorSet.select to ColorSet.text
             ValueSelect.V2 -> ColorSet.text to ColorSet.select
-            else -> ColorSet.text to ColorSet.text
         }
     Column(modifier = Modifier.height(height)) {
         ViewButtonNumber(
@@ -427,12 +403,7 @@ private fun KeyboardRightView(
                     .weight(2f)
                     .padding(2.dp),
             onClick = {
-                if (calculate.select == ValueSelect.V1) {
-                    focusManager.clearFocus()
-                    action?.inputValueSelect(ValueSelect.NONE)
-                } else {
-                    v1Focus.requestFocus()
-                }
+                v1Focus.requestFocus()
             },
             text = "V1",
             style = TextSet.extraBold.copy(color = v1Color, 24.sp),
@@ -444,12 +415,7 @@ private fun KeyboardRightView(
                     .weight(2f)
                     .padding(2.dp),
             onClick = {
-                if (calculate.select == ValueSelect.V2) {
-                    focusManager.clearFocus()
-                    action?.inputValueSelect(ValueSelect.NONE)
-                } else {
-                    v2Focus.requestFocus()
-                }
+                v2Focus.requestFocus()
             },
             text = "V2",
             style = TextSet.extraBold.copy(color = v2Color, 24.sp),

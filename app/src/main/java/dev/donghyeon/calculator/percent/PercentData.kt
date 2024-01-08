@@ -24,7 +24,7 @@ enum class PercentSelect(val value: String) {
     CALCULATE4("증감율"),
 }
 
-enum class ValueSelect { NONE, V1, V2 }
+enum class ValueSelect { V1, V2 }
 
 enum class NumberPadKey(val value: String) {
     ONE("1"),
