@@ -73,6 +73,7 @@ fun PercentScreen(
                 action = action,
                 v1Focus = v1Focus,
                 v2Focus = v2Focus,
+                focusManager = focusManager,
             )
         }
         Row(verticalAlignment = Alignment.Bottom) {
@@ -105,8 +106,10 @@ fun PercentScreen(
         ) {
             Column(modifier = Modifier.weight(3f)) {
                 KeyboardLeftView(
-                    height = keyboardHeight,
+                    state = state,
                     action = action,
+                    height = keyboardHeight,
+                    v1Focus = v1Focus,
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -129,6 +132,7 @@ fun CalculateView(
     action: PercentAction? = null,
     v1Focus: FocusRequester,
     v2Focus: FocusRequester,
+    focusManager: FocusManager,
 ) {
     val fieldTotalWith: Dp = 320.dp
     val fieldLeft: Dp = 50.dp
@@ -284,13 +288,29 @@ fun CalculateView(
     LaunchedEffect(Unit) {
         v1Focus.requestFocus()
     }
+    LaunchedEffect(state.select) {
+        when (calculate.select) {
+            ValueSelect.V1 -> v1Focus.requestFocus()
+            ValueSelect.V2 -> v2Focus.requestFocus()
+            else -> focusManager.clearFocus()
+        }
+    }
 }
 
 @Composable
 fun KeyboardLeftView(
-    height: Dp,
+    state: PercentData,
     action: PercentAction? = null,
+    height: Dp,
+    v1Focus: FocusRequester,
 ) {
+    val calculate =
+        when (state.select) {
+            PercentSelect.CALCULATE1 -> state.calculate1
+            PercentSelect.CALCULATE2 -> state.calculate2
+            PercentSelect.CALCULATE3 -> state.calculate3
+            PercentSelect.CALCULATE4 -> state.calculate4
+        }
     Column(modifier = Modifier.height(height)) {
         Row(modifier = Modifier.weight(1f)) {
             ViewButtonNumber(
@@ -299,7 +319,12 @@ fun KeyboardLeftView(
                         .weight(1f)
                         .fillMaxHeight()
                         .padding(2.dp),
-                onClick = { action?.inputNumberKeyPad(NumberPadKey.CLEAR) },
+                onClick = {
+                    action?.inputNumberKeyPad(NumberPadKey.CLEAR)
+                    if (calculate.select == ValueSelect.NONE) {
+                        v1Focus.requestFocus()
+                    }
+                },
                 text = "C",
             )
             ViewButtonValue(
