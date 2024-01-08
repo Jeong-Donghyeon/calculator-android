@@ -164,7 +164,7 @@ fun CalculateView(
                 listOf(
                     "이/가",
                     "%\n증가하면",
-                    "예) 100 이 10% 증가하면 1000",
+                    "예) 100 이 10% 증가하면 110",
                 )
         }
     val calculate =
