@@ -34,11 +34,13 @@ import dev.donghyeon.calculator.LocalViewModel
 import dev.donghyeon.calculator.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
+import dev.donghyeon.calculator.view.FontSizeRange
 import dev.donghyeon.calculator.view.TitleView
 import dev.donghyeon.calculator.view.ViewButtonNumber
 import dev.donghyeon.calculator.view.ViewButtonValue
 import dev.donghyeon.calculator.view.ViewScrollTab
 import dev.donghyeon.calculator.view.ViewTextField
+import dev.donghyeon.calculator.view.ViewTextResult
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
@@ -282,9 +284,14 @@ fun CalculateView(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
+                ViewTextResult(
+                    modifier = Modifier.width(fieldTotalWith),
                     text = calculate.result,
-                    style = TextSet.extraBold.copy(ColorSet.result, 34.sp),
+                    fontSizeRange =
+                        FontSizeRange(
+                            min = 1.sp,
+                            max = 34.sp,
+                        ),
                 )
             }
             Text(
