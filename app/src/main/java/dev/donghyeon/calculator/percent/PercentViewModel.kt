@@ -2,14 +2,20 @@ package dev.donghyeon.calculator.percent
 
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.donghyeon.calculator.BaseViewModel
+import dev.donghyeon.calculator.SideEffect
 import dev.donghyeon.calculator.domain.PercentCalculate1UseCase
 import dev.donghyeon.calculator.domain.PercentCalculate2UseCase
 import dev.donghyeon.calculator.domain.PercentCalculate3UseCase
 import dev.donghyeon.calculator.domain.PercentCalculate4UseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface PercentAction {
@@ -30,7 +36,10 @@ class PercentViewModel
         private val percentCalculate4UseCase: PercentCalculate4UseCase,
     ) : BaseViewModel(), PercentAction {
         private val _state = MutableStateFlow(PercentData())
-        val state: StateFlow<PercentData> = _state
+        val state = _state.asStateFlow()
+
+        private val _sideEffect = MutableSharedFlow<SideEffect>()
+        val sideEffect = _sideEffect.asSharedFlow()
 
         override fun inputPercentSelect(select: PercentSelect) {
             _state.value = state.value.copy(select = select)
@@ -108,40 +117,70 @@ class PercentViewModel
                         else -> calculate
                     }
                 else -> {
+                    val decimalMessage = "소수점은 하나만 입력하세요"
+                    val digitsLimitMessage = "최대 10 자리수 입니다"
                     when (calculate.select) {
                         ValueSelect.V1 -> {
-                            val inputTxt = inputKey(key, calculate.v1)
-                            val index =
-                                calculate.v1.selection.start.let {
-                                    if (key == NumberPadKey.BACK) {
-                                        if (it == 0) 0 else it - 1
-                                    } else {
-                                        it + key.value.count()
-                                    }
+                            val decimalCheck = checkDecimal(calculate.v1.text)
+                            val digitsLimitCheck = checkDigitsLimit(calculate.v1.text, key)
+                            if (key == NumberPadKey.DECIMAL && decimalCheck) {
+                                viewModelScope.launch {
+                                    _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
-                            val v1 =
-                                calculate.v1.copy(
-                                    text = inputTxt,
-                                    selection = TextRange(index),
-                                )
-                            calculate.copy(v1 = v1)
+                                calculate
+                            } else if (key.value.isDigitsOnly() && digitsLimitCheck) {
+                                viewModelScope.launch {
+                                    _sideEffect.emit(SideEffect.Toast(digitsLimitMessage))
+                                }
+                                calculate
+                            } else {
+                                val inputTxt = inputKey(key, calculate.v1)
+                                val index =
+                                    calculate.v1.selection.start.let {
+                                        if (key == NumberPadKey.BACK) {
+                                            if (it == 0) 0 else it - 1
+                                        } else {
+                                            it + key.value.count()
+                                        }
+                                    }
+                                val v1 =
+                                    calculate.v1.copy(
+                                        text = inputTxt,
+                                        selection = TextRange(index),
+                                    )
+                                calculate.copy(v1 = v1)
+                            }
                         }
                         ValueSelect.V2 -> {
-                            val inputTxt = inputKey(key, calculate.v2)
-                            val index =
-                                calculate.v2.selection.start.let {
-                                    if (key == NumberPadKey.BACK) {
-                                        if (it == 0) 0 else it - 1
-                                    } else {
-                                        it + key.value.count()
-                                    }
+                            val decimalCheck = checkDecimal(calculate.v2.text)
+                            val digitsLimitCheck = checkDigitsLimit(calculate.v2.text, key)
+                            if (key == NumberPadKey.DECIMAL && decimalCheck) {
+                                viewModelScope.launch {
+                                    _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
-                            val v2 =
-                                calculate.v2.copy(
-                                    text = inputTxt,
-                                    selection = TextRange(index),
-                                )
-                            calculate.copy(v2 = v2)
+                                calculate
+                            } else if (key.value.isDigitsOnly() && digitsLimitCheck) {
+                                viewModelScope.launch {
+                                    _sideEffect.emit(SideEffect.Toast(digitsLimitMessage))
+                                }
+                                calculate
+                            } else {
+                                val inputTxt = inputKey(key, calculate.v2)
+                                val index =
+                                    calculate.v2.selection.start.let {
+                                        if (key == NumberPadKey.BACK) {
+                                            if (it == 0) 0 else it - 1
+                                        } else {
+                                            it + key.value.count()
+                                        }
+                                    }
+                                val v2 =
+                                    calculate.v2.copy(
+                                        text = inputTxt,
+                                        selection = TextRange(index),
+                                    )
+                                calculate.copy(v2 = v2)
+                            }
                         }
                         else -> calculate
                     }.let {
@@ -175,5 +214,15 @@ class PercentViewModel
                 }
                 else -> it.insert(index, key.value).toString()
             }
+        }
+
+        private fun checkDecimal(v: String) = v.any { it == '.' }
+
+        private fun checkDigitsLimit(
+            v: String,
+            key: NumberPadKey,
+        ): Boolean {
+            val count = if (key == NumberPadKey.ZERO_ZERO) 9 else 10
+            return v.replace(".", "").count() >= count
         }
     }

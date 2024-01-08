@@ -37,7 +37,7 @@ enum class NumberPadKey(val value: String) {
     EIGHT("8"),
     NINE("9"),
     ZERO("0"),
-    ZERO3("000"),
+    ZERO_ZERO("00"),
     DECIMAL("."),
     BACK("back"),
     CLEAR("clear"),

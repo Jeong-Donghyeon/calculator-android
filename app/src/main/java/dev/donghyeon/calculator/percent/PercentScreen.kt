@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.donghyeon.calculator.LocalViewModel
+import dev.donghyeon.calculator.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 import dev.donghyeon.calculator.view.TitleView
@@ -37,6 +39,7 @@ import dev.donghyeon.calculator.view.ViewButtonNumber
 import dev.donghyeon.calculator.view.ViewButtonValue
 import dev.donghyeon.calculator.view.ViewScrollTab
 import dev.donghyeon.calculator.view.ViewTextField
+import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
@@ -50,6 +53,12 @@ fun Preview_PercentScreen() {
 fun PercentScreen() {
     val viewModel: PercentViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    val main = LocalViewModel.current
+    LaunchedEffect(true) {
+        viewModel.sideEffect.collectLatest {
+            if (it is SideEffect.Toast) main.showToast(it.message)
+        }
+    }
     PercentScreen(
         state = state,
         action = viewModel,
@@ -352,7 +361,7 @@ fun KeyboardLeftView(
             listOf(NumberPadKey.SEVEN, NumberPadKey.EIGHT, NumberPadKey.NINE),
             listOf(NumberPadKey.FOUR, NumberPadKey.FIVE, NumberPadKey.SIX),
             listOf(NumberPadKey.ONE, NumberPadKey.TWO, NumberPadKey.THREE),
-            listOf(NumberPadKey.ZERO3, NumberPadKey.ZERO, NumberPadKey.DECIMAL),
+            listOf(NumberPadKey.ZERO_ZERO, NumberPadKey.ZERO, NumberPadKey.DECIMAL),
         ).forEach {
             Row(modifier = Modifier.weight(1f)) {
                 it.forEach {
