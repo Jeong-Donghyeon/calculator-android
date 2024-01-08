@@ -2,14 +2,21 @@ root = true
 
 [{*.kt,*.kts}]
 
+# 문자 코드 utf-8 지정
 charset = utf-8
 
+# 개행 문자 lf 지정
 end_of_line = lf
+
+# 마지막 행에 빈 행 삽입
 insert_final_newline = true
 
+# 들여쓰기 space 4개 지정
 indent_style = space
 indent_size = 4
 
+# 행 끝의 공백 제거
 trim_trailing_whitespace = true
 
+# Composable 함수에서 네이밍 규칙 예외
 ktlint_function_naming_ignore_when_annotated_with = Composable

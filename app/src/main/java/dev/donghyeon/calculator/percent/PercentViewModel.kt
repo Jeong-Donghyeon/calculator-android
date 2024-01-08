@@ -41,33 +41,12 @@ class PercentViewModel
                 state.value.let {
                     when (it.select) {
                         PercentSelect.CALCULATE2 ->
-                            it.copy(
-                                calculate2 =
-                                    it.calculate2.copy(
-                                        select = select,
-                                    ),
-                            )
+                            it.copy(calculate2 = it.calculate2.copy(select = select))
                         PercentSelect.CALCULATE3 ->
-                            it.copy(
-                                calculate3 =
-                                    it.calculate3.copy(
-                                        select = select,
-                                    ),
-                            )
+                            it.copy(calculate3 = it.calculate3.copy(select = select))
                         PercentSelect.CALCULATE4 ->
-                            it.copy(
-                                calculate4 =
-                                    it.calculate4.copy(
-                                        select = select,
-                                    ),
-                            )
-                        else ->
-                            it.copy(
-                                calculate1 =
-                                    it.calculate1.copy(
-                                        select = select,
-                                    ),
-                            )
+                            it.copy(calculate4 = it.calculate4.copy(select = select))
+                        else -> it.copy(calculate1 = it.calculate1.copy(select = select))
                     }
                 }
         }
@@ -77,32 +56,12 @@ class PercentViewModel
                 state.value.let {
                     when (it.select) {
                         PercentSelect.CALCULATE2 ->
-                            it.copy(
-                                calculate2 =
-                                    input(
-                                        key = key,
-                                        calculate = it.calculate2,
-                                    ),
-                            )
+                            it.copy(calculate2 = input(key, it.calculate2))
                         PercentSelect.CALCULATE3 ->
-                            it.copy(
-                                calculate3 =
-                                    input(
-                                        key = key,
-                                        calculate = it.calculate3,
-                                    ),
-                            )
-
+                            it.copy(calculate3 = input(key, it.calculate3))
                         PercentSelect.CALCULATE4 ->
-                            it.copy(
-                                calculate4 =
-                                    input(
-                                        key = key,
-                                        calculate = it.calculate4,
-                                    ),
-                            )
-
-                        else -> it.copy(calculate1 = input(key = key, calculate = it.calculate1))
+                            it.copy(calculate4 = input(key, it.calculate4))
+                        else -> it.copy(calculate1 = input(key, it.calculate1))
                     }
                 }
         }
@@ -125,18 +84,14 @@ class PercentViewModel
                                 calculate.v1.selection.start.let {
                                     if (it == 0) 0 else it - 1
                                 }
-                            calculate.copy(
-                                v1 = calculate.v1.copy(selection = TextRange(index)),
-                            )
+                            calculate.copy(v1 = calculate.v1.copy(selection = TextRange(index)))
                         }
                         ValueSelect.V2 -> {
                             val index =
                                 calculate.v2.selection.start.let {
                                     if (it == 0) 0 else it - 1
                                 }
-                            calculate.copy(
-                                v2 = calculate.v2.copy(selection = TextRange(index)),
-                            )
+                            calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
                         }
                         else -> calculate
                     }
@@ -144,34 +99,15 @@ class PercentViewModel
                     when (calculate.select) {
                         ValueSelect.V1 -> {
                             val index = calculate.v1.selection.start + 1
-                            calculate.copy(
-                                v1 = calculate.v1.copy(selection = TextRange(index)),
-                            )
+                            calculate.copy(v1 = calculate.v1.copy(selection = TextRange(index)))
                         }
                         ValueSelect.V2 -> {
                             val index = calculate.v2.selection.start + 1
-                            calculate.copy(
-                                v2 = calculate.v2.copy(selection = TextRange(index)),
-                            )
+                            calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
                         }
                         else -> calculate
                     }
                 else -> {
-                    val inputKey: (key: NumberPadKey, value: TextFieldValue) -> String = { k, v ->
-                        StringBuilder(v.text).let {
-                            val index = v.selection.start
-                            when (k) {
-                                NumberPadKey.BACK -> {
-                                    if (index == 0) {
-                                        it.toString()
-                                    } else {
-                                        it.delete(index - 1, index).toString()
-                                    }
-                                }
-                                else -> it.insert(index, k.value).toString()
-                            }
-                        }
-                    }
                     when (calculate.select) {
                         ValueSelect.V1 -> {
                             val inputTxt = inputKey(key, calculate.v1)
@@ -183,13 +119,12 @@ class PercentViewModel
                                         it + key.value.count()
                                     }
                                 }
-                            calculate.copy(
-                                v1 =
-                                    calculate.v1.copy(
-                                        text = inputTxt,
-                                        selection = TextRange(index),
-                                    ),
-                            )
+                            val v1 =
+                                calculate.v1.copy(
+                                    text = inputTxt,
+                                    selection = TextRange(index),
+                                )
+                            calculate.copy(v1 = v1)
                         }
                         ValueSelect.V2 -> {
                             val inputTxt = inputKey(key, calculate.v2)
@@ -201,26 +136,44 @@ class PercentViewModel
                                         it + key.value.count()
                                     }
                                 }
-                            calculate.copy(
-                                v2 =
-                                    calculate.v2.copy(
-                                        text = inputTxt,
-                                        selection = TextRange(index),
-                                    ),
-                            )
+                            val v2 =
+                                calculate.v2.copy(
+                                    text = inputTxt,
+                                    selection = TextRange(index),
+                                )
+                            calculate.copy(v2 = v2)
                         }
                         else -> calculate
                     }.let {
-                        it.copy(
-                            result =
-                                when (state.value.select) {
-                                    PercentSelect.CALCULATE2 -> percentCalculate2UseCase(it.v1.text, it.v2.text)
-                                    PercentSelect.CALCULATE3 -> percentCalculate3UseCase(it.v1.text, it.v2.text)
-                                    PercentSelect.CALCULATE4 -> percentCalculate4UseCase(it.v1.text, it.v2.text)
-                                    else -> percentCalculate1UseCase(it.v1.text, it.v2.text)
-                                },
-                        )
+                        val result =
+                            when (state.value.select) {
+                                PercentSelect.CALCULATE2 ->
+                                    percentCalculate2UseCase(it.v1.text, it.v2.text)
+                                PercentSelect.CALCULATE3 ->
+                                    percentCalculate3UseCase(it.v1.text, it.v2.text)
+                                PercentSelect.CALCULATE4 ->
+                                    percentCalculate4UseCase(it.v1.text, it.v2.text)
+                                else -> percentCalculate1UseCase(it.v1.text, it.v2.text)
+                            }
+                        it.copy(result = result)
                     }
                 }
             }
+
+        private fun inputKey(
+            key: NumberPadKey,
+            value: TextFieldValue,
+        ) = StringBuilder(value.text).let {
+            val index = value.selection.start
+            when (key) {
+                NumberPadKey.BACK -> {
+                    if (index == 0) {
+                        it.toString()
+                    } else {
+                        it.delete(index - 1, index).toString()
+                    }
+                }
+                else -> it.insert(index, key.value).toString()
+            }
+        }
     }
