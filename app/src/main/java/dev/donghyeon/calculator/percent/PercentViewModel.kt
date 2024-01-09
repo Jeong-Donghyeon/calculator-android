@@ -5,8 +5,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.donghyeon.calculator.BaseViewModel
-import dev.donghyeon.calculator.SideEffect
+import dev.donghyeon.calculator.common.BaseViewModel
+import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.domain.PercentCalculate1UseCase
 import dev.donghyeon.calculator.domain.PercentCalculate2UseCase
 import dev.donghyeon.calculator.domain.PercentCalculate3UseCase

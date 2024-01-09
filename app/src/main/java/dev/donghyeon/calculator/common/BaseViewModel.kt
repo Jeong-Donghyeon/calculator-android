@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator
+package dev.donghyeon.calculator.common
 
 import androidx.lifecycle.ViewModel
 

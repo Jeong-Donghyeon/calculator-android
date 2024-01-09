@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.donghyeon.calculator.LocalViewModel
-import dev.donghyeon.calculator.SideEffect
+import dev.donghyeon.calculator.common.LocalViewModel
+import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 import dev.donghyeon.calculator.view.FontSizeRange

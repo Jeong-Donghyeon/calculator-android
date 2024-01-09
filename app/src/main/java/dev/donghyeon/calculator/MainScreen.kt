@@ -14,6 +14,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dev.donghyeon.calculator.common.LocalNavController
+import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.general.GeneralScreen
 import dev.donghyeon.calculator.percent.PercentScreen
 import dev.donghyeon.calculator.theme.ColorSet

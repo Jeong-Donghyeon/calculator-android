@@ -1,7 +1,8 @@
-package dev.donghyeon.calculator
+package dev.donghyeon.calculator.common
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController
+import dev.donghyeon.calculator.MainViewModel
 
 val LocalViewModel =
     staticCompositionLocalOf<MainViewModel> {

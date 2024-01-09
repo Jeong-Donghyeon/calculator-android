@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.general
 
-import dev.donghyeon.calculator.BaseViewModel
+import dev.donghyeon.calculator.common.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
