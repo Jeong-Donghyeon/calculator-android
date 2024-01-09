@@ -16,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.donghyeon.calculator.Destination
+import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.view.TitleView
 import dev.donghyeon.calculator.view.ViewButtonNumber
@@ -28,9 +30,11 @@ fun Preview_GeneralScreen() = GeneralScreen(state = GeneralData())
 fun GeneralScreen() {
     val viewModel: GeneralViewModel = hiltViewModel()
     val state by viewModel.generalState.collectAsState()
+    val main = LocalViewModel.current
     GeneralScreen(
         state = state,
         action = viewModel,
+        menu = { main.openMenu() },
     )
 }
 
@@ -41,7 +45,7 @@ fun GeneralScreen(
     menu: (() -> Unit)? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.container)) {
-        TitleView(title = "일반 계산기")
+        TitleView(title = Destination.General.route)
         Box(modifier = Modifier.weight(1f)) {}
         Row(verticalAlignment = Alignment.Bottom) {
             ViewButtonNumber(

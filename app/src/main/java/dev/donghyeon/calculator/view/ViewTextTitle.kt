@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.donghyeon.calculator.Destination
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 
@@ -18,7 +19,7 @@ import dev.donghyeon.calculator.theme.TextSet
 @Composable
 fun Preview_TitleView() =
     TitleView(
-        title = "일반 계산기",
+        title = Destination.General.route,
     )
 
 @Composable
@@ -33,6 +34,6 @@ fun TitleView(title: String) =
     ) {
         Text(
             text = title,
-            style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+            style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
         )
     }

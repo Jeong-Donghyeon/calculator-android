@@ -105,4 +105,5 @@ dependencies {
     implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("com.holix.android:bottomsheetdialog-compose:1.2.1")
 }

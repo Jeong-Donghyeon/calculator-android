@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.donghyeon.calculator.Destination
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
@@ -62,6 +63,7 @@ fun PercentScreen() {
     PercentScreen(
         state = state,
         action = viewModel,
+        menu = { main.openMenu() },
     )
 }
 
@@ -69,12 +71,13 @@ fun PercentScreen() {
 fun PercentScreen(
     state: PercentData,
     action: PercentAction? = null,
+    menu: (() -> Unit)? = null,
 ) {
     val keyboardHeight = 350.dp
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
     Column(modifier = Modifier.background(ColorSet.container)) {
-        TitleView(title = "퍼센트 계산기")
+        TitleView(title = Destination.Percent.route)
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
                 state = state,
@@ -89,7 +92,7 @@ fun PercentScreen(
                 text = "메뉴",
                 height = 40.dp,
                 size = 20.sp,
-                onClick = {},
+                onClick = menu ?: {},
             )
             ViewScrollTab(
                 modifier = Modifier.fillMaxWidth(),
