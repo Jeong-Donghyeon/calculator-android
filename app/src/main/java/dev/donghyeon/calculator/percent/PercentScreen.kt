@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,9 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -29,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.Destination
+import dev.donghyeon.calculator.R
+import dev.donghyeon.calculator.common.BUTTON_HEIGHT
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
@@ -73,7 +82,7 @@ fun PercentScreen(
     action: PercentAction? = null,
     menu: (() -> Unit)? = null,
 ) {
-    val keyboardHeight = 350.dp
+    val keyboardHeight = (BUTTON_HEIGHT * 5).dp
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
     Column(modifier = Modifier.background(ColorSet.container)) {
@@ -87,15 +96,24 @@ fun PercentScreen(
             )
         }
         Row(verticalAlignment = Alignment.Bottom) {
-            ViewButtonNumber(
-                modifier = Modifier.padding(start = 10.dp),
-                text = "메뉴",
-                height = 40.dp,
-                size = 20.sp,
+            Spacer(modifier = Modifier.width(12.dp))
+            IconButton(
+                modifier =
+                    Modifier
+                        .clip(CircleShape)
+                        .shadow(2.dp)
+                        .background(ColorSet.button),
                 onClick = menu ?: {},
-            )
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(id = R.drawable.ic_menu),
+                    tint = ColorSet.text,
+                    contentDescription = "menu",
+                )
+            }
             ViewScrollTab(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 3.dp),
                 tabs = PercentSelect.entries.map { it.value },
                 index = state.select.ordinal,
                 onTab = {
