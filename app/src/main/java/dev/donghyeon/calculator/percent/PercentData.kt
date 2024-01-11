@@ -26,7 +26,7 @@ enum class PercentSelect(val value: String) {
 
 enum class ValueSelect { V1, V2 }
 
-enum class NumberPadKey(val value: String) {
+enum class PercentKeyPad(val value: String) {
     ONE("1"),
     TWO("2"),
     THREE("3"),
@@ -39,8 +39,8 @@ enum class NumberPadKey(val value: String) {
     ZERO("0"),
     ZERO_ZERO("00"),
     DECIMAL("."),
-    BACK("back"),
-    CLEAR("clear"),
-    LEFT("left"),
-    RIGHT("right"),
+    BACK("⌫"),
+    CLEAR("C"),
+    LEFT("<-"),
+    RIGHT("->"),
 }

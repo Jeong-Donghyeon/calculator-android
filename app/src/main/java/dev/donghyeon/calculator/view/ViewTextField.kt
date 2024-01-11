@@ -28,11 +28,13 @@ fun ViewTextField(
     modifier: Modifier = Modifier,
     value: TextFieldValue,
     color: Color,
+    line: Boolean = true,
     onValueChange: (TextFieldValue) -> Unit,
 ) {
     CompositionLocalProvider(
         LocalTextInputService provides null,
     ) {
+        val lineColor = if (line) color else ColorSet.transparent
         TextField(
             modifier = modifier,
             value = value,
@@ -53,12 +55,12 @@ fun ViewTextField(
                     unfocusedContainerColor = ColorSet.container,
                     disabledContainerColor = ColorSet.container,
                     errorContainerColor = ColorSet.container,
-                    cursorColor = color,
-                    errorCursorColor = color,
-                    focusedIndicatorColor = color,
-                    unfocusedIndicatorColor = color,
-                    disabledIndicatorColor = color,
-                    errorIndicatorColor = color,
+                    cursorColor = ColorSet.select,
+                    errorCursorColor = ColorSet.select,
+                    focusedIndicatorColor = lineColor,
+                    unfocusedIndicatorColor = lineColor,
+                    disabledIndicatorColor = lineColor,
+                    errorIndicatorColor = lineColor,
                 ),
         )
     }

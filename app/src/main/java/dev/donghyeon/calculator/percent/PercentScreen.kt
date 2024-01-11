@@ -77,12 +77,12 @@ fun PercentScreen() {
 }
 
 @Composable
-fun PercentScreen(
+private fun PercentScreen(
     state: PercentData,
     action: PercentAction? = null,
     menu: (() -> Unit)? = null,
 ) {
-    val keyboardHeight = (BUTTON_HEIGHT * 5).dp
+    val keyPadHeight = (BUTTON_HEIGHT * 5).dp
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
     Column(modifier = Modifier.background(ColorSet.container)) {
@@ -133,16 +133,16 @@ fun PercentScreen(
                     .padding(bottom = 10.dp),
         ) {
             Column(modifier = Modifier.weight(3f)) {
-                KeyboardLeftView(
+                KeyPadLeftView(
                     action = action,
-                    height = keyboardHeight,
+                    height = keyPadHeight,
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
-                KeyboardRightView(
+                KeyPadRightView(
                     state = state,
                     action = action,
-                    height = keyboardHeight,
+                    height = keyPadHeight,
                     v1Focus = v1Focus,
                     v2Focus = v2Focus,
                 )
@@ -152,7 +152,7 @@ fun PercentScreen(
 }
 
 @Composable
-fun CalculateView(
+private fun CalculateView(
     state: PercentData,
     action: PercentAction? = null,
     v1Focus: FocusRequester,
@@ -325,49 +325,17 @@ fun CalculateView(
 }
 
 @Composable
-fun KeyboardLeftView(
+private fun KeyPadLeftView(
     action: PercentAction? = null,
     height: Dp,
 ) {
     Column(modifier = Modifier.height(height)) {
-        Row(modifier = Modifier.weight(1f)) {
-            ViewButtonNumber(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .padding(2.dp),
-                onClick = {
-                    action?.inputNumberKeyPad(NumberPadKey.CLEAR)
-                },
-                text = "C",
-            )
-            ViewButtonValue(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .padding(2.dp),
-                onClick = { action?.inputNumberKeyPad(NumberPadKey.LEFT) },
-                text = "<-",
-                style = TextSet.bold.copy(ColorSet.text, 26.sp),
-            )
-            ViewButtonValue(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .padding(2.dp),
-                onClick = { action?.inputNumberKeyPad(NumberPadKey.RIGHT) },
-                text = "->",
-                style = TextSet.bold.copy(ColorSet.text, 26.sp),
-            )
-        }
         listOf(
-            listOf(NumberPadKey.SEVEN, NumberPadKey.EIGHT, NumberPadKey.NINE),
-            listOf(NumberPadKey.FOUR, NumberPadKey.FIVE, NumberPadKey.SIX),
-            listOf(NumberPadKey.ONE, NumberPadKey.TWO, NumberPadKey.THREE),
-            listOf(NumberPadKey.ZERO_ZERO, NumberPadKey.ZERO, NumberPadKey.DECIMAL),
+            listOf(PercentKeyPad.CLEAR, PercentKeyPad.LEFT, PercentKeyPad.RIGHT),
+            listOf(PercentKeyPad.SEVEN, PercentKeyPad.EIGHT, PercentKeyPad.NINE),
+            listOf(PercentKeyPad.FOUR, PercentKeyPad.FIVE, PercentKeyPad.SIX),
+            listOf(PercentKeyPad.ONE, PercentKeyPad.TWO, PercentKeyPad.THREE),
+            listOf(PercentKeyPad.ZERO_ZERO, PercentKeyPad.ZERO, PercentKeyPad.DECIMAL),
         ).forEach {
             Row(modifier = Modifier.weight(1f)) {
                 it.forEach {
@@ -377,7 +345,7 @@ fun KeyboardLeftView(
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .padding(2.dp),
-                        onClick = { action?.inputNumberKeyPad(it) },
+                        onClick = { action?.inputKeyPad(it) },
                         text = it.value,
                     )
                 }
@@ -387,7 +355,7 @@ fun KeyboardLeftView(
 }
 
 @Composable
-private fun KeyboardRightView(
+private fun KeyPadRightView(
     state: PercentData,
     action: PercentAction? = null,
     height: Dp,
@@ -413,7 +381,7 @@ private fun KeyboardRightView(
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(2.dp),
-            onClick = { action?.inputNumberKeyPad(NumberPadKey.BACK) },
+            onClick = { action?.inputKeyPad(PercentKeyPad.BACK) },
             text = "⌫",
             size = 26.sp,
         )

@@ -23,7 +23,7 @@ interface PercentAction {
 
     fun inputValueSelect(select: ValueSelect)
 
-    fun inputNumberKeyPad(key: NumberPadKey)
+    fun inputKeyPad(key: PercentKeyPad)
 }
 
 @HiltViewModel
@@ -60,7 +60,7 @@ class PercentViewModel
                 }
         }
 
-        override fun inputNumberKeyPad(key: NumberPadKey) {
+        override fun inputKeyPad(key: PercentKeyPad) {
             _state.value =
                 state.value.let {
                     when (it.select) {
@@ -76,16 +76,16 @@ class PercentViewModel
         }
 
         private fun input(
-            key: NumberPadKey,
+            key: PercentKeyPad,
             calculate: PercentData.Calculate,
         ): PercentData.Calculate =
             when (key) {
-                NumberPadKey.CLEAR ->
+                PercentKeyPad.CLEAR ->
                     when (calculate.select) {
                         ValueSelect.V1 -> calculate.copy(v1 = TextFieldValue(), result = "?")
                         ValueSelect.V2 -> calculate.copy(v2 = TextFieldValue(), result = "?")
                     }
-                NumberPadKey.LEFT ->
+                PercentKeyPad.LEFT ->
                     when (calculate.select) {
                         ValueSelect.V1 -> {
                             val index =
@@ -102,7 +102,7 @@ class PercentViewModel
                             calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
                         }
                     }
-                NumberPadKey.RIGHT ->
+                PercentKeyPad.RIGHT ->
                     when (calculate.select) {
                         ValueSelect.V1 -> {
                             val index = calculate.v1.selection.start + 1
@@ -120,7 +120,7 @@ class PercentViewModel
                         ValueSelect.V1 -> {
                             val decimalCheck = checkDecimal(calculate.v1.text)
                             val digitsLimitCheck = checkDigitsLimit(calculate.v1.text, key)
-                            if (key == NumberPadKey.DECIMAL && decimalCheck) {
+                            if (key == PercentKeyPad.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
@@ -134,7 +134,7 @@ class PercentViewModel
                                 val inputTxt = inputKey(key, calculate.v1)
                                 val index =
                                     calculate.v1.selection.start.let {
-                                        if (key == NumberPadKey.BACK) {
+                                        if (key == PercentKeyPad.BACK) {
                                             if (it == 0) 0 else it - 1
                                         } else {
                                             it + key.value.count()
@@ -151,7 +151,7 @@ class PercentViewModel
                         ValueSelect.V2 -> {
                             val decimalCheck = checkDecimal(calculate.v2.text)
                             val digitsLimitCheck = checkDigitsLimit(calculate.v2.text, key)
-                            if (key == NumberPadKey.DECIMAL && decimalCheck) {
+                            if (key == PercentKeyPad.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
@@ -165,7 +165,7 @@ class PercentViewModel
                                 val inputTxt = inputKey(key, calculate.v2)
                                 val index =
                                     calculate.v2.selection.start.let {
-                                        if (key == NumberPadKey.BACK) {
+                                        if (key == PercentKeyPad.BACK) {
                                             if (it == 0) 0 else it - 1
                                         } else {
                                             it + key.value.count()
@@ -196,29 +196,30 @@ class PercentViewModel
             }
 
         private fun inputKey(
-            key: NumberPadKey,
+            key: PercentKeyPad,
             value: TextFieldValue,
-        ) = StringBuilder(value.text).let {
-            val index = value.selection.start
-            when (key) {
-                NumberPadKey.BACK -> {
-                    if (index == 0) {
-                        it.toString()
-                    } else {
-                        it.delete(index - 1, index).toString()
+        ): String =
+            StringBuilder(value.text).let {
+                val index = value.selection.start
+                when (key) {
+                    PercentKeyPad.BACK -> {
+                        if (index == 0) {
+                            it.toString()
+                        } else {
+                            it.delete(index - 1, index).toString()
+                        }
                     }
+                    else -> it.insert(index, key.value).toString()
                 }
-                else -> it.insert(index, key.value).toString()
             }
-        }
 
         private fun checkDecimal(v: String) = v.any { it == '.' }
 
         private fun checkDigitsLimit(
             v: String,
-            key: NumberPadKey,
+            key: PercentKeyPad,
         ): Boolean {
-            val count = if (key == NumberPadKey.ZERO_ZERO) 9 else 10
+            val count = if (key == PercentKeyPad.ZERO_ZERO) 9 else 10
             return v.replace(".", "").count() >= count
         }
     }
