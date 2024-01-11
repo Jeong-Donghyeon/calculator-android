@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -37,25 +35,25 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.Destination
 import dev.donghyeon.calculator.R
-import dev.donghyeon.calculator.common.BUTTON_HEIGHT
+import dev.donghyeon.calculator.common.KEY_HEIGHT
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 import dev.donghyeon.calculator.view.FontSizeRange
 import dev.donghyeon.calculator.view.TitleView
-import dev.donghyeon.calculator.view.ViewButtonNumber
-import dev.donghyeon.calculator.view.ViewButtonValue
+import dev.donghyeon.calculator.view.ViewButtonKey
+import dev.donghyeon.calculator.view.ViewButtonKeyValue
+import dev.donghyeon.calculator.view.ViewFieldNumber
 import dev.donghyeon.calculator.view.ViewScrollTab
-import dev.donghyeon.calculator.view.ViewTextField
 import dev.donghyeon.calculator.view.ViewTextResult
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
-fun Preview_PercentScreen() {
+private fun Preview_PercentScreen() {
     PercentScreen(
-        state = PercentData(),
+        state = PercentState(),
     )
 }
 
@@ -64,27 +62,38 @@ fun PercentScreen() {
     val viewModel: PercentViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val main = LocalViewModel.current
-    LaunchedEffect(true) {
+    val v1Focus = remember { FocusRequester() }
+    val v2Focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        v1Focus.requestFocus()
         viewModel.sideEffect.collectLatest {
-            if (it is SideEffect.Toast) main.showToast(it.message)
+            when (it) {
+                is SideEffect.Toast -> main.showToast(it.message)
+                is SideEffect.Focus ->
+                    when (it.fieldName) {
+                        PercentKey.V1.value -> v1Focus.requestFocus()
+                        PercentKey.V2.value -> v2Focus.requestFocus()
+                    }
+            }
         }
     }
     PercentScreen(
         state = state,
         action = viewModel,
         menu = { main.openMenu() },
+        v1Focus = v1Focus,
+        v2Focus = v2Focus,
     )
 }
 
 @Composable
 private fun PercentScreen(
-    state: PercentData,
+    state: PercentState,
     action: PercentAction? = null,
     menu: (() -> Unit)? = null,
+    v1Focus: FocusRequester? = null,
+    v2Focus: FocusRequester? = null,
 ) {
-    val keyPadHeight = (BUTTON_HEIGHT * 5).dp
-    val v1Focus = remember { FocusRequester() }
-    val v2Focus = remember { FocusRequester() }
     Column(modifier = Modifier.background(ColorSet.container)) {
         TitleView(title = Destination.Percent.route)
         Box(modifier = Modifier.weight(1f)) {
@@ -95,68 +104,26 @@ private fun PercentScreen(
                 v2Focus = v2Focus,
             )
         }
-        Row(verticalAlignment = Alignment.Bottom) {
-            Spacer(modifier = Modifier.width(12.dp))
-            IconButton(
-                modifier =
-                    Modifier
-                        .clip(CircleShape)
-                        .shadow(2.dp)
-                        .background(ColorSet.button),
-                onClick = menu ?: {},
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(id = R.drawable.ic_menu),
-                    tint = ColorSet.text,
-                    contentDescription = "menu",
-                )
-            }
-            ViewScrollTab(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 3.dp),
-                tabs = PercentSelect.entries.map { it.value },
-                index = state.select.ordinal,
-                onTab = {
-                    when (it) {
-                        0 -> action?.inputPercentSelect(PercentSelect.CALCULATE1)
-                        1 -> action?.inputPercentSelect(PercentSelect.CALCULATE2)
-                        2 -> action?.inputPercentSelect(PercentSelect.CALCULATE3)
-                        3 -> action?.inputPercentSelect(PercentSelect.CALCULATE4)
-                    }
-                },
-            )
-        }
-        Row(
-            modifier =
-                Modifier
-                    .padding(10.dp)
-                    .padding(bottom = 10.dp),
-        ) {
-            Column(modifier = Modifier.weight(3f)) {
-                KeyPadLeftView(
-                    action = action,
-                    height = keyPadHeight,
-                )
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                KeyPadRightView(
-                    state = state,
-                    action = action,
-                    height = keyPadHeight,
-                    v1Focus = v1Focus,
-                    v2Focus = v2Focus,
-                )
-            }
-        }
+        MenuView(
+            state = state,
+            action = action,
+            menu = menu,
+        )
+        KeyView(
+            state = state,
+            action = action,
+            v1Focus = v1Focus,
+            v2Focus = v2Focus,
+        )
     }
 }
 
 @Composable
 private fun CalculateView(
-    state: PercentData,
+    state: PercentState,
     action: PercentAction? = null,
-    v1Focus: FocusRequester,
-    v2Focus: FocusRequester,
+    v1Focus: FocusRequester? = null,
+    v2Focus: FocusRequester? = null,
 ) {
     val fieldTotalWith: Dp = 320.dp
     val fieldLeft: Dp = 50.dp
@@ -197,8 +164,8 @@ private fun CalculateView(
         }
     val (v1Color, v2Color) =
         when (calculate.select) {
-            ValueSelect.V1 -> ColorSet.select to ColorSet.text
-            ValueSelect.V2 -> ColorSet.text to ColorSet.select
+            PercentValueSelect.V1 -> ColorSet.select to ColorSet.text
+            PercentValueSelect.V2 -> ColorSet.text to ColorSet.select
         }
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -214,21 +181,22 @@ private fun CalculateView(
                     Modifier
                         .width(fieldLeft)
                         .padding(top = 5.dp),
-                text = "V1",
+                text = PercentKey.V1.value,
                 style = TextSet.extraBold.copy(v1Color, 24.sp),
                 textAlign = TextAlign.Center,
             )
-            ViewTextField(
+            ViewFieldNumber(
                 modifier =
                     Modifier
                         .weight(1f)
-                        .focusRequester(v1Focus)
+                        .focusRequester(v1Focus ?: FocusRequester())
                         .onFocusChanged {
-                            if (it.isFocused) action?.inputValueSelect(ValueSelect.V1)
+                            if (it.isFocused) {
+                                action?.inputPercentValueSelect(PercentValueSelect.V1)
+                            }
                         },
                 value = calculate.v1,
                 color = v1Color,
-                onValueChange = {},
             )
             Text(
                 modifier =
@@ -254,17 +222,18 @@ private fun CalculateView(
                 style = TextSet.extraBold.copy(v2Color, 24.sp),
                 textAlign = TextAlign.Center,
             )
-            ViewTextField(
+            ViewFieldNumber(
                 modifier =
                     Modifier
                         .weight(1f)
-                        .focusRequester(v2Focus)
+                        .focusRequester(v2Focus ?: FocusRequester())
                         .onFocusChanged {
-                            if (it.isFocused) action?.inputValueSelect(ValueSelect.V2)
+                            if (it.isFocused) {
+                                action?.inputPercentValueSelect(PercentValueSelect.V2)
+                            }
                         },
                 value = calculate.v2,
                 color = v2Color,
-                onValueChange = {},
             )
             val v2FontSize =
                 when (state.select) {
@@ -313,55 +282,86 @@ private fun CalculateView(
             )
         }
     }
-    LaunchedEffect(Unit) {
-        v1Focus.requestFocus()
-    }
-    LaunchedEffect(state.select) {
-        when (calculate.select) {
-            ValueSelect.V1 -> v1Focus.requestFocus()
-            ValueSelect.V2 -> v2Focus.requestFocus()
-        }
-    }
 }
 
 @Composable
-private fun KeyPadLeftView(
+private fun MenuView(
+    state: PercentState,
     action: PercentAction? = null,
-    height: Dp,
+    menu: (() -> Unit)? = null,
 ) {
-    Column(modifier = Modifier.height(height)) {
-        listOf(
-            listOf(PercentKeyPad.CLEAR, PercentKeyPad.LEFT, PercentKeyPad.RIGHT),
-            listOf(PercentKeyPad.SEVEN, PercentKeyPad.EIGHT, PercentKeyPad.NINE),
-            listOf(PercentKeyPad.FOUR, PercentKeyPad.FIVE, PercentKeyPad.SIX),
-            listOf(PercentKeyPad.ONE, PercentKeyPad.TWO, PercentKeyPad.THREE),
-            listOf(PercentKeyPad.ZERO_ZERO, PercentKeyPad.ZERO, PercentKeyPad.DECIMAL),
-        ).forEach {
-            Row(modifier = Modifier.weight(1f)) {
-                it.forEach {
-                    ViewButtonNumber(
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .padding(2.dp),
-                        onClick = { action?.inputKeyPad(it) },
-                        text = it.value,
-                    )
+    Row {
+        Spacer(modifier = Modifier.width(12.dp))
+        IconButton(
+            modifier =
+                Modifier
+                    .clip(CircleShape)
+                    .background(ColorSet.button),
+            onClick = menu ?: {},
+        ) {
+            Icon(
+                modifier = Modifier.size(32.dp),
+                painter = painterResource(id = R.drawable.ic_menu),
+                tint = ColorSet.text,
+                contentDescription = "menu",
+            )
+        }
+        ViewScrollTab(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 3.dp),
+            tabs = PercentSelect.entries.map { it.value },
+            index = state.select.ordinal,
+            onTab = {
+                when (it) {
+                    0 -> action?.inputPercentSelect(PercentSelect.CALCULATE1)
+                    1 -> action?.inputPercentSelect(PercentSelect.CALCULATE2)
+                    2 -> action?.inputPercentSelect(PercentSelect.CALCULATE3)
+                    3 -> action?.inputPercentSelect(PercentSelect.CALCULATE4)
                 }
-            }
-        }
+            },
+        )
     }
 }
 
 @Composable
-private fun KeyPadRightView(
-    state: PercentData,
+private fun KeyView(
+    state: PercentState,
     action: PercentAction? = null,
-    height: Dp,
-    v1Focus: FocusRequester,
-    v2Focus: FocusRequester,
+    v1Focus: FocusRequester? = null,
+    v2Focus: FocusRequester? = null,
 ) {
+    val keyList =
+        listOf(
+            listOf(
+                PercentKey.CLEAR,
+                PercentKey.SEVEN,
+                PercentKey.FOUR,
+                PercentKey.ONE,
+                PercentKey.ZERO_ZERO,
+            ),
+            listOf(
+                PercentKey.LEFT,
+                PercentKey.EIGHT,
+                PercentKey.FIVE,
+                PercentKey.TWO,
+                PercentKey.ZERO,
+            ),
+            listOf(
+                PercentKey.RIGHT,
+                PercentKey.NINE,
+                PercentKey.SIX,
+                PercentKey.THREE,
+                PercentKey.DECIMAL,
+            ),
+            listOf(
+                PercentKey.BACK,
+                PercentKey.V1,
+                PercentKey.V2,
+            ),
+        )
+    val height = keyList.first().count() * KEY_HEIGHT
     val calculate =
         when (state.select) {
             PercentSelect.CALCULATE1 -> state.calculate1
@@ -369,45 +369,54 @@ private fun KeyPadRightView(
             PercentSelect.CALCULATE3 -> state.calculate3
             PercentSelect.CALCULATE4 -> state.calculate4
         }
-    val (v1Color, v2Color) =
-        when (calculate.select) {
-            ValueSelect.V1 -> ColorSet.select to ColorSet.text
-            ValueSelect.V2 -> ColorSet.text to ColorSet.select
+    Row(
+        modifier =
+            Modifier
+                .padding(10.dp)
+                .padding(bottom = 20.dp)
+                .height(height.dp),
+    ) {
+        keyList.forEach { row ->
+            Column(modifier = Modifier.weight(1f)) {
+                row.forEach { key ->
+                    when (key) {
+                        PercentKey.V1, PercentKey.V2 -> {
+                            val color =
+                                if (key.value == calculate.select.name) {
+                                    ColorSet.select
+                                } else {
+                                    ColorSet.text
+                                }
+                            ViewButtonKeyValue(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .weight(2f)
+                                        .padding(2.dp),
+                                text = key.value,
+                                color = color,
+                                onClick = {
+                                    when (key) {
+                                        PercentKey.V1 -> v1Focus?.requestFocus()
+                                        PercentKey.V2 -> v2Focus?.requestFocus()
+                                        else -> {}
+                                    }
+                                },
+                            )
+                        }
+                        else ->
+                            ViewButtonKey(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .padding(2.dp),
+                                text = key.value,
+                                onClick = { action?.inputKey(key) },
+                            )
+                    }
+                }
+            }
         }
-    Column(modifier = Modifier.height(height)) {
-        ViewButtonNumber(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(2.dp),
-            onClick = { action?.inputKeyPad(PercentKeyPad.BACK) },
-            text = "⌫",
-            size = 26.sp,
-        )
-        ViewButtonValue(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(2f)
-                    .padding(2.dp),
-            onClick = {
-                v1Focus.requestFocus()
-            },
-            text = "V1",
-            style = TextSet.extraBold.copy(color = v1Color, 24.sp),
-        )
-        ViewButtonValue(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(2f)
-                    .padding(2.dp),
-            onClick = {
-                v2Focus.requestFocus()
-            },
-            text = "V2",
-            style = TextSet.extraBold.copy(color = v2Color, 24.sp),
-        )
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,39 +22,43 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.Destination
 import dev.donghyeon.calculator.R
-import dev.donghyeon.calculator.common.BUTTON_HEIGHT
+import dev.donghyeon.calculator.common.KEY_HEIGHT
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.view.FontSizeRange
 import dev.donghyeon.calculator.view.TitleView
-import dev.donghyeon.calculator.view.ViewButtonNumber
+import dev.donghyeon.calculator.view.ViewButtonKey
+import dev.donghyeon.calculator.view.ViewFieldGeneral
 import dev.donghyeon.calculator.view.ViewScrollTab
-import dev.donghyeon.calculator.view.ViewTextField
 import dev.donghyeon.calculator.view.ViewTextResult
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
-fun Preview_GeneralScreen() = GeneralScreen(state = GeneralData())
+private fun Preview_GeneralScreen() {
+    GeneralScreen(
+        state = GeneralState(),
+    )
+}
 
 @Composable
 fun GeneralScreen() {
     val viewModel: GeneralViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val main = LocalViewModel.current
-    LaunchedEffect(true) {
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focus.requestFocus()
         viewModel.sideEffect.collectLatest {
             if (it is SideEffect.Toast) main.showToast(it.message)
         }
@@ -64,82 +67,40 @@ fun GeneralScreen() {
         state = state,
         action = viewModel,
         menu = { main.openMenu() },
+        focus = focus,
     )
 }
 
 @Composable
 private fun GeneralScreen(
-    state: GeneralData,
+    state: GeneralState,
     action: GeneralAction? = null,
     menu: (() -> Unit)? = null,
+    focus: FocusRequester? = null,
 ) {
-    val keyPadHeight = (BUTTON_HEIGHT * 6).dp
-    val focus = remember { FocusRequester() }
     Column(modifier = Modifier.background(ColorSet.container)) {
         TitleView(title = Destination.General.route)
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
                 state = state,
-                action = action,
                 focus = focus,
             )
         }
-        Row(verticalAlignment = Alignment.Bottom) {
-            Spacer(modifier = Modifier.width(12.dp))
-            IconButton(
-                modifier =
-                    Modifier
-                        .clip(CircleShape)
-                        .shadow(2.dp)
-                        .background(ColorSet.button),
-                onClick = menu ?: {},
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(id = R.drawable.ic_menu),
-                    tint = ColorSet.text,
-                    contentDescription = "menu",
-                )
-            }
-            ViewScrollTab(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 3.dp),
-                tabs = GeneralSelect.entries.map { it.value },
-                index = state.select.ordinal,
-                onTab = {
-                    when (it) {
-                        0 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE1)
-                        1 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE2)
-                        2 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE3)
-                        3 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE4)
-                    }
-                },
-            )
-        }
-        Column(
-            modifier =
-                Modifier
-                    .padding(10.dp)
-                    .padding(bottom = 10.dp),
-        ) {
-            KeyPadView(
-                action = action,
-                height = keyPadHeight,
-            )
-        }
-    }
-    LaunchedEffect(true) {
-        focus.requestFocus()
+        MenuView(
+            state = state,
+            action = action,
+            menu = menu,
+        )
+        KeyPadView(
+            action = action,
+        )
     }
 }
 
 @Composable
 private fun CalculateView(
-    state: GeneralData,
-    action: GeneralAction? = null,
-    focus: FocusRequester,
+    state: GeneralState,
+    focus: FocusRequester? = null,
 ) {
     val calculate =
         when (state.select) {
@@ -158,16 +119,13 @@ private fun CalculateView(
             modifier = Modifier.weight(1f),
             contentAlignment = Alignment.Center,
         ) {
-            ViewTextField(
+            ViewFieldGeneral(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
-                        .focusRequester(focus),
+                        .focusRequester(focus ?: FocusRequester()),
                 value = calculate.v,
-                color = ColorSet.text,
-                line = false,
-                onValueChange = {},
             )
         }
         ViewTextResult(
@@ -186,59 +144,102 @@ private fun CalculateView(
 }
 
 @Composable
-private fun KeyPadView(
+private fun MenuView(
+    state: GeneralState,
     action: GeneralAction? = null,
-    height: Dp,
+    menu: (() -> Unit)? = null,
 ) {
-    Column(modifier = Modifier.height(height)) {
+    Row {
+        Spacer(modifier = Modifier.width(12.dp))
+        IconButton(
+            modifier =
+                Modifier
+                    .clip(CircleShape)
+                    .background(ColorSet.button),
+            onClick = menu ?: {},
+        ) {
+            Icon(
+                modifier = Modifier.size(32.dp),
+                painter = painterResource(id = R.drawable.ic_menu),
+                tint = ColorSet.text,
+                contentDescription = "menu",
+            )
+        }
+        ViewScrollTab(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 3.dp),
+            tabs = GeneralSelect.entries.map { it.value },
+            index = state.select.ordinal,
+            onTab = {
+                when (it) {
+                    0 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE1)
+                    1 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE2)
+                    2 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE3)
+                    3 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE4)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun KeyPadView(action: GeneralAction? = null) {
+    val keyList =
         listOf(
             listOf(
-                GeneralKeyPad.CLEAR,
-                GeneralKeyPad.LEFT,
-                GeneralKeyPad.RIGHT,
-                GeneralKeyPad.BACK,
+                GeneralKey.CLEAR,
+                GeneralKey.SQUARE,
+                GeneralKey.SEVEN,
+                GeneralKey.FOUR,
+                GeneralKey.ONE,
+                GeneralKey.ZERO_ZERO,
             ),
             listOf(
-                GeneralKeyPad.SQUARE,
-                GeneralKeyPad.OPEN,
-                GeneralKeyPad.CLOSE,
-                GeneralKeyPad.DIVIDE,
+                GeneralKey.LEFT,
+                GeneralKey.OPEN,
+                GeneralKey.EIGHT,
+                GeneralKey.FIVE,
+                GeneralKey.TWO,
+                GeneralKey.ZERO,
             ),
             listOf(
-                GeneralKeyPad.SEVEN,
-                GeneralKeyPad.EIGHT,
-                GeneralKeyPad.NINE,
-                GeneralKeyPad.MULTIPLY,
+                GeneralKey.RIGHT,
+                GeneralKey.CLOSE,
+                GeneralKey.NINE,
+                GeneralKey.SIX,
+                GeneralKey.THREE,
+                GeneralKey.DECIMAL,
             ),
             listOf(
-                GeneralKeyPad.FOUR,
-                GeneralKeyPad.FIVE,
-                GeneralKeyPad.SIX,
-                GeneralKeyPad.MINUS,
+                GeneralKey.BACK,
+                GeneralKey.DIVIDE,
+                GeneralKey.MULTIPLY,
+                GeneralKey.MINUS,
+                GeneralKey.PLUS,
+                GeneralKey.RESULT,
             ),
-            listOf(
-                GeneralKeyPad.ONE,
-                GeneralKeyPad.TWO,
-                GeneralKeyPad.THREE,
-                GeneralKeyPad.PLUS,
-            ),
-            listOf(
-                GeneralKeyPad.ZERO_ZERO,
-                GeneralKeyPad.ZERO,
-                GeneralKeyPad.DECIMAL,
-                GeneralKeyPad.RESULT,
-            ),
-        ).forEach {
-            Row(modifier = Modifier.weight(1f)) {
-                it.forEach {
-                    ViewButtonNumber(
+        )
+    val height = keyList.first().count() * KEY_HEIGHT
+    Row(
+        modifier =
+            Modifier
+                .padding(10.dp)
+                .padding(bottom = 20.dp)
+                .height(height.dp),
+    ) {
+        keyList.forEach { row ->
+            Column(modifier = Modifier.weight(1f)) {
+                row.forEach { key ->
+                    ViewButtonKey(
                         modifier =
                             Modifier
+                                .fillMaxWidth()
                                 .weight(1f)
-                                .fillMaxHeight()
                                 .padding(2.dp),
-                        onClick = { action?.inputKeyPad(it) },
-                        text = it.value,
+                        text = key.value,
+                        onClick = { action?.inputKey(key) },
                     )
                 }
             }

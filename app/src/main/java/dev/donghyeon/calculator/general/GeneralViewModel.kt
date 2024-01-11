@@ -15,13 +15,13 @@ import javax.inject.Inject
 interface GeneralAction {
     fun inputGeneralSelect(select: GeneralSelect)
 
-    fun inputKeyPad(key: GeneralKeyPad)
+    fun inputKey(key: GeneralKey)
 }
 
 class GeneralViewModel
     @Inject
     constructor() : BaseViewModel(), GeneralAction {
-        private val _state = MutableStateFlow(GeneralData())
+        private val _state = MutableStateFlow(GeneralState())
         val state = _state.asStateFlow()
 
         private val _sideEffect = MutableSharedFlow<SideEffect>()
@@ -31,7 +31,7 @@ class GeneralViewModel
             _state.value = state.value.copy(select = select)
         }
 
-        override fun inputKeyPad(key: GeneralKeyPad) {
+        override fun inputKey(key: GeneralKey) {
             _state.value =
                 state.value.let {
                     when (it.select) {
@@ -47,26 +47,26 @@ class GeneralViewModel
         }
 
         private fun input(
-            key: GeneralKeyPad,
-            calculate: GeneralData.Calculate,
-        ): GeneralData.Calculate =
+            key: GeneralKey,
+            calculate: GeneralState.Calculate,
+        ): GeneralState.Calculate =
             when (key) {
-                GeneralKeyPad.CLEAR -> calculate.copy(v = TextFieldValue(), result = "?")
-                GeneralKeyPad.LEFT -> {
+                GeneralKey.CLEAR -> calculate.copy(v = TextFieldValue(), result = "?")
+                GeneralKey.LEFT -> {
                     val index =
                         calculate.v.selection.start.let {
                             if (it == 0) 0 else it - 1
                         }
                     calculate.copy(v = calculate.v.copy(selection = TextRange(index)))
                 }
-                GeneralKeyPad.RIGHT -> {
+                GeneralKey.RIGHT -> {
                     val index = calculate.v.selection.start + 1
                     calculate.copy(v = calculate.v.copy(selection = TextRange(index)))
                 }
                 else -> {
                     val decimalMessage = "소수점은 하나만 입력하세요"
                     val decimalCheck = checkDecimal(calculate.v.text)
-                    if (key == GeneralKeyPad.DECIMAL && decimalCheck) {
+                    if (key == GeneralKey.DECIMAL && decimalCheck) {
                         viewModelScope.launch {
                             _sideEffect.emit(SideEffect.Toast(decimalMessage))
                         }
@@ -75,7 +75,7 @@ class GeneralViewModel
                         val inputTxt = inputKey(key, calculate.v)
                         val index =
                             calculate.v.selection.start.let {
-                                if (key == GeneralKeyPad.BACK) {
+                                if (key == GeneralKey.BACK) {
                                     if (it == 0) 0 else it - 1
                                 } else {
                                     it + key.value.count()
@@ -92,13 +92,13 @@ class GeneralViewModel
             }
 
         private fun inputKey(
-            key: GeneralKeyPad,
+            key: GeneralKey,
             value: TextFieldValue,
         ): String =
             StringBuilder(value.text).let {
                 val index = value.selection.start
                 when (key) {
-                    GeneralKeyPad.BACK -> {
+                    GeneralKey.BACK -> {
                         if (index == 0) {
                             it.toString()
                         } else {

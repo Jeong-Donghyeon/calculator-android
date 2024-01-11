@@ -1,3 +1,3 @@
 package dev.donghyeon.calculator.common
 
-const val BUTTON_HEIGHT = 70
+const val KEY_HEIGHT = 70

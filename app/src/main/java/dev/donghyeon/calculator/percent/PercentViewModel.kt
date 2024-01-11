@@ -21,9 +21,9 @@ import javax.inject.Inject
 interface PercentAction {
     fun inputPercentSelect(select: PercentSelect)
 
-    fun inputValueSelect(select: ValueSelect)
+    fun inputPercentValueSelect(select: PercentValueSelect)
 
-    fun inputKeyPad(key: PercentKeyPad)
+    fun inputKey(key: PercentKey)
 }
 
 @HiltViewModel
@@ -35,17 +35,30 @@ class PercentViewModel
         private val percentCalculate3UseCase: PercentCalculate3UseCase,
         private val percentCalculate4UseCase: PercentCalculate4UseCase,
     ) : BaseViewModel(), PercentAction {
-        private val _state = MutableStateFlow(PercentData())
+        private val _state = MutableStateFlow(PercentState())
         val state = _state.asStateFlow()
 
         private val _sideEffect = MutableSharedFlow<SideEffect>()
         val sideEffect = _sideEffect.asSharedFlow()
 
         override fun inputPercentSelect(select: PercentSelect) {
-            _state.value = state.value.copy(select = select)
+            _state.value =
+                state.value.let {
+                    viewModelScope.launch {
+                        val calculate =
+                            when (select) {
+                                PercentSelect.CALCULATE1 -> it.calculate1
+                                PercentSelect.CALCULATE2 -> it.calculate2
+                                PercentSelect.CALCULATE3 -> it.calculate3
+                                PercentSelect.CALCULATE4 -> it.calculate4
+                            }
+                        _sideEffect.emit(SideEffect.Focus(calculate.select.value))
+                    }
+                    it.copy(select = select)
+                }
         }
 
-        override fun inputValueSelect(select: ValueSelect) {
+        override fun inputPercentValueSelect(select: PercentValueSelect) {
             _state.value =
                 state.value.let {
                     when (it.select) {
@@ -60,7 +73,7 @@ class PercentViewModel
                 }
         }
 
-        override fun inputKeyPad(key: PercentKeyPad) {
+        override fun inputKey(key: PercentKey) {
             _state.value =
                 state.value.let {
                     when (it.select) {
@@ -76,25 +89,27 @@ class PercentViewModel
         }
 
         private fun input(
-            key: PercentKeyPad,
-            calculate: PercentData.Calculate,
-        ): PercentData.Calculate =
+            key: PercentKey,
+            calculate: PercentState.Calculate,
+        ): PercentState.Calculate =
             when (key) {
-                PercentKeyPad.CLEAR ->
+                PercentKey.CLEAR ->
                     when (calculate.select) {
-                        ValueSelect.V1 -> calculate.copy(v1 = TextFieldValue(), result = "?")
-                        ValueSelect.V2 -> calculate.copy(v2 = TextFieldValue(), result = "?")
+                        PercentValueSelect.V1 ->
+                            calculate.copy(v1 = TextFieldValue(), result = "?")
+                        PercentValueSelect.V2 ->
+                            calculate.copy(v2 = TextFieldValue(), result = "?")
                     }
-                PercentKeyPad.LEFT ->
+                PercentKey.LEFT ->
                     when (calculate.select) {
-                        ValueSelect.V1 -> {
+                        PercentValueSelect.V1 -> {
                             val index =
                                 calculate.v1.selection.start.let {
                                     if (it == 0) 0 else it - 1
                                 }
                             calculate.copy(v1 = calculate.v1.copy(selection = TextRange(index)))
                         }
-                        ValueSelect.V2 -> {
+                        PercentValueSelect.V2 -> {
                             val index =
                                 calculate.v2.selection.start.let {
                                     if (it == 0) 0 else it - 1
@@ -102,13 +117,13 @@ class PercentViewModel
                             calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
                         }
                     }
-                PercentKeyPad.RIGHT ->
+                PercentKey.RIGHT ->
                     when (calculate.select) {
-                        ValueSelect.V1 -> {
+                        PercentValueSelect.V1 -> {
                             val index = calculate.v1.selection.start + 1
                             calculate.copy(v1 = calculate.v1.copy(selection = TextRange(index)))
                         }
-                        ValueSelect.V2 -> {
+                        PercentValueSelect.V2 -> {
                             val index = calculate.v2.selection.start + 1
                             calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
                         }
@@ -117,10 +132,10 @@ class PercentViewModel
                     val decimalMessage = "소수점은 하나만 입력하세요"
                     val digitsLimitMessage = "최대 10 자리수 입니다"
                     when (calculate.select) {
-                        ValueSelect.V1 -> {
+                        PercentValueSelect.V1 -> {
                             val decimalCheck = checkDecimal(calculate.v1.text)
                             val digitsLimitCheck = checkDigitsLimit(calculate.v1.text, key)
-                            if (key == PercentKeyPad.DECIMAL && decimalCheck) {
+                            if (key == PercentKey.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
@@ -134,7 +149,7 @@ class PercentViewModel
                                 val inputTxt = inputKey(key, calculate.v1)
                                 val index =
                                     calculate.v1.selection.start.let {
-                                        if (key == PercentKeyPad.BACK) {
+                                        if (key == PercentKey.BACK) {
                                             if (it == 0) 0 else it - 1
                                         } else {
                                             it + key.value.count()
@@ -148,10 +163,10 @@ class PercentViewModel
                                 calculate.copy(v1 = v1)
                             }
                         }
-                        ValueSelect.V2 -> {
+                        PercentValueSelect.V2 -> {
                             val decimalCheck = checkDecimal(calculate.v2.text)
                             val digitsLimitCheck = checkDigitsLimit(calculate.v2.text, key)
-                            if (key == PercentKeyPad.DECIMAL && decimalCheck) {
+                            if (key == PercentKey.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
@@ -165,7 +180,7 @@ class PercentViewModel
                                 val inputTxt = inputKey(key, calculate.v2)
                                 val index =
                                     calculate.v2.selection.start.let {
-                                        if (key == PercentKeyPad.BACK) {
+                                        if (key == PercentKey.BACK) {
                                             if (it == 0) 0 else it - 1
                                         } else {
                                             it + key.value.count()
@@ -196,13 +211,13 @@ class PercentViewModel
             }
 
         private fun inputKey(
-            key: PercentKeyPad,
+            key: PercentKey,
             value: TextFieldValue,
         ): String =
             StringBuilder(value.text).let {
                 val index = value.selection.start
                 when (key) {
-                    PercentKeyPad.BACK -> {
+                    PercentKey.BACK -> {
                         if (index == 0) {
                             it.toString()
                         } else {
@@ -217,9 +232,9 @@ class PercentViewModel
 
         private fun checkDigitsLimit(
             v: String,
-            key: PercentKeyPad,
+            key: PercentKey,
         ): Boolean {
-            val count = if (key == PercentKeyPad.ZERO_ZERO) 9 else 10
+            val count = if (key == PercentKey.ZERO_ZERO) 9 else 10
             return v.replace(".", "").count() >= count
         }
     }

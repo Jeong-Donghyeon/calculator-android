@@ -5,7 +5,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -16,29 +15,24 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewTextField() =
-    ViewTextField(
-        value = TextFieldValue(text = "123.123"),
-        color = ColorSet.select,
-        onValueChange = {},
+fun Preview_ViewFieldGeneral() =
+    ViewFieldGeneral(
+        value = TextFieldValue(text = "1+2+3"),
     )
 
 @Composable
-fun ViewTextField(
+fun ViewFieldGeneral(
     modifier: Modifier = Modifier,
     value: TextFieldValue,
-    color: Color,
-    line: Boolean = true,
-    onValueChange: (TextFieldValue) -> Unit,
 ) {
     CompositionLocalProvider(
         LocalTextInputService provides null,
     ) {
-        val lineColor = if (line) color else ColorSet.transparent
+        val color = ColorSet.text
         TextField(
             modifier = modifier,
             value = value,
-            onValueChange = { onValueChange(it) },
+            onValueChange = {},
             textStyle =
                 TextSet.extraBold.copy(
                     color = color,
@@ -57,10 +51,10 @@ fun ViewTextField(
                     errorContainerColor = ColorSet.container,
                     cursorColor = ColorSet.select,
                     errorCursorColor = ColorSet.select,
-                    focusedIndicatorColor = lineColor,
-                    unfocusedIndicatorColor = lineColor,
-                    disabledIndicatorColor = lineColor,
-                    errorIndicatorColor = lineColor,
+                    focusedIndicatorColor = ColorSet.transparent,
+                    unfocusedIndicatorColor = ColorSet.transparent,
+                    disabledIndicatorColor = ColorSet.transparent,
+                    errorIndicatorColor = ColorSet.transparent,
                 ),
         )
     }

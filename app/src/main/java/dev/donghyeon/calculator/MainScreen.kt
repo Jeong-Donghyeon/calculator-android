@@ -38,7 +38,7 @@ fun MainScreen(viewModel: MainViewModel) =
                 window.statusBarColor = ColorSet.container.toArgb()
             }
             val menu by viewModel.menu.collectAsState()
-            LaunchedEffect(true) {
+            LaunchedEffect(Unit) {
                 viewModel.nav.collectLatest {
                     navController.navigate(it.second.route) {
                         launchSingleTop = true
@@ -48,7 +48,7 @@ fun MainScreen(viewModel: MainViewModel) =
                     }
                 }
             }
-            LaunchedEffect(true) {
+            LaunchedEffect(Unit) {
                 viewModel.toast.collectLatest {
                     toast?.cancel()
                     toast = Toast.makeText(context, it, Toast.LENGTH_SHORT)

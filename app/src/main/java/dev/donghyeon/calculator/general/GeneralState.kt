@@ -2,7 +2,7 @@ package dev.donghyeon.calculator.general
 
 import androidx.compose.ui.text.input.TextFieldValue
 
-data class GeneralData(
+data class GeneralState(
     val select: GeneralSelect = GeneralSelect.CALCULATE1,
     val calculate1: Calculate = Calculate(),
     val calculate2: Calculate = Calculate(),
@@ -22,7 +22,7 @@ enum class GeneralSelect(val value: String) {
     CALCULATE4("계산 4"),
 }
 
-enum class GeneralKeyPad(val value: String) {
+enum class GeneralKey(val value: String) {
     ONE("1"),
     TWO("2"),
     THREE("3"),
