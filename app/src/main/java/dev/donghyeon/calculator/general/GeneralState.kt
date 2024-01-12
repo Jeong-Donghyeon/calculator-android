@@ -42,7 +42,7 @@ enum class GeneralKey(val value: String) {
     RESULT("="),
     PLUS("+"),
     MINUS("-"),
-    MULTIPLY("x"),
+    MULTIPLY("×"),
     DIVIDE("÷"),
     SQUARE("^"),
     OPEN("("),

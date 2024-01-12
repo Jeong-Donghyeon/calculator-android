@@ -1,23 +1,23 @@
-package dev.donghyeon.calculator.domain
+package dev.donghyeon.calculator.calculate
 
-import dev.donghyeon.calculator.domain.fakedata.percent.eDecimalPercentCalculate1
-import dev.donghyeon.calculator.domain.fakedata.percent.eDecimalPercentCalculate2
-import dev.donghyeon.calculator.domain.fakedata.percent.eDecimalPercentCalculate3
-import dev.donghyeon.calculator.domain.fakedata.percent.eDecimalPercentCalculate4
-import dev.donghyeon.calculator.domain.fakedata.percent.eIntegerPercentCalculate1
-import dev.donghyeon.calculator.domain.fakedata.percent.eIntegerPercentCalculate2
-import dev.donghyeon.calculator.domain.fakedata.percent.eIntegerPercentCalculate3
-import dev.donghyeon.calculator.domain.fakedata.percent.eIntegerPercentCalculate4
-import dev.donghyeon.calculator.domain.fakedata.percent.vDecimalArr
-import dev.donghyeon.calculator.domain.fakedata.percent.vIntArr
+import dev.donghyeon.calculator.calculate.fakedata.percent.eDecimalPercentCalculate1
+import dev.donghyeon.calculator.calculate.fakedata.percent.eDecimalPercentCalculate2
+import dev.donghyeon.calculator.calculate.fakedata.percent.eDecimalPercentCalculate3
+import dev.donghyeon.calculator.calculate.fakedata.percent.eDecimalPercentCalculate4
+import dev.donghyeon.calculator.calculate.fakedata.percent.eIntegerPercentCalculate1
+import dev.donghyeon.calculator.calculate.fakedata.percent.eIntegerPercentCalculate2
+import dev.donghyeon.calculator.calculate.fakedata.percent.eIntegerPercentCalculate3
+import dev.donghyeon.calculator.calculate.fakedata.percent.eIntegerPercentCalculate4
+import dev.donghyeon.calculator.calculate.fakedata.percent.vDecimalArr
+import dev.donghyeon.calculator.calculate.fakedata.percent.vIntArr
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
 class PercentTest {
-    private val useCase1 = PercentCalculate1UseCase(NumberFormatString())
-    private val useCase2 = PercentCalculate2UseCase(NumberFormatString())
-    private val useCase3 = PercentCalculate3UseCase(NumberFormatString())
-    private val useCase4 = PercentCalculate4UseCase(NumberFormatString())
+    private val useCase1 = Percent1UseCase(FormatNumber())
+    private val useCase2 = Percent2UseCase(FormatNumber())
+    private val useCase3 = Percent3UseCase(FormatNumber())
+    private val useCase4 = Percent4UseCase(FormatNumber())
 
     @Test
     fun test_Integer_PercentCalculate1UseCase() {

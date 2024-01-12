@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "calculator"
 include(":app")
-include(":domain")
+include(":calculate")

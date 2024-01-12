@@ -2,14 +2,14 @@ package dev.donghyeon.calculator.general
 
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.donghyeon.calculator.calculate.GeneralUseCase
 import dev.donghyeon.calculator.common.BaseViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface GeneralAction {
@@ -18,9 +18,12 @@ interface GeneralAction {
     fun inputKey(key: GeneralKey)
 }
 
+@HiltViewModel
 class GeneralViewModel
     @Inject
-    constructor() : BaseViewModel(), GeneralAction {
+    constructor(
+        private val generalUseCase: GeneralUseCase,
+    ) : BaseViewModel(), GeneralAction {
         private val _state = MutableStateFlow(GeneralState())
         val state = _state.asStateFlow()
 
@@ -64,31 +67,24 @@ class GeneralViewModel
                     calculate.copy(v = calculate.v.copy(selection = TextRange(index)))
                 }
                 else -> {
-                    val decimalMessage = "소수점은 하나만 입력하세요"
-                    val decimalCheck = checkDecimal(calculate.v.text)
-                    if (key == GeneralKey.DECIMAL && decimalCheck) {
-                        viewModelScope.launch {
-                            _sideEffect.emit(SideEffect.Toast(decimalMessage))
-                        }
-                        calculate
-                    } else {
-                        val inputTxt = inputKey(key, calculate.v)
-                        val index =
-                            calculate.v.selection.start.let {
-                                if (key == GeneralKey.BACK) {
-                                    if (it == 0) 0 else it - 1
-                                } else {
-                                    it + key.value.count()
-                                }
+                    val inputTxt = inputKey(key, calculate.v)
+                    val index =
+                        calculate.v.selection.start.let {
+                            if (key == GeneralKey.BACK) {
+                                if (it == 0) 0 else it - 1
+                            } else {
+                                it + key.value.count()
                             }
-                        val v =
-                            calculate.v.copy(
-                                text = inputTxt,
-                                selection = TextRange(index),
-                            )
-                        calculate.copy(v = v)
-                    }
+                        }
+                    val v =
+                        calculate.v.copy(
+                            text = inputTxt,
+                            selection = TextRange(index),
+                        )
+                    calculate.copy(v = v)
                 }
+            }.let {
+                it.copy(result = generalUseCase(it.v.text))
             }
 
         private fun inputKey(
@@ -108,6 +104,4 @@ class GeneralViewModel
                     else -> it.insert(index, key.value).toString()
                 }
             }
-
-        private fun checkDecimal(v: String) = v.any { it == '.' }
     }

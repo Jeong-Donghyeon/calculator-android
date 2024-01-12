@@ -1,10 +1,10 @@
-package dev.donghyeon.calculator.domain
+package dev.donghyeon.calculator.calculate
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import javax.inject.Inject
 
-class NumberFormatString
+class FormatNumber
     @Inject
     constructor() {
         operator fun invoke(number: String): String =

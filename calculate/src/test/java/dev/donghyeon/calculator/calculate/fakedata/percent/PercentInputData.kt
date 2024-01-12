@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator.domain.fakedata.percent
+package dev.donghyeon.calculator.calculate.fakedata.percent
 
 val vIntArr =
     arrayOf(

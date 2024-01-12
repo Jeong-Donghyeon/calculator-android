@@ -5,12 +5,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.donghyeon.calculator.calculate.Percent1UseCase
+import dev.donghyeon.calculator.calculate.Percent2UseCase
+import dev.donghyeon.calculator.calculate.Percent3UseCase
+import dev.donghyeon.calculator.calculate.Percent4UseCase
 import dev.donghyeon.calculator.common.BaseViewModel
 import dev.donghyeon.calculator.common.SideEffect
-import dev.donghyeon.calculator.domain.PercentCalculate1UseCase
-import dev.donghyeon.calculator.domain.PercentCalculate2UseCase
-import dev.donghyeon.calculator.domain.PercentCalculate3UseCase
-import dev.donghyeon.calculator.domain.PercentCalculate4UseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -30,10 +30,10 @@ interface PercentAction {
 class PercentViewModel
     @Inject
     constructor(
-        private val percentCalculate1UseCase: PercentCalculate1UseCase,
-        private val percentCalculate2UseCase: PercentCalculate2UseCase,
-        private val percentCalculate3UseCase: PercentCalculate3UseCase,
-        private val percentCalculate4UseCase: PercentCalculate4UseCase,
+        private val percent1UseCase: Percent1UseCase,
+        private val percent2UseCase: Percent2UseCase,
+        private val percent3UseCase: Percent3UseCase,
+        private val percent4UseCase: Percent4UseCase,
     ) : BaseViewModel(), PercentAction {
         private val _state = MutableStateFlow(PercentState())
         val state = _state.asStateFlow()
@@ -198,12 +198,12 @@ class PercentViewModel
                         val result =
                             when (state.value.select) {
                                 PercentSelect.CALCULATE2 ->
-                                    percentCalculate2UseCase(it.v1.text, it.v2.text)
+                                    percent2UseCase(it.v1.text, it.v2.text)
                                 PercentSelect.CALCULATE3 ->
-                                    percentCalculate3UseCase(it.v1.text, it.v2.text)
+                                    percent3UseCase(it.v1.text, it.v2.text)
                                 PercentSelect.CALCULATE4 ->
-                                    percentCalculate4UseCase(it.v1.text, it.v2.text)
-                                else -> percentCalculate1UseCase(it.v1.text, it.v2.text)
+                                    percent4UseCase(it.v1.text, it.v2.text)
+                                else -> percent1UseCase(it.v1.text, it.v2.text)
                             }
                         it.copy(result = result)
                     }
