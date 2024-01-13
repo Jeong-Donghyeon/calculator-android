@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.fakedata.percent
 
-val vIntArr =
+val PercentIntegerInput =
     arrayOf(
         "123",
         "023",
@@ -11,7 +11,7 @@ val vIntArr =
         "00200",
     )
 
-val vDecimalArr =
+val PercentDecimalInput =
     listOf(
         "123",
         "023",

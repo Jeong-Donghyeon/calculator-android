@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 private var toast: Toast? = null
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) =
+fun MainScreen(viewModel: MainViewModel) {
     CompositionLocalProvider(
         LocalViewModel provides viewModel,
         LocalNavController provides rememberNavController(),
@@ -76,3 +76,4 @@ fun MainScreen(viewModel: MainViewModel) =
             }
         },
     )
+}

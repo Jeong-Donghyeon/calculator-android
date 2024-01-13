@@ -71,8 +71,8 @@ fun PercentScreen() {
                 is SideEffect.Toast -> main.showToast(it.message)
                 is SideEffect.Focus ->
                     when (it.fieldName) {
-                        PercentKey.V1.value -> v1Focus.requestFocus()
-                        PercentKey.V2.value -> v2Focus.requestFocus()
+                        PercentKey.VALUE1.value -> v1Focus.requestFocus()
+                        PercentKey.VALUE2.value -> v2Focus.requestFocus()
                     }
             }
         }
@@ -164,8 +164,8 @@ private fun CalculateView(
         }
     val (v1Color, v2Color) =
         when (calculate.select) {
-            PercentValueSelect.V1 -> ColorSet.select to ColorSet.text
-            PercentValueSelect.V2 -> ColorSet.text to ColorSet.select
+            PercentValueSelect.VALUE1 -> ColorSet.select to ColorSet.text
+            PercentValueSelect.VALUE2 -> ColorSet.text to ColorSet.select
         }
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -181,7 +181,7 @@ private fun CalculateView(
                     Modifier
                         .width(fieldLeft)
                         .padding(top = 5.dp),
-                text = PercentKey.V1.value,
+                text = PercentKey.VALUE1.value,
                 style = TextSet.extraBold.copy(v1Color, 24.sp),
                 textAlign = TextAlign.Center,
             )
@@ -192,10 +192,10 @@ private fun CalculateView(
                         .focusRequester(v1Focus ?: FocusRequester())
                         .onFocusChanged {
                             if (it.isFocused) {
-                                action?.inputPercentValueSelect(PercentValueSelect.V1)
+                                action?.inputPercentValueSelect(PercentValueSelect.VALUE1)
                             }
                         },
-                value = calculate.v1,
+                value = calculate.value1,
                 color = v1Color,
             )
             Text(
@@ -229,10 +229,10 @@ private fun CalculateView(
                         .focusRequester(v2Focus ?: FocusRequester())
                         .onFocusChanged {
                             if (it.isFocused) {
-                                action?.inputPercentValueSelect(PercentValueSelect.V2)
+                                action?.inputPercentValueSelect(PercentValueSelect.VALUE2)
                             }
                         },
-                value = calculate.v2,
+                value = calculate.value2,
                 color = v2Color,
             )
             val v2FontSize =
@@ -357,8 +357,8 @@ private fun KeyView(
             ),
             listOf(
                 PercentKey.BACK,
-                PercentKey.V1,
-                PercentKey.V2,
+                PercentKey.VALUE1,
+                PercentKey.VALUE2,
             ),
         )
     val height = keyList.first().count() * KEY_HEIGHT
@@ -380,7 +380,7 @@ private fun KeyView(
             Column(modifier = Modifier.weight(1f)) {
                 row.forEach { key ->
                     when (key) {
-                        PercentKey.V1, PercentKey.V2 -> {
+                        PercentKey.VALUE1, PercentKey.VALUE2 -> {
                             val color =
                                 if (key.value == calculate.select.name) {
                                     ColorSet.select
@@ -397,8 +397,8 @@ private fun KeyView(
                                 color = color,
                                 onClick = {
                                     when (key) {
-                                        PercentKey.V1 -> v1Focus?.requestFocus()
-                                        PercentKey.V2 -> v2Focus?.requestFocus()
+                                        PercentKey.VALUE1 -> v1Focus?.requestFocus()
+                                        PercentKey.VALUE2 -> v2Focus?.requestFocus()
                                         else -> {}
                                     }
                                 },

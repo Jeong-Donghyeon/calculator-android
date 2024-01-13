@@ -17,13 +17,14 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_TitleView() =
+fun Preview_TitleView() {
     TitleView(
         title = Destination.General.route,
     )
+}
 
 @Composable
-fun TitleView(title: String) =
+fun TitleView(title: String) {
     Box(
         modifier =
             Modifier
@@ -37,3 +38,4 @@ fun TitleView(title: String) =
             style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
         )
     }
+}

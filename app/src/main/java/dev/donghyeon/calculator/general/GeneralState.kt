@@ -11,7 +11,7 @@ data class GeneralState(
     val calculate4: Calculate = Calculate(),
 ) {
     data class Calculate(
-        val v: TextFieldValue = TextFieldValue(),
+        val value: TextFieldValue = TextFieldValue(),
         val result: String = "?",
     )
 }

@@ -95,46 +95,46 @@ class PercentViewModel
             when (key) {
                 PercentKey.CLEAR ->
                     when (calculate.select) {
-                        PercentValueSelect.V1 ->
-                            calculate.copy(v1 = TextFieldValue(), result = "?")
-                        PercentValueSelect.V2 ->
-                            calculate.copy(v2 = TextFieldValue(), result = "?")
+                        PercentValueSelect.VALUE1 ->
+                            calculate.copy(value1 = TextFieldValue(), result = "?")
+                        PercentValueSelect.VALUE2 ->
+                            calculate.copy(value2 = TextFieldValue(), result = "?")
                     }
                 PercentKey.LEFT ->
                     when (calculate.select) {
-                        PercentValueSelect.V1 -> {
+                        PercentValueSelect.VALUE1 -> {
                             val index =
-                                calculate.v1.selection.start.let {
+                                calculate.value1.selection.start.let {
                                     if (it == 0) 0 else it - 1
                                 }
-                            calculate.copy(v1 = calculate.v1.copy(selection = TextRange(index)))
+                            calculate.copy(value1 = calculate.value1.copy(selection = TextRange(index)))
                         }
-                        PercentValueSelect.V2 -> {
+                        PercentValueSelect.VALUE2 -> {
                             val index =
-                                calculate.v2.selection.start.let {
+                                calculate.value2.selection.start.let {
                                     if (it == 0) 0 else it - 1
                                 }
-                            calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
+                            calculate.copy(value2 = calculate.value2.copy(selection = TextRange(index)))
                         }
                     }
                 PercentKey.RIGHT ->
                     when (calculate.select) {
-                        PercentValueSelect.V1 -> {
-                            val index = calculate.v1.selection.start + 1
-                            calculate.copy(v1 = calculate.v1.copy(selection = TextRange(index)))
+                        PercentValueSelect.VALUE1 -> {
+                            val index = calculate.value1.selection.start + 1
+                            calculate.copy(value1 = calculate.value1.copy(selection = TextRange(index)))
                         }
-                        PercentValueSelect.V2 -> {
-                            val index = calculate.v2.selection.start + 1
-                            calculate.copy(v2 = calculate.v2.copy(selection = TextRange(index)))
+                        PercentValueSelect.VALUE2 -> {
+                            val index = calculate.value2.selection.start + 1
+                            calculate.copy(value2 = calculate.value2.copy(selection = TextRange(index)))
                         }
                     }
                 else -> {
                     val decimalMessage = "소수점은 하나만 입력하세요"
                     val digitsLimitMessage = "최대 10 자리수 입니다"
                     when (calculate.select) {
-                        PercentValueSelect.V1 -> {
-                            val decimalCheck = checkDecimal(calculate.v1.text)
-                            val digitsLimitCheck = checkDigitsLimit(calculate.v1.text, key)
+                        PercentValueSelect.VALUE1 -> {
+                            val decimalCheck = checkDecimal(calculate.value1.text)
+                            val digitsLimitCheck = checkDigitsLimit(calculate.value1.text, key)
                             if (key == PercentKey.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
@@ -146,9 +146,9 @@ class PercentViewModel
                                 }
                                 calculate
                             } else {
-                                val inputTxt = inputKey(key, calculate.v1)
+                                val inputTxt = inputKey(key, calculate.value1)
                                 val index =
-                                    calculate.v1.selection.start.let {
+                                    calculate.value1.selection.start.let {
                                         if (key == PercentKey.BACK) {
                                             if (it == 0) 0 else it - 1
                                         } else {
@@ -156,16 +156,16 @@ class PercentViewModel
                                         }
                                     }
                                 val v1 =
-                                    calculate.v1.copy(
+                                    calculate.value1.copy(
                                         text = inputTxt,
                                         selection = TextRange(index),
                                     )
-                                calculate.copy(v1 = v1)
+                                calculate.copy(value1 = v1)
                             }
                         }
-                        PercentValueSelect.V2 -> {
-                            val decimalCheck = checkDecimal(calculate.v2.text)
-                            val digitsLimitCheck = checkDigitsLimit(calculate.v2.text, key)
+                        PercentValueSelect.VALUE2 -> {
+                            val decimalCheck = checkDecimal(calculate.value2.text)
+                            val digitsLimitCheck = checkDigitsLimit(calculate.value2.text, key)
                             if (key == PercentKey.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
@@ -177,9 +177,9 @@ class PercentViewModel
                                 }
                                 calculate
                             } else {
-                                val inputTxt = inputKey(key, calculate.v2)
+                                val inputTxt = inputKey(key, calculate.value2)
                                 val index =
-                                    calculate.v2.selection.start.let {
+                                    calculate.value2.selection.start.let {
                                         if (key == PercentKey.BACK) {
                                             if (it == 0) 0 else it - 1
                                         } else {
@@ -187,23 +187,23 @@ class PercentViewModel
                                         }
                                     }
                                 val v2 =
-                                    calculate.v2.copy(
+                                    calculate.value2.copy(
                                         text = inputTxt,
                                         selection = TextRange(index),
                                     )
-                                calculate.copy(v2 = v2)
+                                calculate.copy(value2 = v2)
                             }
                         }
                     }.let {
                         val result =
                             when (state.value.select) {
                                 PercentSelect.CALCULATE2 ->
-                                    percent2UseCase(it.v1.text, it.v2.text)
+                                    percent2UseCase(it.value1.text, it.value2.text)
                                 PercentSelect.CALCULATE3 ->
-                                    percent3UseCase(it.v1.text, it.v2.text)
+                                    percent3UseCase(it.value1.text, it.value2.text)
                                 PercentSelect.CALCULATE4 ->
-                                    percent4UseCase(it.v1.text, it.v2.text)
-                                else -> percent1UseCase(it.v1.text, it.v2.text)
+                                    percent4UseCase(it.value1.text, it.value2.text)
+                                else -> percent1UseCase(it.value1.text, it.value2.text)
                             }
                         it.copy(result = result)
                     }

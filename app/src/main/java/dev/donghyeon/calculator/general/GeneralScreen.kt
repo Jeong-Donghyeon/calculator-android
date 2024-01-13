@@ -125,7 +125,7 @@ private fun CalculateView(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .focusRequester(focus ?: FocusRequester()),
-                value = calculate.v,
+                value = calculate.value,
             )
         }
         ViewTextResult(

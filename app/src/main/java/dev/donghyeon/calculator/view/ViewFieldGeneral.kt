@@ -20,10 +20,11 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewFieldGeneral() =
+fun Preview_ViewFieldGeneral() {
     ViewFieldGeneral(
         value = TextFieldValue(text = "1+2+3"),
     )
+}
 
 @Composable
 fun ViewFieldGeneral(

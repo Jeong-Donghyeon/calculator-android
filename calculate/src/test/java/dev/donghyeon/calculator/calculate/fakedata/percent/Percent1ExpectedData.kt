@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.fakedata.percent
 
-val eIntegerPercentCalculate1 =
+val Percent1IntegerExpected =
     arrayOf(
         "151.29",
         "28.29",
@@ -53,7 +53,7 @@ val eIntegerPercentCalculate1 =
         "400",
     )
 
-val eDecimalPercentCalculate1 =
+val Percent1DecimalExpected =
     arrayOf(
         "151.59",
         "151.46",

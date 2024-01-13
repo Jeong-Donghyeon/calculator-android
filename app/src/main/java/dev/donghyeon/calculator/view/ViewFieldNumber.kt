@@ -16,11 +16,12 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewFieldNumber() =
+fun Preview_ViewFieldNumber() {
     ViewFieldNumber(
         value = TextFieldValue(text = "123.123"),
         color = ColorSet.select,
     )
+}
 
 @Composable
 fun ViewFieldNumber(

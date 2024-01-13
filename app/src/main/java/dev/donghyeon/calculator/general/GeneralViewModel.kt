@@ -54,22 +54,22 @@ class GeneralViewModel
             calculate: GeneralState.Calculate,
         ): GeneralState.Calculate =
             when (key) {
-                GeneralKey.CLEAR -> calculate.copy(v = TextFieldValue(), result = "?")
+                GeneralKey.CLEAR -> calculate.copy(value = TextFieldValue(), result = "?")
                 GeneralKey.LEFT -> {
                     val index =
-                        calculate.v.selection.start.let {
+                        calculate.value.selection.start.let {
                             if (it == 0) 0 else it - 1
                         }
-                    calculate.copy(v = calculate.v.copy(selection = TextRange(index)))
+                    calculate.copy(value = calculate.value.copy(selection = TextRange(index)))
                 }
                 GeneralKey.RIGHT -> {
-                    val index = calculate.v.selection.start + 1
-                    calculate.copy(v = calculate.v.copy(selection = TextRange(index)))
+                    val index = calculate.value.selection.start + 1
+                    calculate.copy(value = calculate.value.copy(selection = TextRange(index)))
                 }
                 else -> {
-                    val inputTxt = inputKey(key, calculate.v)
+                    val inputTxt = inputKey(key, calculate.value)
                     val index =
-                        calculate.v.selection.start.let {
+                        calculate.value.selection.start.let {
                             if (key == GeneralKey.BACK) {
                                 if (it == 0) 0 else it - 1
                             } else {
@@ -77,14 +77,14 @@ class GeneralViewModel
                             }
                         }
                     val v =
-                        calculate.v.copy(
+                        calculate.value.copy(
                             text = inputTxt,
                             selection = TextRange(index),
                         )
-                    calculate.copy(v = v)
+                    calculate.copy(value = v)
                 }
             }.let {
-                it.copy(result = generalUseCase(it.v.text))
+                it.copy(result = generalUseCase(it.value.text))
             }
 
         private fun inputKey(

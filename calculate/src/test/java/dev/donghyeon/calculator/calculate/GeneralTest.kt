@@ -3,10 +3,11 @@ package dev.donghyeon.calculator.calculate
 import org.junit.Test
 
 class GeneralTest {
-    private val useCase = GeneralUseCase(
-        formatNumber = FormatNumber(),
-        formatPostfix = FormatPostfix(),
-    )
+    private val useCase =
+        GeneralUseCase(
+            formatNumber = FormatNumber(),
+            formatPostfix = FormatPostfix(),
+        )
 
     @Test
     fun test() {

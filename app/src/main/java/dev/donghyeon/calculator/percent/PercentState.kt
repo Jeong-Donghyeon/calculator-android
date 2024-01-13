@@ -10,9 +10,9 @@ data class PercentState(
     val calculate4: Calculate = Calculate(),
 ) {
     data class Calculate(
-        val select: PercentValueSelect = PercentValueSelect.V1,
-        val v1: TextFieldValue = TextFieldValue(),
-        val v2: TextFieldValue = TextFieldValue(),
+        val select: PercentValueSelect = PercentValueSelect.VALUE1,
+        val value1: TextFieldValue = TextFieldValue(),
+        val value2: TextFieldValue = TextFieldValue(),
         val result: String = "?",
     )
 }
@@ -25,8 +25,8 @@ enum class PercentSelect(val value: String) {
 }
 
 enum class PercentValueSelect(val value: String) {
-    V1(PercentKey.V1.value),
-    V2(PercentKey.V2.value),
+    VALUE1(PercentKey.VALUE1.value),
+    VALUE2(PercentKey.VALUE2.value),
 }
 
 enum class PercentKey(val value: String) {
@@ -46,6 +46,6 @@ enum class PercentKey(val value: String) {
     CLEAR("C"),
     LEFT("<-"),
     RIGHT("->"),
-    V1("V1"),
-    V2("V2"),
+    VALUE1("V1"),
+    VALUE2("V2"),
 }

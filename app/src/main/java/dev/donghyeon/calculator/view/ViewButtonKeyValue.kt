@@ -20,7 +20,7 @@ import dev.donghyeon.calculator.theme.TextSet
 @Composable
 fun Preview_ViewButtonKeyValue() {
     ViewButtonKeyValue(
-        text = PercentValueSelect.V1.value,
+        text = PercentValueSelect.VALUE1.value,
         color = ColorSet.select,
     )
 }

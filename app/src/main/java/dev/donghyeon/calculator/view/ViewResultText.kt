@@ -18,7 +18,7 @@ import dev.donghyeon.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewTextResult() =
+fun Preview_ViewTextResult() {
     ViewTextResult(
         text = "999,999,999,999,999",
         fontSizeRange =
@@ -27,6 +27,7 @@ fun Preview_ViewTextResult() =
                 max = 34.sp,
             ),
     )
+}
 
 @Composable
 fun ViewTextResult(
