@@ -1,6 +1,7 @@
 package dev.donghyeon.calculator.general
 
 import androidx.compose.ui.text.input.TextFieldValue
+import dev.donghyeon.calculator.calculate.Operator
 
 data class GeneralState(
     val select: GeneralSelect = GeneralSelect.CALCULATE1,
@@ -40,11 +41,11 @@ enum class GeneralKey(val value: String) {
     LEFT("<-"),
     RIGHT("->"),
     RESULT("="),
-    PLUS("+"),
-    MINUS("-"),
-    MULTIPLY("×"),
-    DIVIDE("÷"),
-    SQUARE("^"),
-    OPEN("("),
-    CLOSE(")"),
+    SQUARE(Operator.SQUARE.value),
+    MULTIPLY(Operator.MULTIPLY.value),
+    DIVIDE(Operator.DIVIDE.value),
+    PLUS(Operator.PLUS.value),
+    MINUS(Operator.MINUS.value),
+    OPEN(Operator.OPEN.value),
+    CLOSE(Operator.CLOSE.value),
 }
