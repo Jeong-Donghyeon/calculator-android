@@ -6,10 +6,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalTextInputService
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import dev.donghyeon.calculator.calculate.Operator
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 
@@ -56,6 +61,34 @@ fun ViewFieldGeneral(
                     disabledIndicatorColor = ColorSet.transparent,
                     errorIndicatorColor = ColorSet.transparent,
                 ),
+            visualTransformation = {
+                TransformedText(
+                    buildAnnotatedString {
+                        append(it)
+                        val style: (String) -> SpanStyle = {
+                            SpanStyle(
+                                color =
+                                    when (it) {
+                                        Operator.OPEN.value,
+                                        Operator.CLOSE.value,
+                                        -> ColorSet.bracket
+                                        else -> ColorSet.select
+                                    },
+                            )
+                        }
+                        toAnnotatedString().forEachIndexed { i, s ->
+                            if (Operator.entries.any { it.value == s.toString() }) {
+                                addStyle(
+                                    style = style(s.toString()),
+                                    start = i,
+                                    end = i + 1,
+                                )
+                            }
+                        }
+                    },
+                    OffsetMapping.Identity,
+                )
+            },
         )
     }
 }

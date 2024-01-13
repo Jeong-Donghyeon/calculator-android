@@ -9,5 +9,5 @@ object ColorSet {
     val button: Color = Color.DarkGray
     val select: Color = Color.Yellow
     val result: Color = Color.Green
-    val blue: Color = Color.Blue
+    val bracket: Color = Color.Blue
 }
