@@ -10,7 +10,7 @@ class FormatPostfix
             val infixList = mutableListOf<String>()
             var row = ""
             infix.forEachIndexed { i, v ->
-                if (v.isDigit()) {
+                if (v.isDigit() || v == '.') {
                     row += v.toString()
                 } else {
                     if (row != "") {
