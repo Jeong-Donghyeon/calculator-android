@@ -45,26 +45,6 @@ class FormatPostfix
                             result.add(pop)
                         }
                     }
-                } else if (it == "^") {
-                    if (oper.empty()) {
-                        oper.push(it)
-                    } else {
-                        var s = true
-                        while (s) {
-                            val last =
-                                if (oper.empty()) {
-                                    break
-                                } else {
-                                    oper.last()
-                                }
-                            if (last == "^") {
-                                result.add(oper.pop())
-                            } else {
-                                s = false
-                            }
-                        }
-                        oper.push(it)
-                    }
                 } else if (it == "×" || it == "÷") {
                     if (oper.empty()) {
                         oper.push(it)

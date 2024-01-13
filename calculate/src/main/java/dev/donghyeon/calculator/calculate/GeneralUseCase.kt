@@ -22,7 +22,6 @@ class GeneralUseCase
                     val v2 = stack.pop().toBigDecimalOrNull() ?: return "?"
                     val calculate =
                         when (v) {
-                            Operator.SQUARE.value -> return "?"
                             Operator.MULTIPLY.value -> v1.multiply(v2)
                             Operator.DIVIDE.value -> v1.divide(v2, 10, RoundingMode.DOWN)
                             Operator.PLUS.value -> v1.plus(v2)

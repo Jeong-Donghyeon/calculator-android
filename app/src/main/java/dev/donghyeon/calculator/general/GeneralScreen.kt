@@ -190,7 +190,7 @@ private fun KeyPadView(action: GeneralAction? = null) {
         listOf(
             listOf(
                 GeneralKey.CLEAR,
-                GeneralKey.SQUARE,
+                GeneralKey.COPY,
                 GeneralKey.SEVEN,
                 GeneralKey.FOUR,
                 GeneralKey.ONE,
@@ -214,11 +214,11 @@ private fun KeyPadView(action: GeneralAction? = null) {
             ),
             listOf(
                 GeneralKey.BACK,
+                GeneralKey.PASTE,
                 GeneralKey.DIVIDE,
                 GeneralKey.MULTIPLY,
                 GeneralKey.MINUS,
                 GeneralKey.PLUS,
-                GeneralKey.RESULT,
             ),
         )
     val height = keyList.first().count() * KEY_HEIGHT
