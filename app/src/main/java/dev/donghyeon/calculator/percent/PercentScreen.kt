@@ -382,7 +382,7 @@ private fun KeyView(
                     when (key) {
                         PercentKey.VALUE1, PercentKey.VALUE2 -> {
                             val color =
-                                if (key.value == calculate.select.name) {
+                                if (key.value == calculate.select.value) {
                                     ColorSet.select
                                 } else {
                                     ColorSet.text
