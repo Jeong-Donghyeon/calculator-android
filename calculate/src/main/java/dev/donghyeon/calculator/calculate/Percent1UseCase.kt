@@ -18,6 +18,6 @@ class Percent1UseCase
                 value1.multiply(value2)
                     .divide("100".toBigDecimal(), 10, RoundingMode.DOWN)
                     .toString()
-            return formatNumber(result)
+            return formatNumber(result, scaleDown = true)
         }
     }

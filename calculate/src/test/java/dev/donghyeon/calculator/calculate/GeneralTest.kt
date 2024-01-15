@@ -1,9 +1,11 @@
 package dev.donghyeon.calculator.calculate
 
+import dev.donghyeon.calculator.calculate.fakedata.general.GeneralExpected
+import dev.donghyeon.calculator.calculate.fakedata.general.GeneralIntegerInput
 import org.junit.Test
 
 class GeneralTest {
-    private val useCase =
+    private val general =
         GeneralUseCase(
             formatNumber = FormatNumber(),
             formatPostfix = FormatPostfix(),
@@ -11,10 +13,11 @@ class GeneralTest {
 
     @Test
     fun test() {
-        // + - × ÷
-        val e = "(9.5+5)×5"
-        val a = useCase(e)
-        println("e: $e")
-        println("a: $a")
+        GeneralIntegerInput.mapIndexed { index, input ->
+            val expected = GeneralExpected[index]
+            val actuals = general(input)
+            val result = expected == actuals
+            println("$input = $expected | $actuals | $result")
+        }
     }
 }

@@ -21,64 +21,72 @@ class PercentTest {
 
     @Test
     fun test_Percent1() {
-        val integerActuals = calculate(
-            inputArr = PercentIntegerInput,
-            expectedArr = Percent1IntegerExpected,
-            percent = { v1, v2 -> percent1(v1, v2) }
-        )
-        val decimalActuals = calculate(
-            inputArr = PercentDecimalInput,
-            expectedArr = Percent1DecimalExpected,
-            percent = { v1, v2 -> percent1(v1, v2) }
-        )
+        val integerActuals =
+            calculate(
+                inputArr = PercentIntegerInput,
+                expectedArr = Percent1IntegerExpected,
+                percent = { v1, v2 -> percent1(v1, v2) },
+            )
+        val decimalActuals =
+            calculate(
+                inputArr = PercentDecimalInput,
+                expectedArr = Percent1DecimalExpected,
+                percent = { v1, v2 -> percent1(v1, v2) },
+            )
         assertArrayEquals(Percent1IntegerExpected, integerActuals)
         assertArrayEquals(Percent1DecimalExpected, decimalActuals)
     }
 
     @Test
     fun test_Percent2() {
-        val integerActuals = calculate(
-            inputArr = PercentIntegerInput,
-            expectedArr = Percent2IntegerExpected,
-            percent = { v1, v2 -> percent2(v1, v2) }
-        )
-        val decimalActuals = calculate(
-            inputArr = PercentDecimalInput,
-            expectedArr = Percent2DecimalExpected,
-            percent = { v1, v2 -> percent2(v1, v2) }
-        )
+        val integerActuals =
+            calculate(
+                inputArr = PercentIntegerInput,
+                expectedArr = Percent2IntegerExpected,
+                percent = { v1, v2 -> percent2(v1, v2) },
+            )
+        val decimalActuals =
+            calculate(
+                inputArr = PercentDecimalInput,
+                expectedArr = Percent2DecimalExpected,
+                percent = { v1, v2 -> percent2(v1, v2) },
+            )
         assertArrayEquals(Percent2IntegerExpected, integerActuals)
         assertArrayEquals(Percent2DecimalExpected, decimalActuals)
     }
 
     @Test
     fun test_Percent3() {
-        val integerActuals = calculate(
-            inputArr = PercentIntegerInput,
-            expectedArr = Percent3IntegerExpected,
-            percent = { v1, v2 -> percent3(v1, v2) }
-        )
-        val decimalActuals = calculate(
-            inputArr = PercentDecimalInput,
-            expectedArr = Percent3DecimalExpected,
-            percent = { v1, v2 -> percent3(v1, v2) }
-        )
+        val integerActuals =
+            calculate(
+                inputArr = PercentIntegerInput,
+                expectedArr = Percent3IntegerExpected,
+                percent = { v1, v2 -> percent3(v1, v2) },
+            )
+        val decimalActuals =
+            calculate(
+                inputArr = PercentDecimalInput,
+                expectedArr = Percent3DecimalExpected,
+                percent = { v1, v2 -> percent3(v1, v2) },
+            )
         assertArrayEquals(Percent3IntegerExpected, integerActuals)
         assertArrayEquals(Percent3DecimalExpected, decimalActuals)
     }
 
     @Test
     fun test_Percent4() {
-        val integerActuals = calculate(
-            inputArr = PercentIntegerInput,
-            expectedArr = Percent4IntegerExpected,
-            percent = { v1, v2 -> percent4(v1, v2) }
-        )
-        val decimalActuals = calculate(
-            inputArr = PercentDecimalInput,
-            expectedArr = Percent4DecimalExpected,
-            percent = { v1, v2 -> percent4(v1, v2) }
-        )
+        val integerActuals =
+            calculate(
+                inputArr = PercentIntegerInput,
+                expectedArr = Percent4IntegerExpected,
+                percent = { v1, v2 -> percent4(v1, v2) },
+            )
+        val decimalActuals =
+            calculate(
+                inputArr = PercentDecimalInput,
+                expectedArr = Percent4DecimalExpected,
+                percent = { v1, v2 -> percent4(v1, v2) },
+            )
         assertArrayEquals(Percent4IntegerExpected, integerActuals)
         assertArrayEquals(Percent4DecimalExpected, decimalActuals)
     }

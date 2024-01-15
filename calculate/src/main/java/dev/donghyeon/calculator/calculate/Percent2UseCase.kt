@@ -17,6 +17,6 @@ class Percent2UseCase
             val result =
                 value2.divide(value1, 10, RoundingMode.DOWN)
                     .multiply("100".toBigDecimal()).toString()
-            return formatNumber(result) + "%"
+            return formatNumber(result, scaleDown = true) + "%"
         }
     }

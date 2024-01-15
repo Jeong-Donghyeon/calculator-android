@@ -24,7 +24,6 @@ class FormatPostfix
                 }
             }
             if (!checkInfix(infixList)) return emptyList()
-            println("checkInfix")
             val result = mutableListOf<String>()
             val oper = Stack<String>()
             infixList.forEach {
@@ -95,7 +94,6 @@ class FormatPostfix
         }
 
         private fun checkInfix(infixList: List<String>): Boolean {
-            println("infixList: $infixList")
             val checkValue =
                 infixList.all { v ->
                     v.toBigDecimalOrNull() != null || Operator.entries.any { v == it.value }

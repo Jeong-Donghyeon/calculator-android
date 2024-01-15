@@ -20,6 +20,6 @@ class Percent3UseCase
             val result =
                 value.abs().divide(value1, 10, RoundingMode.DOWN)
                     .multiply("100".toBigDecimal()).toString()
-            return formatNumber(result) + "% $updown"
+            return formatNumber(result, scaleDown = true) + "% $updown"
         }
     }
