@@ -3,7 +3,7 @@ package dev.donghyeon.calculator.calculate
 import java.util.Stack
 import javax.inject.Inject
 
-class FormatPostfix
+class GeneralPostfix
     @Inject
     constructor() {
         operator fun invoke(infix: String): List<String> {
@@ -27,66 +27,45 @@ class FormatPostfix
             val result = mutableListOf<String>()
             val oper = Stack<String>()
             infixList.forEach {
-                if (it == "(") {
-                    oper.push(it)
-                } else if (it == ")") {
-                    var open = true
-                    while (open) {
-                        val pop =
-                            if (oper.empty()) {
-                                break
-                            } else {
-                                oper.pop()
-                            }
-                        if (pop == "(") {
-                            open = false
+                when (it) {
+                    GenralOperator.OPEN.value, GenralOperator.CLOSE.value -> {}
+                    GenralOperator.MULTIPLY.value, GenralOperator.DIVIDE.value -> {
+                        if (oper.empty()) {
+                            oper.push(it)
                         } else {
-                            result.add(pop)
-                        }
-                    }
-                } else if (it == "×" || it == "÷") {
-                    if (oper.empty()) {
-                        oper.push(it)
-                    } else {
-                        var md = true
-                        while (md) {
-                            val last =
+                            while (true) {
                                 if (oper.empty()) {
+                                    oper.push(it)
                                     break
-                                } else {
-                                    oper.last()
                                 }
-                            if (last == "×" || last == "÷") {
-                                result.add(oper.pop())
-                            } else {
-                                md = false
+                                when (oper.peek()) {
+                                    GenralOperator.OPEN.value, GenralOperator.CLOSE.value-> {}
+                                    GenralOperator.MULTIPLY.value, GenralOperator.DIVIDE.value -> {
+                                        result.add(oper.pop())
+                                    }
+                                    GenralOperator.PLUS.value, GenralOperator.MINUS.value -> {
+                                        oper.push(it)
+                                        break
+                                    }
+                                }
                             }
                         }
-                        oper.push(it)
                     }
-                } else if (it == "+" || it == "-") {
-                    if (oper.empty()) {
-                        oper.push(it)
-                    } else {
-                        var pm = true
-                        while (pm) {
-                            val last =
+                    GenralOperator.PLUS.value, GenralOperator.MINUS.value -> {
+                        if (oper.empty()) {
+                            oper.push(it)
+                        } else {
+                            while (true) {
                                 if (oper.empty()) {
+                                    oper.push(it)
                                     break
                                 } else {
-                                    oper.last()
+                                    result.add(oper.pop())
                                 }
-                            if (last == "(") {
-                                oper.push(oper.pop())
-                                pm = false
-                            } else {
-                                result.add(oper.pop())
                             }
                         }
-                        oper.push(it)
                     }
-                } else {
-                    result.add(it)
+                    else -> result.add(it)
                 }
             }
             result.addAll(oper.reversed())
@@ -96,7 +75,7 @@ class FormatPostfix
         private fun checkInfix(infixList: List<String>): Boolean {
             val checkValue =
                 infixList.all { v ->
-                    v.toBigDecimalOrNull() != null || Operator.entries.any { v == it.value }
+                    v.toBigDecimalOrNull() != null || GenralOperator.entries.any { v == it.value }
                 }
             var checkBracket: Boolean? = null
             var bracketCount = 0

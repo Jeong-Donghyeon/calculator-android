@@ -1,13 +1,13 @@
 package dev.donghyeon.calculator.calculate.fakedata.general
 
-import dev.donghyeon.calculator.calculate.Operator
+import dev.donghyeon.calculator.calculate.GenralOperator
 
 private val GeneralOperatorList =
     listOf(
-        Operator.PLUS.value,
-        Operator.MINUS.value,
-        Operator.MULTIPLY.value,
-        Operator.DIVIDE.value,
+        GenralOperator.PLUS.value,
+        GenralOperator.MINUS.value,
+        GenralOperator.MULTIPLY.value,
+        GenralOperator.DIVIDE.value,
     ).let {
         it.map { v1 ->
             val l1 = it - v1

@@ -14,7 +14,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import dev.donghyeon.calculator.calculate.Operator
+import dev.donghyeon.calculator.calculate.GenralOperator
 import dev.donghyeon.calculator.theme.ColorSet
 import dev.donghyeon.calculator.theme.TextSet
 
@@ -70,15 +70,15 @@ fun ViewFieldGeneral(
                             SpanStyle(
                                 color =
                                     when (it) {
-                                        Operator.OPEN.value,
-                                        Operator.CLOSE.value,
+                                        GenralOperator.OPEN.value,
+                                        GenralOperator.CLOSE.value,
                                         -> ColorSet.bracket
                                         else -> ColorSet.select
                                     },
                             )
                         }
                         toAnnotatedString().forEachIndexed { i, s ->
-                            if (Operator.entries.any { it.value == s.toString() }) {
+                            if (GenralOperator.entries.any { it.value == s.toString() }) {
                                 addStyle(
                                     style = style(s.toString()),
                                     start = i,

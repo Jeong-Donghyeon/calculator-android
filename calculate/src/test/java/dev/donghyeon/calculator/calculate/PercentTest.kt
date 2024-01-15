@@ -14,10 +14,10 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
 class PercentTest {
-    private val percent1 = Percent1UseCase(FormatNumber())
-    private val percent2 = Percent2UseCase(FormatNumber())
-    private val percent3 = Percent3UseCase(FormatNumber())
-    private val percent4 = Percent4UseCase(FormatNumber())
+    private val percent1 = Percent1UseCase(ResultFormatPercent())
+    private val percent2 = Percent2UseCase(ResultFormatPercent())
+    private val percent3 = Percent3UseCase(ResultFormatPercent())
+    private val percent4 = Percent4UseCase(ResultFormatPercent())
 
     @Test
     fun test_Percent1() {

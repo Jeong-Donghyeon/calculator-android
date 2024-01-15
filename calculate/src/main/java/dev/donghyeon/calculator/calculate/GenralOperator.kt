@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate
 
-enum class Operator(val value: String) {
+enum class GenralOperator(val value: String) {
     MULTIPLY("×"),
     DIVIDE("÷"),
     PLUS("+"),

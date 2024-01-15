@@ -7,7 +7,7 @@ import javax.inject.Inject
 class Percent3UseCase
     @Inject
     constructor(
-        private val formatNumber: FormatNumber,
+        private val format: ResultFormatPercent,
     ) {
         operator fun invoke(
             v1: String,
@@ -20,6 +20,6 @@ class Percent3UseCase
             val result =
                 value.abs().divide(value1, 10, RoundingMode.DOWN)
                     .multiply("100".toBigDecimal()).toString()
-            return formatNumber(result, scaleDown = true) + "% $updown"
+            return format(result) + "% $updown"
         }
     }
