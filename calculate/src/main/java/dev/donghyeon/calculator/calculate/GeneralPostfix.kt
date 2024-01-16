@@ -39,7 +39,7 @@ class GeneralPostfix
                                     break
                                 }
                                 when (oper.peek()) {
-                                    GenralOperator.OPEN.value, GenralOperator.CLOSE.value-> {}
+                                    GenralOperator.OPEN.value, GenralOperator.CLOSE.value -> {}
                                     GenralOperator.MULTIPLY.value, GenralOperator.DIVIDE.value -> {
                                         result.add(oper.pop())
                                     }

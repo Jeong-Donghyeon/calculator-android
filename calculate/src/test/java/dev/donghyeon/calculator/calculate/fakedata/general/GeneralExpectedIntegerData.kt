@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.fakedata.general
 
-val GeneralExpected =
+val GeneralExpectedInteger =
     arrayOf(
         "-38.6153",
         "68",

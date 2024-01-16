@@ -7,9 +7,7 @@ import javax.inject.Inject
 class ResultFormatGeneral
     @Inject
     constructor() {
-        operator fun invoke(
-            number: String
-        ): String =
+        operator fun invoke(number: String): String =
             number.toBigDecimalOrNull()?.let {
                 val result =
                     DecimalFormat("#,###.######").apply {
