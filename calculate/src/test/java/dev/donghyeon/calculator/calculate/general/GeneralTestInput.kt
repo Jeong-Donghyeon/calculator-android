@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator.calculate.fakedata.general
+package dev.donghyeon.calculator.calculate.general
 
 import dev.donghyeon.calculator.calculate.GenralOperator
 

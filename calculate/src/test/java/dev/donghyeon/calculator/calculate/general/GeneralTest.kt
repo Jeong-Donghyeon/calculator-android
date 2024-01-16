@@ -1,9 +1,8 @@
-package dev.donghyeon.calculator.calculate
+package dev.donghyeon.calculator.calculate.general
 
-import dev.donghyeon.calculator.calculate.fakedata.general.GeneralDecimalInput
-import dev.donghyeon.calculator.calculate.fakedata.general.GeneralExpectedDecimal
-import dev.donghyeon.calculator.calculate.fakedata.general.GeneralExpectedInteger
-import dev.donghyeon.calculator.calculate.fakedata.general.GeneralIntegerInput
+import dev.donghyeon.calculator.calculate.GeneralPostfix
+import dev.donghyeon.calculator.calculate.GeneralUseCase
+import dev.donghyeon.calculator.calculate.ResultFormatGeneral
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
@@ -18,25 +17,25 @@ class GeneralTest {
     fun test_GeneralInteger() {
         val actuals =
             GeneralIntegerInput.mapIndexed { index, input ->
-                val expected = GeneralExpectedInteger[index]
+                val expected = GeneralIntegerExpected[index]
                 val actuals = general(input)
                 val result = expected == actuals
                 println("$input = $expected | $actuals | $result")
                 actuals
             }.toTypedArray()
-        assertArrayEquals(GeneralExpectedInteger, actuals)
+        assertArrayEquals(GeneralIntegerExpected, actuals)
     }
 
     @Test
     fun test_GeneralDecimal() {
         val actuals =
             GeneralDecimalInput.mapIndexed { index, input ->
-                val expected = GeneralExpectedDecimal[index]
+                val expected = GeneralDecimalExpected[index]
                 val actuals = general(input)
                 val result = expected == actuals
                 println("$input = $expected | $actuals | $result")
                 actuals
             }.toTypedArray()
-        assertArrayEquals(GeneralExpectedDecimal, actuals)
+        assertArrayEquals(GeneralDecimalExpected, actuals)
     }
 }

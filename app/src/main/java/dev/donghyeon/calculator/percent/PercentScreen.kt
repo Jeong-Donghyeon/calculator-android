@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.Destination
 import dev.donghyeon.calculator.R
+import dev.donghyeon.calculator.calculate.PercentCalculateType
 import dev.donghyeon.calculator.common.KEY_HEIGHT
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
@@ -129,26 +130,26 @@ private fun CalculateView(
     val fieldLeft: Dp = 50.dp
     val fieldRight: Dp = 60.dp
     val guideStrList =
-        when (state.select) {
-            PercentSelect.CALCULATE1 ->
+        when (state.type) {
+            PercentCalculateType.TYPE1 ->
                 listOf(
                     "의",
                     "% 는",
                     "예) 100 의 10% 는 10",
                 )
-            PercentSelect.CALCULATE2 ->
+            PercentCalculateType.TYPE2 ->
                 listOf(
                     "의",
                     "은",
                     "예) 100 의 10 은 10%",
                 )
-            PercentSelect.CALCULATE3 ->
+            PercentCalculateType.TYPE3 ->
                 listOf(
                     "이/가",
                     "(으)로\n변하면",
                     "예) 100 이 10 으로 변하면 90% 감소",
                 )
-            PercentSelect.CALCULATE4 ->
+            PercentCalculateType.TYPE4 ->
                 listOf(
                     "이/가",
                     "%\n증가하면",
@@ -156,11 +157,11 @@ private fun CalculateView(
                 )
         }
     val calculate =
-        when (state.select) {
-            PercentSelect.CALCULATE1 -> state.calculate1
-            PercentSelect.CALCULATE2 -> state.calculate2
-            PercentSelect.CALCULATE3 -> state.calculate3
-            PercentSelect.CALCULATE4 -> state.calculate4
+        when (state.type) {
+            PercentCalculateType.TYPE1 -> state.calculate1
+            PercentCalculateType.TYPE2 -> state.calculate2
+            PercentCalculateType.TYPE3 -> state.calculate3
+            PercentCalculateType.TYPE4 -> state.calculate4
         }
     val (v1Color, v2Color) =
         when (calculate.select) {
@@ -236,9 +237,9 @@ private fun CalculateView(
                 color = v2Color,
             )
             val v2FontSize =
-                when (state.select) {
-                    PercentSelect.CALCULATE3 -> 14.sp
-                    PercentSelect.CALCULATE4 -> 14.sp
+                when (state.type) {
+                    PercentCalculateType.TYPE3 -> 14.sp
+                    PercentCalculateType.TYPE4 -> 14.sp
                     else -> 20.sp
                 }
             Text(
@@ -311,14 +312,14 @@ private fun MenuView(
                 Modifier
                     .fillMaxWidth()
                     .padding(bottom = 3.dp),
-            tabs = PercentSelect.entries.map { it.value },
-            index = state.select.ordinal,
+            tabs = PercentCalculateType.entries.map { it.value },
+            index = state.type.ordinal,
             onTab = {
                 when (it) {
-                    0 -> action?.inputPercentSelect(PercentSelect.CALCULATE1)
-                    1 -> action?.inputPercentSelect(PercentSelect.CALCULATE2)
-                    2 -> action?.inputPercentSelect(PercentSelect.CALCULATE3)
-                    3 -> action?.inputPercentSelect(PercentSelect.CALCULATE4)
+                    0 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE1)
+                    1 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE2)
+                    2 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE3)
+                    3 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE4)
                 }
             },
         )
@@ -363,11 +364,11 @@ private fun KeyView(
         )
     val height = keyList.first().count() * KEY_HEIGHT
     val calculate =
-        when (state.select) {
-            PercentSelect.CALCULATE1 -> state.calculate1
-            PercentSelect.CALCULATE2 -> state.calculate2
-            PercentSelect.CALCULATE3 -> state.calculate3
-            PercentSelect.CALCULATE4 -> state.calculate4
+        when (state.type) {
+            PercentCalculateType.TYPE1 -> state.calculate1
+            PercentCalculateType.TYPE2 -> state.calculate2
+            PercentCalculateType.TYPE3 -> state.calculate3
+            PercentCalculateType.TYPE4 -> state.calculate4
         }
     Row(
         modifier =

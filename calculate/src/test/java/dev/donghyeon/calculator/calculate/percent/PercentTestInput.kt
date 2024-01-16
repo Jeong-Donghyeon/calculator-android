@@ -1,4 +1,4 @@
-package dev.donghyeon.calculator.calculate.fakedata.percent
+package dev.donghyeon.calculator.calculate.percent
 
 val PercentIntegerInput =
     arrayOf(

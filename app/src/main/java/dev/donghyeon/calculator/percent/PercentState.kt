@@ -1,9 +1,10 @@
 package dev.donghyeon.calculator.percent
 
 import androidx.compose.ui.text.input.TextFieldValue
+import dev.donghyeon.calculator.calculate.PercentCalculateType
 
 data class PercentState(
-    val select: PercentSelect = PercentSelect.CALCULATE1,
+    val type: PercentCalculateType = PercentCalculateType.TYPE1,
     val calculate1: Calculate = Calculate(),
     val calculate2: Calculate = Calculate(),
     val calculate3: Calculate = Calculate(),
@@ -15,13 +16,6 @@ data class PercentState(
         val value2: TextFieldValue = TextFieldValue(),
         val result: String = "?",
     )
-}
-
-enum class PercentSelect(val value: String) {
-    CALCULATE1("비율값"),
-    CALCULATE2("일부값"),
-    CALCULATE3("증감값"),
-    CALCULATE4("증감율"),
 }
 
 enum class PercentValueSelect(val value: String) {

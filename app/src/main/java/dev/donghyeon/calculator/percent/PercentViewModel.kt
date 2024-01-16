@@ -5,10 +5,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.donghyeon.calculator.calculate.Percent1UseCase
-import dev.donghyeon.calculator.calculate.Percent2UseCase
-import dev.donghyeon.calculator.calculate.Percent3UseCase
-import dev.donghyeon.calculator.calculate.Percent4UseCase
+import dev.donghyeon.calculator.calculate.PercentCalculateType
+import dev.donghyeon.calculator.calculate.PercentUseCase
 import dev.donghyeon.calculator.common.BaseViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface PercentAction {
-    fun inputPercentSelect(select: PercentSelect)
+    fun inputPercentCalculateType(type: PercentCalculateType)
 
     fun inputPercentValueSelect(select: PercentValueSelect)
 
@@ -30,10 +28,7 @@ interface PercentAction {
 class PercentViewModel
     @Inject
     constructor(
-        private val percent1UseCase: Percent1UseCase,
-        private val percent2UseCase: Percent2UseCase,
-        private val percent3UseCase: Percent3UseCase,
-        private val percent4UseCase: Percent4UseCase,
+        private val percentUseCase: PercentUseCase,
     ) : BaseViewModel(), PercentAction {
         private val _state = MutableStateFlow(PercentState())
         val state = _state.asStateFlow()
@@ -41,34 +36,35 @@ class PercentViewModel
         private val _sideEffect = MutableSharedFlow<SideEffect>()
         val sideEffect = _sideEffect.asSharedFlow()
 
-        override fun inputPercentSelect(select: PercentSelect) {
+        override fun inputPercentCalculateType(type: PercentCalculateType) {
             _state.value =
                 state.value.let {
                     viewModelScope.launch {
                         val calculate =
-                            when (select) {
-                                PercentSelect.CALCULATE1 -> it.calculate1
-                                PercentSelect.CALCULATE2 -> it.calculate2
-                                PercentSelect.CALCULATE3 -> it.calculate3
-                                PercentSelect.CALCULATE4 -> it.calculate4
+                            when (type) {
+                                PercentCalculateType.TYPE1 -> it.calculate1
+                                PercentCalculateType.TYPE2 -> it.calculate2
+                                PercentCalculateType.TYPE3 -> it.calculate3
+                                PercentCalculateType.TYPE4 -> it.calculate4
                             }
                         _sideEffect.emit(SideEffect.Focus(calculate.select.value))
                     }
-                    it.copy(select = select)
+                    it.copy(type = type)
                 }
         }
 
         override fun inputPercentValueSelect(select: PercentValueSelect) {
             _state.value =
                 state.value.let {
-                    when (it.select) {
-                        PercentSelect.CALCULATE2 ->
+                    when (it.type) {
+                        PercentCalculateType.TYPE1 ->
+                            it.copy(calculate1 = it.calculate1.copy(select = select))
+                        PercentCalculateType.TYPE2 ->
                             it.copy(calculate2 = it.calculate2.copy(select = select))
-                        PercentSelect.CALCULATE3 ->
+                        PercentCalculateType.TYPE3 ->
                             it.copy(calculate3 = it.calculate3.copy(select = select))
-                        PercentSelect.CALCULATE4 ->
+                        PercentCalculateType.TYPE4 ->
                             it.copy(calculate4 = it.calculate4.copy(select = select))
-                        else -> it.copy(calculate1 = it.calculate1.copy(select = select))
                     }
                 }
         }
@@ -76,14 +72,15 @@ class PercentViewModel
         override fun inputKey(key: PercentKey) {
             _state.value =
                 state.value.let {
-                    when (it.select) {
-                        PercentSelect.CALCULATE2 ->
+                    when (it.type) {
+                        PercentCalculateType.TYPE1 ->
+                            it.copy(calculate1 = input(key, it.calculate1))
+                        PercentCalculateType.TYPE2 ->
                             it.copy(calculate2 = input(key, it.calculate2))
-                        PercentSelect.CALCULATE3 ->
+                        PercentCalculateType.TYPE3 ->
                             it.copy(calculate3 = input(key, it.calculate3))
-                        PercentSelect.CALCULATE4 ->
+                        PercentCalculateType.TYPE4 ->
                             it.copy(calculate4 = input(key, it.calculate4))
-                        else -> it.copy(calculate1 = input(key, it.calculate1))
                     }
                 }
         }
@@ -196,15 +193,11 @@ class PercentViewModel
                         }
                     }.let {
                         val result =
-                            when (state.value.select) {
-                                PercentSelect.CALCULATE2 ->
-                                    percent2UseCase(it.value1.text, it.value2.text)
-                                PercentSelect.CALCULATE3 ->
-                                    percent3UseCase(it.value1.text, it.value2.text)
-                                PercentSelect.CALCULATE4 ->
-                                    percent4UseCase(it.value1.text, it.value2.text)
-                                else -> percent1UseCase(it.value1.text, it.value2.text)
-                            }
+                            percentUseCase(
+                                type = state.value.type,
+                                value1 = it.value1.text,
+                                value2 = it.value2.text,
+                            )
                         it.copy(result = result)
                     }
                 }

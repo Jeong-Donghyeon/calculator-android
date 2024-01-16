@@ -1,23 +1,12 @@
-package dev.donghyeon.calculator.calculate
+package dev.donghyeon.calculator.calculate.percent
 
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent1DecimalExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent1IntegerExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent2DecimalExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent2IntegerExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent3DecimalExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent3IntegerExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent4DecimalExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.Percent4IntegerExpected
-import dev.donghyeon.calculator.calculate.fakedata.percent.PercentDecimalInput
-import dev.donghyeon.calculator.calculate.fakedata.percent.PercentIntegerInput
+import dev.donghyeon.calculator.calculate.PercentCalculateType
+import dev.donghyeon.calculator.calculate.PercentUseCase
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
 class PercentTest {
-    private val percent1 = Percent1UseCase(ResultFormatPercent())
-    private val percent2 = Percent2UseCase(ResultFormatPercent())
-    private val percent3 = Percent3UseCase(ResultFormatPercent())
-    private val percent4 = Percent4UseCase(ResultFormatPercent())
+    private val useCase = PercentUseCase()
 
     @Test
     fun test_Percent1() {
@@ -25,13 +14,17 @@ class PercentTest {
             calculate(
                 inputArr = PercentIntegerInput,
                 expectedArr = Percent1IntegerExpected,
-                percent = { v1, v2 -> percent1(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE1, v1, v2)
+                },
             )
         val decimalActuals =
             calculate(
                 inputArr = PercentDecimalInput,
                 expectedArr = Percent1DecimalExpected,
-                percent = { v1, v2 -> percent1(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE1, v1, v2)
+                },
             )
         assertArrayEquals(Percent1IntegerExpected, integerActuals)
         assertArrayEquals(Percent1DecimalExpected, decimalActuals)
@@ -43,13 +36,17 @@ class PercentTest {
             calculate(
                 inputArr = PercentIntegerInput,
                 expectedArr = Percent2IntegerExpected,
-                percent = { v1, v2 -> percent2(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE2, v1, v2)
+                },
             )
         val decimalActuals =
             calculate(
                 inputArr = PercentDecimalInput,
                 expectedArr = Percent2DecimalExpected,
-                percent = { v1, v2 -> percent2(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE2, v1, v2)
+                },
             )
         assertArrayEquals(Percent2IntegerExpected, integerActuals)
         assertArrayEquals(Percent2DecimalExpected, decimalActuals)
@@ -61,13 +58,17 @@ class PercentTest {
             calculate(
                 inputArr = PercentIntegerInput,
                 expectedArr = Percent3IntegerExpected,
-                percent = { v1, v2 -> percent3(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE3, v1, v2)
+                },
             )
         val decimalActuals =
             calculate(
                 inputArr = PercentDecimalInput,
                 expectedArr = Percent3DecimalExpected,
-                percent = { v1, v2 -> percent3(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE3, v1, v2)
+                },
             )
         assertArrayEquals(Percent3IntegerExpected, integerActuals)
         assertArrayEquals(Percent3DecimalExpected, decimalActuals)
@@ -79,13 +80,17 @@ class PercentTest {
             calculate(
                 inputArr = PercentIntegerInput,
                 expectedArr = Percent4IntegerExpected,
-                percent = { v1, v2 -> percent4(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE4, v1, v2)
+                },
             )
         val decimalActuals =
             calculate(
                 inputArr = PercentDecimalInput,
                 expectedArr = Percent4DecimalExpected,
-                percent = { v1, v2 -> percent4(v1, v2) },
+                percent = { v1, v2 ->
+                    useCase(PercentCalculateType.TYPE4, v1, v2)
+                },
             )
         assertArrayEquals(Percent4IntegerExpected, integerActuals)
         assertArrayEquals(Percent4DecimalExpected, decimalActuals)
@@ -102,7 +107,7 @@ class PercentTest {
             val expected = expectedArr[index]
             val actuals = percent(v1, v2)
             val result = expected == actuals
-            println("$v1 | $v2 | $expected | $actuals | $result")
+            println("$v1 % $v2 = $expected | $actuals | $result")
             actuals
         }.toTypedArray()
 }

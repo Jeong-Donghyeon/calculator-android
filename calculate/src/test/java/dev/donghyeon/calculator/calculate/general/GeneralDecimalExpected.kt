@@ -1,6 +1,6 @@
-package dev.donghyeon.calculator.calculate.fakedata.general
+package dev.donghyeon.calculator.calculate.general
 
-val GeneralExpectedDecimal =
+val GeneralDecimalExpected =
     arrayOf(
         "-39.349",
         "68.4553",
