@@ -1,24 +1,18 @@
 package dev.donghyeon.calculator.calculate.general
 
-import dev.donghyeon.calculator.calculate.GeneralPostfix
 import dev.donghyeon.calculator.calculate.GeneralUseCase
-import dev.donghyeon.calculator.calculate.ResultFormatGeneral
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
 class GeneralTest {
-    private val general =
-        GeneralUseCase(
-            format = ResultFormatGeneral(),
-            postfix = GeneralPostfix(),
-        )
+    private val useCase = GeneralUseCase()
 
     @Test
     fun test_GeneralInteger() {
         val actuals =
             GeneralIntegerInput.mapIndexed { index, input ->
                 val expected = GeneralIntegerExpected[index]
-                val actuals = general(input)
+                val actuals = useCase(input)
                 val result = expected == actuals
                 println("$input = $expected | $actuals | $result")
                 actuals
@@ -31,7 +25,7 @@ class GeneralTest {
         val actuals =
             GeneralDecimalInput.mapIndexed { index, input ->
                 val expected = GeneralDecimalExpected[index]
-                val actuals = general(input)
+                val actuals = useCase(input)
                 val result = expected == actuals
                 println("$input = $expected | $actuals | $result")
                 actuals
