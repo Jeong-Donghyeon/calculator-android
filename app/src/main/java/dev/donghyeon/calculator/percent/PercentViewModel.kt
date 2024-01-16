@@ -90,6 +90,7 @@ class PercentViewModel
             calculate: PercentState.Calculate,
         ): PercentState.Calculate =
             when (key) {
+                PercentKey.COPY -> calculate
                 PercentKey.CLEAR ->
                     when (calculate.select) {
                         PercentValueSelect.VALUE1 ->
@@ -131,7 +132,7 @@ class PercentViewModel
                     when (calculate.select) {
                         PercentValueSelect.VALUE1 -> {
                             val decimalCheck = checkDecimal(calculate.value1.text)
-                            val digitsLimitCheck = checkDigitsLimit(calculate.value1.text, key)
+                            val digitsLimitCheck = checkDigitsLimit(calculate.value1.text)
                             if (key == PercentKey.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
@@ -162,7 +163,7 @@ class PercentViewModel
                         }
                         PercentValueSelect.VALUE2 -> {
                             val decimalCheck = checkDecimal(calculate.value2.text)
-                            val digitsLimitCheck = checkDigitsLimit(calculate.value2.text, key)
+                            val digitsLimitCheck = checkDigitsLimit(calculate.value2.text)
                             if (key == PercentKey.DECIMAL && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
@@ -223,11 +224,5 @@ class PercentViewModel
 
         private fun checkDecimal(v: String) = v.any { it == '.' }
 
-        private fun checkDigitsLimit(
-            v: String,
-            key: PercentKey,
-        ): Boolean {
-            val count = if (key == PercentKey.ZERO_ZERO) 9 else 10
-            return v.replace(".", "").count() >= count
-        }
+        private fun checkDigitsLimit(v: String): Boolean = v.replace(".", "").count() >= 10
     }

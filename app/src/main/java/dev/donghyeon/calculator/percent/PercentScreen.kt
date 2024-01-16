@@ -26,7 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -333,6 +335,7 @@ private fun KeyView(
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
+    val clipboardManager = LocalClipboardManager.current
     val keyList =
         listOf(
             listOf(
@@ -340,7 +343,7 @@ private fun KeyView(
                 PercentKey.SEVEN,
                 PercentKey.FOUR,
                 PercentKey.ONE,
-                PercentKey.ZERO_ZERO,
+                PercentKey.COPY,
             ),
             listOf(
                 PercentKey.LEFT,
@@ -413,7 +416,14 @@ private fun KeyView(
                                         .weight(1f)
                                         .padding(2.dp),
                                 text = key.value,
-                                onClick = { action?.inputKey(key) },
+                                onClick = {
+                                    if (key == PercentKey.COPY) {
+                                        clipboardManager.setText(
+                                            AnnotatedString(calculate.result),
+                                        )
+                                    }
+                                    action?.inputKey(key)
+                                },
                             )
                     }
                 }

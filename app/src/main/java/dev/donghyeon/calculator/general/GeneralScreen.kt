@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -91,7 +93,8 @@ private fun GeneralScreen(
             action = action,
             menu = menu,
         )
-        KeyPadView(
+        KeyView(
+            state = state,
             action = action,
         )
     }
@@ -185,16 +188,27 @@ private fun MenuView(
 }
 
 @Composable
-private fun KeyPadView(action: GeneralAction? = null) {
+private fun KeyView(
+    state: GeneralState,
+    action: GeneralAction? = null,
+) {
+    val clipboardManager = LocalClipboardManager.current
+    val calculate =
+        when (state.select) {
+            GeneralSelect.CALCULATE1 -> state.calculate1
+            GeneralSelect.CALCULATE2 -> state.calculate2
+            GeneralSelect.CALCULATE3 -> state.calculate3
+            GeneralSelect.CALCULATE4 -> state.calculate4
+        }
     val keyList =
         listOf(
             listOf(
                 GeneralKey.CLEAR,
-                GeneralKey.COPY,
+                GeneralKey.ECOPY,
                 GeneralKey.SEVEN,
                 GeneralKey.FOUR,
                 GeneralKey.ONE,
-                GeneralKey.ZERO_ZERO,
+                GeneralKey.COPY,
             ),
             listOf(
                 GeneralKey.LEFT,
@@ -239,7 +253,14 @@ private fun KeyPadView(action: GeneralAction? = null) {
                                 .weight(1f)
                                 .padding(2.dp),
                         text = key.value,
-                        onClick = { action?.inputKey(key) },
+                        onClick = {
+                            if (key == GeneralKey.COPY) {
+                                clipboardManager.setText(
+                                    AnnotatedString(calculate.result),
+                                )
+                            }
+                            action?.inputKey(key)
+                        },
                     )
                 }
             }

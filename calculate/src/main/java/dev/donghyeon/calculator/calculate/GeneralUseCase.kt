@@ -139,24 +139,25 @@ class GeneralUseCase
                 }
             var formatResult =
                 result.toBigDecimalOrNull()?.let {
-                decimalFormat.format(it)
-            } ?: result
+                    decimalFormat.format(it)
+                } ?: result
             formatResult.split(".").let {
-                formatResult = if (it.count() > 1) {
-                    var d = it[1]
-                    if (d.count() > 4) {
-                        if (d.reversed().substring(0, 3) == "999") {
-                            d = d.toIntOrNull()?.plus(1)?.toString() ?: d
+                formatResult =
+                    if (it.count() > 1) {
+                        var d = it[1]
+                        if (d.count() > 4) {
+                            if (d.reversed().substring(0, 3) == "999") {
+                                d = d.toIntOrNull()?.plus(1)?.toString() ?: d
+                            }
+                            d = d.substring(0, 4)
                         }
-                        d = d.substring(0, 4)
+                        while (d.last() == '0') {
+                            d = d.dropLast(1)
+                        }
+                        it.first() + "." + d
+                    } else {
+                        formatResult
                     }
-                    while (d.last() == '0') {
-                        d = d.dropLast(1)
-                    }
-                    it.first() + "." + d
-                } else {
-                    formatResult
-                }
             }
             return formatResult
         }

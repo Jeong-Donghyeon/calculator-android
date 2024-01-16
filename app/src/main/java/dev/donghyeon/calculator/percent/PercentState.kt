@@ -34,7 +34,7 @@ enum class PercentKey(val value: String) {
     EIGHT("8"),
     NINE("9"),
     ZERO("0"),
-    ZERO_ZERO("00"),
+    COPY("CP"),
     DECIMAL("."),
     BACK("⌫"),
     CLEAR("C"),
