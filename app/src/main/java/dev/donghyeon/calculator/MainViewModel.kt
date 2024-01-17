@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Stack
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +24,10 @@ class MainViewModel
         private val _menu = MutableStateFlow(false)
         val menu = _menu.asStateFlow()
 
-        private var currentScreen: Destination = Destination.Percent
+        private val screenStack =
+            Stack<Destination>().apply {
+                push(Destination.START_SCREEN)
+            }
 
         fun openMenu() {
             _menu.value = true
@@ -35,8 +39,13 @@ class MainViewModel
 
         fun nav(destination: Destination) {
             viewModelScope.launch {
-                _nav.emit(currentScreen to destination)
-                currentScreen = destination
+                val currentScreen = screenStack.peek()
+                if (destination == Destination.Back) {
+                    _nav.emit(currentScreen to Destination.Back)
+                } else {
+                    screenStack.push(destination)
+                    _nav.emit(currentScreen to destination)
+                }
             }
         }
 

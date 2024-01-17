@@ -84,6 +84,7 @@ fun PercentScreen() {
     PercentScreen(
         state = state,
         action = viewModel,
+        nav = { main.nav(it) },
         menu = { main.openMenu() },
         v1Focus = v1Focus,
         v2Focus = v2Focus,
@@ -94,12 +95,16 @@ fun PercentScreen() {
 private fun PercentScreen(
     state: PercentState,
     action: PercentAction? = null,
+    nav: ((Destination) -> Unit)? = null,
     menu: (() -> Unit)? = null,
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.container)) {
-        TitleView(title = Destination.Percent.route)
+        TitleView(
+            title = Destination.Percent.route,
+            nav = { nav?.invoke(it) },
+        )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
                 state = state,

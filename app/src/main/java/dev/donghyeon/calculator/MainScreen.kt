@@ -20,6 +20,7 @@ import dev.donghyeon.calculator.common.LocalNavController
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.dialog.SheetMenu
 import dev.donghyeon.calculator.general.GeneralScreen
+import dev.donghyeon.calculator.info.InfoScreen
 import dev.donghyeon.calculator.percent.PercentScreen
 import dev.donghyeon.calculator.theme.ColorSet
 import kotlinx.coroutines.flow.collectLatest
@@ -40,10 +41,16 @@ fun MainScreen(viewModel: MainViewModel) {
             val menu by viewModel.menu.collectAsState()
             LaunchedEffect(Unit) {
                 viewModel.nav.collectLatest {
-                    navController.navigate(it.second.route) {
-                        launchSingleTop = true
-                        popUpTo(it.first.route) {
-                            inclusive = true
+                    when (it.second) {
+                        Destination.Back -> navController.popBackStack()
+                        Destination.Info -> navController.navigate(it.second.route)
+                        Destination.General, Destination.Percent -> {
+                            navController.navigate(it.second.route) {
+                                launchSingleTop = true
+                                popUpTo(it.first.route) {
+                                    inclusive = true
+                                }
+                            }
                         }
                     }
                 }
@@ -59,8 +66,9 @@ fun MainScreen(viewModel: MainViewModel) {
                 NavHost(
                     modifier = Modifier.padding(it),
                     navController = navController,
-                    startDestination = Destination.General.route,
+                    startDestination = Destination.START_SCREEN.route,
                 ) {
+                    composable(route = Destination.Info.route) { InfoScreen() }
                     composable(Destination.General.route) { GeneralScreen() }
                     composable(Destination.Percent.route) { PercentScreen() }
                 }

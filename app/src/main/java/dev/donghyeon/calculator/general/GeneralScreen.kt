@@ -68,6 +68,7 @@ fun GeneralScreen() {
     GeneralScreen(
         state = state,
         action = viewModel,
+        nav = { main.nav(it) },
         menu = { main.openMenu() },
         focus = focus,
     )
@@ -77,11 +78,15 @@ fun GeneralScreen() {
 private fun GeneralScreen(
     state: GeneralState,
     action: GeneralAction? = null,
+    nav: ((Destination) -> Unit)? = null,
     menu: (() -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.container)) {
-        TitleView(title = Destination.General.route)
+        TitleView(
+            title = Destination.General.route,
+            nav = { nav?.invoke(it) },
+        )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
                 state = state,
