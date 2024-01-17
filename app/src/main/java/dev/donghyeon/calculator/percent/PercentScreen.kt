@@ -315,7 +315,7 @@ private fun MenuView(
                 modifier = Modifier.size(32.dp),
                 painter = painterResource(id = R.drawable.ic_menu),
                 tint = ColorSet.text,
-                contentDescription = "menu",
+                contentDescription = "Menu",
             )
         }
         ViewScrollTab(

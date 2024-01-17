@@ -55,7 +55,7 @@ fun TitleView(
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(id = R.drawable.ic_info),
                 tint = ColorSet.text,
-                contentDescription = "info",
+                contentDescription = "Info",
             )
         }
     }
