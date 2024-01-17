@@ -55,7 +55,7 @@ class GeneralViewModel
         ): GeneralState.Calculate =
             when (key) {
                 GeneralKey.COPY, GeneralKey.PASTE, GeneralKey.ECOPY -> calculate
-                GeneralKey.CLEAR -> calculate.copy(value = TextFieldValue(), result = "?")
+                GeneralKey.CLEAR -> calculate.copy(value = TextFieldValue(), result = "")
                 GeneralKey.LEFT -> {
                     val index =
                         calculate.value.selection.start.let {

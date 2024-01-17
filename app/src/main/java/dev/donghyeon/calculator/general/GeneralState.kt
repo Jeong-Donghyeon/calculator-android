@@ -12,7 +12,7 @@ data class GeneralState(
 ) {
     data class Calculate(
         val value: TextFieldValue = TextFieldValue(),
-        val result: String = "?",
+        val result: String = "",
     )
 }
 

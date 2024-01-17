@@ -20,14 +20,14 @@ class GeneralUseCase
     constructor() {
         operator fun invoke(input: String): String {
             val postfix = infixToPostfix(input)
-            if (postfix.isEmpty()) return "?"
+            if (postfix.isEmpty()) return ""
             val stack = Stack<String>()
             postfix.forEach { v ->
                 if (GenralOperator.entries.any { it.value == v }) {
-                    if (stack.empty()) return "?"
-                    val v1 = stack.pop().toBigDecimalOrNull() ?: return "?"
-                    if (stack.empty()) return "?"
-                    val v2 = stack.pop().toBigDecimalOrNull() ?: return "?"
+                    if (stack.empty()) return ""
+                    val v1 = stack.pop().toBigDecimalOrNull() ?: return ""
+                    if (stack.empty()) return ""
+                    val v2 = stack.pop().toBigDecimalOrNull() ?: return ""
                     val calculate =
                         when (v) {
                             GenralOperator.MULTIPLY.value -> v2.multiply(v1)
@@ -40,7 +40,7 @@ class GeneralUseCase
                             }
                             GenralOperator.PLUS.value -> v2.plus(v1)
                             GenralOperator.MINUS.value -> v2.minus(v1)
-                            else -> return "?"
+                            else -> return ""
                         }
                     stack.push(calculate.toString())
                 } else {
