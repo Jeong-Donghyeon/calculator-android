@@ -2,6 +2,10 @@ package dev.donghyeon.calculator
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -13,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -81,7 +86,23 @@ fun MainScreen(viewModel: MainViewModel) {
                 navController = navController,
                 startDestination = StartSceen.route,
             ) {
-                composable(route = Destination.INTRO.route) { InfoScreen() }
+                val pushEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Start,
+                        tween(200),
+                    )
+                }
+                val pushPopExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+                    slideOutOfContainer(
+                        AnimatedContentTransitionScope.SlideDirection.End,
+                        tween(200),
+                    )
+                }
+                composable(
+                    route = Destination.INTRO.route,
+                    enterTransition = pushEnterTransition,
+                    popExitTransition = pushPopExitTransition,
+                ) { InfoScreen() }
                 composable(Destination.GENERAL.route) { GeneralScreen() }
                 composable(Destination.PERCENT.route) { PercentScreen() }
             }
