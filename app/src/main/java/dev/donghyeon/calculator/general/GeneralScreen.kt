@@ -1,5 +1,6 @@
 package dev.donghyeon.calculator.general
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,8 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.Destination
+import dev.donghyeon.calculator.Navigation
 import dev.donghyeon.calculator.R
-import dev.donghyeon.calculator.common.KEY_HEIGHT
+import dev.donghyeon.calculator.common.InputKeyHeight
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
@@ -59,6 +61,7 @@ fun GeneralScreen() {
     val state by viewModel.state.collectAsState()
     val main = LocalViewModel.current
     val focus = remember { FocusRequester() }
+    BackHandler { main.navigation(Navigation.Pop) }
     LaunchedEffect(Unit) {
         focus.requestFocus()
         viewModel.sideEffect.collectLatest {
@@ -68,7 +71,7 @@ fun GeneralScreen() {
     GeneralScreen(
         state = state,
         action = viewModel,
-        nav = { main.nav(it) },
+        navInfo = { main.navigation(Navigation.Push(it)) },
         menu = { main.openMenu() },
         focus = focus,
     )
@@ -78,14 +81,14 @@ fun GeneralScreen() {
 private fun GeneralScreen(
     state: GeneralState,
     action: GeneralAction? = null,
-    nav: ((Destination) -> Unit)? = null,
+    navInfo: ((Destination) -> Unit)? = null,
     menu: (() -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.container)) {
         TitleView(
-            title = Destination.General.route,
-            nav = { nav?.invoke(it) },
+            title = Destination.GENERAL.route,
+            navInfo = { navInfo?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
@@ -240,7 +243,7 @@ private fun KeyView(
                 GeneralKey.PLUS,
             ),
         )
-    val height = keyList.first().count() * KEY_HEIGHT
+    val height = keyList.first().count() * InputKeyHeight.value
     Row(
         modifier =
             Modifier

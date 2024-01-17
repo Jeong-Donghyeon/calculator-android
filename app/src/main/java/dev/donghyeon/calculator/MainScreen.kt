@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.donghyeon.calculator.common.LocalNavController
 import dev.donghyeon.calculator.common.LocalViewModel
+import dev.donghyeon.calculator.common.StartSceen
 import dev.donghyeon.calculator.dialog.SheetMenu
 import dev.donghyeon.calculator.general.GeneralScreen
 import dev.donghyeon.calculator.info.InfoScreen
@@ -32,56 +33,67 @@ fun MainScreen(viewModel: MainViewModel) {
     CompositionLocalProvider(
         LocalViewModel provides viewModel,
         LocalNavController provides rememberNavController(),
-        content = {
-            val context = LocalContext.current
-            val navController = LocalNavController.current
-            (LocalView.current.context as Activity).apply {
-                window.statusBarColor = ColorSet.container.toArgb()
-            }
-            val menu by viewModel.menu.collectAsState()
-            LaunchedEffect(Unit) {
-                viewModel.nav.collectLatest {
-                    when (it.second) {
-                        Destination.Back -> navController.popBackStack()
-                        Destination.Info -> navController.navigate(it.second.route)
-                        Destination.General, Destination.Percent -> {
-                            navController.navigate(it.second.route) {
-                                launchSingleTop = true
-                                popUpTo(it.first.route) {
-                                    inclusive = true
-                                }
+    ) {
+        val context = LocalContext.current
+        val navController = LocalNavController.current
+        (LocalView.current.context as Activity).apply {
+            window.statusBarColor = ColorSet.container.toArgb()
+        }
+        val menuState by viewModel.menuState.collectAsState()
+        LaunchedEffect(Unit) {
+            viewModel.navigationFlow.collectLatest {
+                val (exit, current, navigation) = it
+                if (exit) {
+                    (context as Activity).finish()
+                } else {
+                    when (navigation) {
+                        is Navigation.Pop -> {
+                            navController.popBackStack()
+                        }
+                        is Navigation.PopToDestination -> {
+                            navController.popBackStack(
+                                route = navigation.destination.route,
+                                inclusive = false,
+                            )
+                        }
+                        is Navigation.Push -> {
+                            navController.navigate(navigation.destination.route)
+                        }
+                        is Navigation.PopPush -> {
+                            navController.navigate(navigation.destination.route) {
+                                popUpTo(current.route) { inclusive = true }
                             }
                         }
                     }
                 }
             }
-            LaunchedEffect(Unit) {
-                viewModel.toast.collectLatest {
-                    toast?.cancel()
-                    toast = Toast.makeText(context, it, Toast.LENGTH_SHORT)
-                    toast?.show()
-                }
+        }
+        LaunchedEffect(Unit) {
+            viewModel.toast.collectLatest {
+                toast?.cancel()
+                toast = Toast.makeText(context, it, Toast.LENGTH_SHORT)
+                toast?.show()
             }
-            Scaffold(containerColor = ColorSet.container) {
-                NavHost(
-                    modifier = Modifier.padding(it),
-                    navController = navController,
-                    startDestination = Destination.START_SCREEN.route,
-                ) {
-                    composable(route = Destination.Info.route) { InfoScreen() }
-                    composable(Destination.General.route) { GeneralScreen() }
-                    composable(Destination.Percent.route) { PercentScreen() }
-                }
+        }
+        Scaffold(containerColor = ColorSet.container) {
+            NavHost(
+                modifier = Modifier.padding(it),
+                navController = navController,
+                startDestination = StartSceen.route,
+            ) {
+                composable(route = Destination.INTRO.route) { InfoScreen() }
+                composable(Destination.GENERAL.route) { GeneralScreen() }
+                composable(Destination.PERCENT.route) { PercentScreen() }
             }
-            if (menu) {
-                SheetMenu(
-                    close = { viewModel.closeMenu() },
-                    nav = {
-                        viewModel.closeMenu()
-                        viewModel.nav(it)
-                    },
-                )
-            }
-        },
-    )
+        }
+        if (menuState) {
+            SheetMenu(
+                close = { viewModel.closeMenu() },
+                nav = {
+                    viewModel.closeMenu()
+                    viewModel.navigation(Navigation.PopPush(it))
+                },
+            )
+        }
+    }
 }

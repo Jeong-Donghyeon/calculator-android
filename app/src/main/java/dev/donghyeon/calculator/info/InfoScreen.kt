@@ -1,5 +1,6 @@
 package dev.donghyeon.calculator.info
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.donghyeon.calculator.BuildConfig
-import dev.donghyeon.calculator.Destination
+import dev.donghyeon.calculator.Navigation
 import dev.donghyeon.calculator.R
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.theme.ColorSet
@@ -38,10 +39,11 @@ private fun Preview_InfoScreen() {
 @Composable
 fun InfoScreen() {
     val main = LocalViewModel.current
+    BackHandler { main.navigation(Navigation.Pop) }
     InfoScreen(
         appName = stringResource(id = R.string.app_name),
         version = BuildConfig.VERSION_NAME,
-        nav = { main.nav(it) },
+        navBack = { main.navigation(Navigation.Pop) },
     )
 }
 
@@ -49,7 +51,7 @@ fun InfoScreen() {
 fun InfoScreen(
     appName: String,
     version: String,
-    nav: ((Destination) -> Unit)? = null,
+    navBack: (() -> Unit)? = null,
 ) {
     Column(
         modifier =
@@ -66,7 +68,7 @@ fun InfoScreen(
             contentAlignment = Alignment.CenterStart,
         ) {
             IconButton(
-                onClick = { nav?.invoke(Destination.Back) },
+                onClick = { navBack?.invoke() },
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),

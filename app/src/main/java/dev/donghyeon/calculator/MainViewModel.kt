@@ -3,6 +3,7 @@ package dev.donghyeon.calculator
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.donghyeon.calculator.common.BaseViewModel
+import dev.donghyeon.calculator.common.StartSceen
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -18,34 +19,54 @@ class MainViewModel
         private val _toast = MutableSharedFlow<String>()
         val toast = _toast.asSharedFlow()
 
-        private val _nav = MutableSharedFlow<Pair<Destination, Destination>>()
-        val nav = _nav.asSharedFlow()
+        private val _navigationFlow =
+            MutableSharedFlow<Triple<Boolean, Destination, Navigation>>()
+        val navigationFlow = _navigationFlow.asSharedFlow()
 
-        private val _menu = MutableStateFlow(false)
-        val menu = _menu.asStateFlow()
+        private val _menuState = MutableStateFlow(false)
+        val menuState = _menuState.asStateFlow()
 
         private val screenStack =
             Stack<Destination>().apply {
-                push(Destination.START_SCREEN)
+                push(StartSceen)
             }
 
         fun openMenu() {
-            _menu.value = true
+            _menuState.value = true
         }
 
         fun closeMenu() {
-            _menu.value = false
+            _menuState.value = false
         }
 
-        fun nav(destination: Destination) {
+        fun navigation(navigation: Navigation) {
             viewModelScope.launch {
-                val currentScreen = screenStack.peek()
-                if (destination == Destination.Back) {
-                    _nav.emit(currentScreen to Destination.Back)
-                } else {
-                    screenStack.push(destination)
-                    _nav.emit(currentScreen to destination)
+                val current = screenStack.peek()
+                when (navigation) {
+                    is Navigation.Pop -> screenStack.pop()
+                    is Navigation.PopToDestination -> {
+                        while (true) {
+                            val peek = screenStack.peek()
+                            if (peek == navigation.destination) {
+                                break
+                            } else {
+                                screenStack.pop()
+                            }
+                        }
+                    }
+                    is Navigation.Push -> screenStack.push(navigation.destination)
+                    is Navigation.PopPush -> {
+                        screenStack.pop()
+                        screenStack.push(navigation.destination)
+                    }
                 }
+                _navigationFlow.emit(
+                    Triple(
+                        screenStack.empty(),
+                        current,
+                        navigation,
+                    ),
+                )
             }
         }
 

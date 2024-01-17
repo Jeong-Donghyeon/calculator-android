@@ -1,5 +1,6 @@
 package dev.donghyeon.calculator.percent
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,10 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.Destination
+import dev.donghyeon.calculator.Navigation
 import dev.donghyeon.calculator.R
 import dev.donghyeon.calculator.calculate.PercentCalculateType
 import dev.donghyeon.calculator.calculate.PercentUnit
-import dev.donghyeon.calculator.common.KEY_HEIGHT
+import dev.donghyeon.calculator.common.InputKeyHeight
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
 import dev.donghyeon.calculator.theme.ColorSet
@@ -68,6 +70,7 @@ fun PercentScreen() {
     val main = LocalViewModel.current
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
+    BackHandler { main.navigation(Navigation.Pop) }
     LaunchedEffect(Unit) {
         v1Focus.requestFocus()
         viewModel.sideEffect.collectLatest {
@@ -84,7 +87,7 @@ fun PercentScreen() {
     PercentScreen(
         state = state,
         action = viewModel,
-        nav = { main.nav(it) },
+        navInfo = { main.navigation(Navigation.Push(it)) },
         menu = { main.openMenu() },
         v1Focus = v1Focus,
         v2Focus = v2Focus,
@@ -95,15 +98,15 @@ fun PercentScreen() {
 private fun PercentScreen(
     state: PercentState,
     action: PercentAction? = null,
-    nav: ((Destination) -> Unit)? = null,
+    navInfo: ((Destination) -> Unit)? = null,
     menu: (() -> Unit)? = null,
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.container)) {
         TitleView(
-            title = Destination.Percent.route,
-            nav = { nav?.invoke(it) },
+            title = Destination.PERCENT.route,
+            navInfo = { navInfo?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
@@ -371,7 +374,7 @@ private fun KeyView(
                 PercentKey.VALUE2,
             ),
         )
-    val height = keyList.first().count() * KEY_HEIGHT
+    val height = keyList.first().count() * InputKeyHeight.value
     val calculate =
         when (state.type) {
             PercentCalculateType.TYPE1 -> state.calculate1

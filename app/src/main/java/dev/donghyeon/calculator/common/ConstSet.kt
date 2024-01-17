@@ -1,3 +1,7 @@
 package dev.donghyeon.calculator.common
 
-const val KEY_HEIGHT = 70
+import androidx.compose.ui.unit.dp
+import dev.donghyeon.calculator.Destination
+
+val InputKeyHeight = 70.dp
+val StartSceen = Destination.GENERAL

@@ -25,14 +25,14 @@ import dev.donghyeon.calculator.theme.TextSet
 @Composable
 fun Preview_TitleView() {
     TitleView(
-        title = Destination.General.route,
+        title = Destination.GENERAL.route,
     )
 }
 
 @Composable
 fun TitleView(
     title: String,
-    nav: ((Destination) -> Unit)? = null,
+    navInfo: ((Destination) -> Unit)? = null,
 ) {
     Box(
         modifier =
@@ -49,7 +49,7 @@ fun TitleView(
             textAlign = TextAlign.Center,
         )
         IconButton(
-            onClick = { nav?.invoke(Destination.Info) },
+            onClick = { navInfo?.invoke(Destination.INTRO) },
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),

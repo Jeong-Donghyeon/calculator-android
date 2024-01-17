@@ -28,8 +28,8 @@ fun SheetMenu(
 ) {
     val calculatorList =
         listOf(
-            Destination.General,
-            Destination.Percent,
+            Destination.GENERAL,
+            Destination.PERCENT,
         )
     BottomSheetDialog(
         onDismissRequest = close,
