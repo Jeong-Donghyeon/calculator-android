@@ -255,8 +255,10 @@ private fun KeyView(
                         text = key.value,
                         onClick = {
                             if (key == GeneralKey.COPY) {
+                                val copyStr =
+                                    calculate.result.replace(",", "")
                                 clipboardManager.setText(
-                                    AnnotatedString(calculate.result),
+                                    AnnotatedString(copyStr),
                                 )
                             }
                             action?.inputKey(key)

@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import dev.donghyeon.calculator.Destination
 import dev.donghyeon.calculator.R
 import dev.donghyeon.calculator.calculate.PercentCalculateType
+import dev.donghyeon.calculator.calculate.PercentUnit
 import dev.donghyeon.calculator.common.KEY_HEIGHT
 import dev.donghyeon.calculator.common.LocalViewModel
 import dev.donghyeon.calculator.common.SideEffect
@@ -418,8 +419,15 @@ private fun KeyView(
                                 text = key.value,
                                 onClick = {
                                     if (key == PercentKey.COPY) {
+                                        val copyStr =
+                                            calculate.result
+                                                .replace(",", "")
+                                                .replace(PercentUnit.PERCENT.value, "")
+                                                .replace(PercentUnit.UP.value, "")
+                                                .replace(PercentUnit.DOWN.value, "")
+                                                .trim()
                                         clipboardManager.setText(
-                                            AnnotatedString(calculate.result),
+                                            AnnotatedString(copyStr),
                                         )
                                     }
                                     action?.inputKey(key)

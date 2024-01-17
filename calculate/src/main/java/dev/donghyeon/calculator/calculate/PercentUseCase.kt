@@ -12,6 +12,12 @@ enum class PercentCalculateType(val value: String) {
     TYPE4("증감율"),
 }
 
+enum class PercentUnit(val value: String) {
+    PERCENT("%"),
+    UP("증가"),
+    DOWN("감소"),
+}
+
 class PercentUseCase
     @Inject
     constructor() {
@@ -50,7 +56,7 @@ class PercentUseCase
             val result =
                 v2.divide(v1, 10, RoundingMode.DOWN)
                     .multiply("100".toBigDecimal()).toString()
-            return format(result) + "%"
+            return format(result) + PercentUnit.PERCENT.value
         }
 
         private fun type3(
@@ -60,11 +66,16 @@ class PercentUseCase
             val v1 = value1.toBigDecimalOrNull() ?: return "?"
             val v2 = value2.toBigDecimalOrNull() ?: return "?"
             val v = v1.minus(v2)
-            val updown = if (v <= BigDecimal.ZERO) "증가" else "감소"
+            val updown =
+                if (v <= BigDecimal.ZERO) {
+                    PercentUnit.UP.value
+                } else {
+                    PercentUnit.DOWN.value
+                }
             val result =
                 v.abs().divide(v1, 10, RoundingMode.DOWN)
                     .multiply("100".toBigDecimal()).toString()
-            return format(result) + "% $updown"
+            return format(result) + "${PercentUnit.PERCENT.value} $updown"
         }
 
         private fun type4(
