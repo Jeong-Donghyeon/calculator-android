@@ -26,11 +26,15 @@ class PercentUseCase
             value1: String,
             value2: String,
         ): String =
-            when (type) {
-                PercentCalculateType.TYPE1 -> type1(value1, value2)
-                PercentCalculateType.TYPE2 -> type2(value1, value2)
-                PercentCalculateType.TYPE3 -> type3(value1, value2)
-                PercentCalculateType.TYPE4 -> type4(value1, value2)
+            try {
+                when (type) {
+                    PercentCalculateType.TYPE1 -> type1(value1, value2)
+                    PercentCalculateType.TYPE2 -> type2(value1, value2)
+                    PercentCalculateType.TYPE3 -> type3(value1, value2)
+                    PercentCalculateType.TYPE4 -> type4(value1, value2)
+                }
+            } catch (e: Exception) {
+                "?"
             }
 
         private fun type1(

@@ -89,17 +89,17 @@ private fun InfoScreen(
     val linkColor = ColorSet.text.copy(alpha = 0.7f)
     Column(
         modifier =
-        Modifier
-            .background(ColorSet.container)
-            .fillMaxSize(),
+            Modifier
+                .background(ColorSet.container)
+                .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
             modifier =
-            Modifier
-                .background(ColorSet.container)
-                .fillMaxWidth()
-                .height(50.dp),
+                Modifier
+                    .background(ColorSet.container)
+                    .fillMaxWidth()
+                    .height(50.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
             IconButton(
@@ -122,10 +122,10 @@ private fun InfoScreen(
         Spacer(modifier = Modifier.height(70.dp))
         Image(
             modifier =
-            Modifier
-                .clip(RoundedCornerShape(30.dp))
-                .background(ColorSet.button)
-                .size(120.dp),
+                Modifier
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(ColorSet.button)
+                    .size(120.dp),
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "AppIcon",
         )
@@ -163,9 +163,7 @@ private fun InfoScreen(
 }
 
 @Composable
-private fun TermsAlert(
-    close: (() -> Unit)? = null
-) {
+private fun TermsAlert(close: (() -> Unit)? = null) {
     Dialog(
         onDismissRequest = close ?: {},
         properties = DialogProperties(),
@@ -173,7 +171,8 @@ private fun TermsAlert(
         Column(modifier = Modifier.background(ColorSet.button)) {
             Text(
                 modifier = Modifier.padding(16.dp),
-                text = """
+                text =
+                    """
                     본 앱을 사용함으로써 귀하는
                     아래의 이용약관에 동의하게 됩니다.
 
@@ -184,16 +183,16 @@ private fun TermsAlert(
                     또한 제공되는 정보들에 의하여 발생 할 수 있는
                     직접적, 간접적인 모든 손해에 대하여
                     책임을 지지 않습니다.
-                """.trimIndent(),
-                style = TextSet.regular.copy(ColorSet.text, 14.sp)
+                    """.trimIndent(),
+                style = TextSet.regular.copy(ColorSet.text, 14.sp),
             )
             Box(
                 modifier =
-                Modifier
-                    .padding(horizontal = 7.dp)
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(ColorSet.text.copy(alpha = 0.1f)),
+                    Modifier
+                        .padding(horizontal = 7.dp)
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(ColorSet.text.copy(alpha = 0.1f)),
             )
             Box(
                 modifier =
@@ -201,7 +200,7 @@ private fun TermsAlert(
                         .clickable { close?.invoke() }
                         .fillMaxWidth()
                         .height(45.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "확인",
