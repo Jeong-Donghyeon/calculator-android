@@ -32,4 +32,17 @@ class GeneralTest {
             }.toTypedArray()
         assertArrayEquals(GeneralDecimalExpected, actuals)
     }
+
+    @Test
+    fun test_GeneralExpression() {
+        val actuals =
+            GeneralExpressionInput.mapIndexed { index, input ->
+                val expected = GeneralExpressionExpected[index]
+                val actuals = useCase(input)
+                val result = expected == actuals
+                println("$input = $expected | $actuals | $result")
+                actuals
+            }.toTypedArray()
+        assertArrayEquals(GeneralExpressionExpected, actuals)
+    }
 }

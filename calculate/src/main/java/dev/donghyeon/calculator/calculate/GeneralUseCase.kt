@@ -34,7 +34,6 @@ class GeneralUseCase
                                 GenralOperator.MULTIPLY.value -> v2.multiply(v1)
                                 GenralOperator.DIVIDE.value -> {
                                     if (v1 > BigDecimal.ZERO && v2 > BigDecimal.ZERO) {
-                                        println("v1: $v1 | v2: $v2")
                                         v2.divide(v1, 15, RoundingMode.UP)
                                     } else {
                                         BigDecimal.ZERO
@@ -68,7 +67,7 @@ class GeneralUseCase
                     }
                     infixList.add(v.toString())
                 }
-                if (i == infix.lastIndex) {
+                if (i == infix.lastIndex && row != "") {
                     infixList.add(row)
                 }
             }
@@ -77,7 +76,21 @@ class GeneralUseCase
             val oper = Stack<String>()
             infixList.forEach {
                 when (it) {
-                    GenralOperator.OPEN.value, GenralOperator.CLOSE.value -> {}
+                    GenralOperator.OPEN.value -> oper.push(it)
+                    GenralOperator.CLOSE.value -> {
+                        while (true) {
+                            if (oper.empty()) {
+                                break
+                            } else {
+                                val pop = oper.pop()
+                                if (pop == GenralOperator.OPEN.value) {
+                                    break
+                                } else {
+                                    result.add(pop)
+                                }
+                            }
+                        }
+                    }
                     GenralOperator.MULTIPLY.value, GenralOperator.DIVIDE.value -> {
                         if (oper.empty()) {
                             oper.push(it)
@@ -88,7 +101,11 @@ class GeneralUseCase
                                     break
                                 }
                                 when (oper.peek()) {
-                                    GenralOperator.OPEN.value, GenralOperator.CLOSE.value -> {}
+                                    GenralOperator.OPEN.value -> {
+                                        oper.push(it)
+                                        break
+                                    }
+                                    GenralOperator.CLOSE.value -> {}
                                     GenralOperator.MULTIPLY.value, GenralOperator.DIVIDE.value -> {
                                         result.add(oper.pop())
                                     }
@@ -108,8 +125,14 @@ class GeneralUseCase
                                 if (oper.empty()) {
                                     oper.push(it)
                                     break
-                                } else {
-                                    result.add(oper.pop())
+                                }
+                                when (oper.peek()) {
+                                    GenralOperator.OPEN.value -> {
+                                        oper.push(it)
+                                        break
+                                    }
+                                    GenralOperator.CLOSE.value -> {}
+                                    else -> result.add(oper.pop())
                                 }
                             }
                         }
