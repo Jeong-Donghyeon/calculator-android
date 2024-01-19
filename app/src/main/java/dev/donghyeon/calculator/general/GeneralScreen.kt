@@ -212,7 +212,7 @@ private fun KeyView(
         listOf(
             listOf(
                 GeneralKey.CLEAR,
-//                GeneralKey.ECOPY,
+                GeneralKey.ECOPY,
                 GeneralKey.SEVEN,
                 GeneralKey.FOUR,
                 GeneralKey.ONE,
@@ -220,7 +220,7 @@ private fun KeyView(
             ),
             listOf(
                 GeneralKey.LEFT,
-//                GeneralKey.OPEN,
+                GeneralKey.OPEN,
                 GeneralKey.EIGHT,
                 GeneralKey.FIVE,
                 GeneralKey.TWO,
@@ -228,7 +228,7 @@ private fun KeyView(
             ),
             listOf(
                 GeneralKey.RIGHT,
-//                GeneralKey.CLOSE,
+                GeneralKey.CLOSE,
                 GeneralKey.NINE,
                 GeneralKey.SIX,
                 GeneralKey.THREE,
@@ -236,7 +236,7 @@ private fun KeyView(
             ),
             listOf(
                 GeneralKey.BACK,
-//                GeneralKey.PASTE,
+                GeneralKey.PASTE,
                 GeneralKey.DIVIDE,
                 GeneralKey.MULTIPLY,
                 GeneralKey.MINUS,
