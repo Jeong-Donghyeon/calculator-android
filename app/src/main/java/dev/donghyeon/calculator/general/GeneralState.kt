@@ -23,29 +23,52 @@ enum class GeneralSelect(val value: String) {
     CALCULATE4("계산 4"),
 }
 
-enum class GeneralKey(val value: String) {
-    ONE("1"),
-    TWO("2"),
-    THREE("3"),
-    FOUR("4"),
-    FIVE("5"),
-    SIX("6"),
-    SEVEN("7"),
-    EIGHT("8"),
-    NINE("9"),
-    ZERO("0"),
-    COPY("CP"),
-    DECIMAL("."),
-    BACK("⌫"),
-    CLEAR("C"),
-    LEFT("<-"),
-    RIGHT("->"),
-    ECOPY("ECP"),
-    PASTE("PS"),
-    MULTIPLY(GenralOperator.MULTIPLY.value),
-    DIVIDE(GenralOperator.DIVIDE.value),
-    PLUS(GenralOperator.PLUS.value),
-    MINUS(GenralOperator.MINUS.value),
-    OPEN(GenralOperator.OPEN.value),
-    CLOSE(GenralOperator.CLOSE.value),
+sealed class GeneralKey(val value: String) {
+    data object One : GeneralKey("1")
+
+    data object Two : GeneralKey("2")
+
+    data object Three : GeneralKey("3")
+
+    data object Four : GeneralKey("4")
+
+    data object Five : GeneralKey("5")
+
+    data object Six : GeneralKey("6")
+
+    data object Seven : GeneralKey("7")
+
+    data object Eight : GeneralKey("8")
+
+    data object Nine : GeneralKey("9")
+
+    data object Zero : GeneralKey("0")
+
+    data object Decimal : GeneralKey(".")
+
+    data object Back : GeneralKey("⌫")
+
+    data object Clear : GeneralKey("C")
+
+    data object Left : GeneralKey("<-")
+
+    data object Right : GeneralKey("->")
+
+    data object CopyResult : GeneralKey("CP")
+
+    data object CopyExpress : GeneralKey("ECP")
+
+    data class Past(val past: String = "") : GeneralKey("PS")
+
+    data object Multiply : GeneralKey(GenralOperator.MULTIPLY.value)
+
+    data object Divide : GeneralKey(GenralOperator.DIVIDE.value)
+
+    data object Plus : GeneralKey(GenralOperator.PLUS.value)
+
+    data object Minus : GeneralKey(GenralOperator.MINUS.value)
+
+    data object Open : GeneralKey(GenralOperator.OPEN.value)
+
+    data object Close : GeneralKey(GenralOperator.CLOSE.value)
 }

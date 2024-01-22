@@ -54,16 +54,29 @@ class GeneralViewModel
             calculate: GeneralState.Calculate,
         ): GeneralState.Calculate =
             when (key) {
-                GeneralKey.COPY, GeneralKey.PASTE, GeneralKey.ECOPY -> calculate
-                GeneralKey.CLEAR -> calculate.copy(value = TextFieldValue(), result = "")
-                GeneralKey.LEFT -> {
+                is GeneralKey.CopyResult, GeneralKey.CopyExpress -> calculate
+                is GeneralKey.Past -> {
+                    val text = calculate.value.text + key.past
+                    val selection =
+                        calculate.value.selection.let {
+                            TextRange(it.start + key.past.count())
+                        }
+                    val textFieldValue =
+                        calculate.value.copy(
+                            text = text,
+                            selection = selection,
+                        )
+                    calculate.copy(value = textFieldValue)
+                }
+                is GeneralKey.Clear -> calculate.copy(value = TextFieldValue(), result = "")
+                is GeneralKey.Left -> {
                     val index =
                         calculate.value.selection.start.let {
                             if (it == 0) 0 else it - 1
                         }
                     calculate.copy(value = calculate.value.copy(selection = TextRange(index)))
                 }
-                GeneralKey.RIGHT -> {
+                is GeneralKey.Right -> {
                     val index = calculate.value.selection.start + 1
                     calculate.copy(value = calculate.value.copy(selection = TextRange(index)))
                 }
@@ -71,7 +84,7 @@ class GeneralViewModel
                     val inputTxt = inputKey(key, calculate.value)
                     val index =
                         calculate.value.selection.start.let {
-                            if (key == GeneralKey.BACK) {
+                            if (key is GeneralKey.Back) {
                                 if (it == 0) 0 else it - 1
                             } else {
                                 it + key.value.count()
@@ -95,7 +108,7 @@ class GeneralViewModel
             StringBuilder(value.text).let {
                 val index = value.selection.start
                 when (key) {
-                    GeneralKey.BACK -> {
+                    is GeneralKey.Back -> {
                         if (index == 0) {
                             it.toString()
                         } else {

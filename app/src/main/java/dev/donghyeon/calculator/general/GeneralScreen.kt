@@ -211,36 +211,36 @@ private fun KeyView(
     val keyList =
         listOf(
             listOf(
-                GeneralKey.CLEAR,
-                GeneralKey.ECOPY,
-                GeneralKey.SEVEN,
-                GeneralKey.FOUR,
-                GeneralKey.ONE,
-                GeneralKey.COPY,
+                GeneralKey.Clear,
+                GeneralKey.CopyExpress,
+                GeneralKey.Seven,
+                GeneralKey.Four,
+                GeneralKey.One,
+                GeneralKey.CopyResult,
             ),
             listOf(
-                GeneralKey.LEFT,
-                GeneralKey.OPEN,
-                GeneralKey.EIGHT,
-                GeneralKey.FIVE,
-                GeneralKey.TWO,
-                GeneralKey.ZERO,
+                GeneralKey.Left,
+                GeneralKey.Open,
+                GeneralKey.Eight,
+                GeneralKey.Five,
+                GeneralKey.Two,
+                GeneralKey.Zero,
             ),
             listOf(
-                GeneralKey.RIGHT,
-                GeneralKey.CLOSE,
-                GeneralKey.NINE,
-                GeneralKey.SIX,
-                GeneralKey.THREE,
-                GeneralKey.DECIMAL,
+                GeneralKey.Right,
+                GeneralKey.Close,
+                GeneralKey.Nine,
+                GeneralKey.Six,
+                GeneralKey.Three,
+                GeneralKey.Decimal,
             ),
             listOf(
-                GeneralKey.BACK,
-                GeneralKey.PASTE,
-                GeneralKey.DIVIDE,
-                GeneralKey.MULTIPLY,
-                GeneralKey.MINUS,
-                GeneralKey.PLUS,
+                GeneralKey.Back,
+                GeneralKey.Past(),
+                GeneralKey.Divide,
+                GeneralKey.Multiply,
+                GeneralKey.Minus,
+                GeneralKey.Plus,
             ),
         )
     val height = keyList.first().count() * InputKeyHeight.value
@@ -262,14 +262,20 @@ private fun KeyView(
                                 .padding(2.dp),
                         text = key.value,
                         onClick = {
-                            if (key == GeneralKey.COPY) {
-                                val copyStr =
-                                    calculate.result.replace(",", "")
-                                clipboardManager.setText(
-                                    AnnotatedString(copyStr),
-                                )
+                            when (key) {
+                                is GeneralKey.CopyResult -> {
+                                    val copyStr =
+                                        calculate.result.replace(",", "")
+                                    clipboardManager.setText(
+                                        AnnotatedString(copyStr),
+                                    )
+                                }
+                                is GeneralKey.Past ->
+                                    action?.inputKey(
+                                        GeneralKey.Past(clipboardManager.getText().toString()),
+                                    )
+                                else -> action?.inputKey(key)
                             }
-                            action?.inputKey(key)
                         },
                     )
                 }
