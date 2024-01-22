@@ -270,6 +270,10 @@ private fun KeyView(
                                         AnnotatedString(copyStr),
                                     )
                                 }
+                                is GeneralKey.CopyExpress ->
+                                    clipboardManager.setText(
+                                        AnnotatedString(calculate.value.text),
+                                    )
                                 is GeneralKey.Past ->
                                     action?.inputKey(
                                         GeneralKey.Past(clipboardManager.getText().toString()),
