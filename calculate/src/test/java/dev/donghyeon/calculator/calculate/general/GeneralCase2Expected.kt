@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.general
 
-val GeneralDecimalExpected =
+val GeneralCase2Expected =
     arrayOf(
         "-39.349",
         "68.4553",

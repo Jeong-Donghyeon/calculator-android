@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.general
 
-val GeneralExpressionExpected =
+val GeneralCase4Expected =
     arrayOf(
         "16",
         "19",

@@ -8,41 +8,54 @@ class GeneralTest {
     private val useCase = GeneralUseCase()
 
     @Test
-    fun test_GeneralInteger() {
+    fun test_GeneralCase1() {
         val actuals =
-            GeneralIntegerInput.mapIndexed { index, input ->
-                val expected = GeneralIntegerExpected[index]
+            GeneralCase1Input.mapIndexed { index, input ->
+                val expected = GeneralCase1Expected[index]
                 val actuals = useCase(input)
                 val result = expected == actuals
                 println("$input = $expected | $actuals | $result")
                 actuals
             }.toTypedArray()
-        assertArrayEquals(GeneralIntegerExpected, actuals)
+        assertArrayEquals(GeneralCase1Expected, actuals)
     }
 
     @Test
-    fun test_GeneralDecimal() {
+    fun test_GeneralCase2() {
         val actuals =
-            GeneralDecimalInput.mapIndexed { index, input ->
-                val expected = GeneralDecimalExpected[index]
+            GeneralCase2Input.mapIndexed { index, input ->
+                val expected = GeneralCase2Expected[index]
                 val actuals = useCase(input)
                 val result = expected == actuals
                 println("$input = $expected | $actuals | $result")
                 actuals
             }.toTypedArray()
-        assertArrayEquals(GeneralDecimalExpected, actuals)
+        assertArrayEquals(GeneralCase2Expected, actuals)
     }
 
     @Test
-    fun test_GeneralExpression() {
+    fun test_GeneralCase3() {
         val actuals =
-            GeneralExpressionInput.mapIndexed { index, input ->
-                val expected = GeneralExpressionExpected[index]
+            GeneralCase3Input.mapIndexed { index, input ->
+                val expected = GeneralCase3Expected[index]
                 val actuals = useCase(input)
                 val result = expected == actuals
                 println("$input = $expected | $actuals | $result")
                 actuals
             }.toTypedArray()
-        assertArrayEquals(GeneralExpressionExpected, actuals)
+        assertArrayEquals(GeneralCase3Expected, actuals)
+    }
+
+    @Test
+    fun test_GeneralCase4() {
+        val actuals =
+            GeneralCase4Input.mapIndexed { index, input ->
+                val expected = GeneralCase4Expected[index]
+                val actuals = useCase(input)
+                val result = expected == actuals
+                println("$input = $expected | $actuals | $result")
+                actuals
+            }.toTypedArray()
+        assertArrayEquals(GeneralCase4Expected, actuals)
     }
 }

@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.general
 
-val GeneralIntegerExpected =
+val GeneralCase1Expected =
     arrayOf(
         "-38.6153",
         "68",
