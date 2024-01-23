@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.percent
 
-val Percent3DecimalExpected =
+val Percent3Case2Expected =
     arrayOf(
         "0% 증가",
         "0.08% 감소",

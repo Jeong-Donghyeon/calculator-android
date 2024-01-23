@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.percent
 
-val Percent1IntegerExpected =
+val Percent1Case1Expected =
     arrayOf(
         "151.29",
         "28.29",

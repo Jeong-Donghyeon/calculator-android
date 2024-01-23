@@ -10,90 +10,90 @@ class PercentTest {
 
     @Test
     fun test_Percent1() {
-        val integerActuals =
+        val case1Actuals =
             calculate(
-                inputArr = PercentIntegerInput,
-                expectedArr = Percent1IntegerExpected,
+                inputArr = PercentCase1Input,
+                expectedArr = Percent1Case1Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE1, v1, v2)
                 },
             )
-        val decimalActuals =
+        val case2Actuals =
             calculate(
-                inputArr = PercentDecimalInput,
-                expectedArr = Percent1DecimalExpected,
+                inputArr = PercentCase2Input,
+                expectedArr = Percent1Case2Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE1, v1, v2)
                 },
             )
-        assertArrayEquals(Percent1IntegerExpected, integerActuals)
-        assertArrayEquals(Percent1DecimalExpected, decimalActuals)
+        assertArrayEquals(Percent1Case1Expected, case1Actuals)
+        assertArrayEquals(Percent1Case2Expected, case2Actuals)
     }
 
     @Test
     fun test_Percent2() {
-        val integerActuals =
+        val case1Actuals =
             calculate(
-                inputArr = PercentIntegerInput,
-                expectedArr = Percent2IntegerExpected,
+                inputArr = PercentCase1Input,
+                expectedArr = Percent2Case1Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE2, v1, v2)
                 },
             )
-        val decimalActuals =
+        val case2Actuals =
             calculate(
-                inputArr = PercentDecimalInput,
-                expectedArr = Percent2DecimalExpected,
+                inputArr = PercentCase2Input,
+                expectedArr = Percent2Case2Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE2, v1, v2)
                 },
             )
-        assertArrayEquals(Percent2IntegerExpected, integerActuals)
-        assertArrayEquals(Percent2DecimalExpected, decimalActuals)
+        assertArrayEquals(Percent2Case1Expected, case1Actuals)
+        assertArrayEquals(Percent2Case2Expected, case2Actuals)
     }
 
     @Test
     fun test_Percent3() {
-        val integerActuals =
+        val case1Actuals =
             calculate(
-                inputArr = PercentIntegerInput,
-                expectedArr = Percent3IntegerExpected,
+                inputArr = PercentCase1Input,
+                expectedArr = Percent3Case1Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE3, v1, v2)
                 },
             )
-        val decimalActuals =
+        val case2Actuals =
             calculate(
-                inputArr = PercentDecimalInput,
-                expectedArr = Percent3DecimalExpected,
+                inputArr = PercentCase2Input,
+                expectedArr = Percent3Case2Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE3, v1, v2)
                 },
             )
-        assertArrayEquals(Percent3IntegerExpected, integerActuals)
-        assertArrayEquals(Percent3DecimalExpected, decimalActuals)
+        assertArrayEquals(Percent3Case1Expected, case1Actuals)
+        assertArrayEquals(Percent3Case2Expected, case2Actuals)
     }
 
     @Test
     fun test_Percent4() {
-        val integerActuals =
+        val case1Actuals =
             calculate(
-                inputArr = PercentIntegerInput,
-                expectedArr = Percent4IntegerExpected,
+                inputArr = PercentCase1Input,
+                expectedArr = Percent4Case1Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE4, v1, v2)
                 },
             )
-        val decimalActuals =
+        val case2Actuals =
             calculate(
-                inputArr = PercentDecimalInput,
-                expectedArr = Percent4DecimalExpected,
+                inputArr = PercentCase2Input,
+                expectedArr = Percent4Case2Expected,
                 percent = { v1, v2 ->
                     useCase(PercentCalculateType.TYPE4, v1, v2)
                 },
             )
-        assertArrayEquals(Percent4IntegerExpected, integerActuals)
-        assertArrayEquals(Percent4DecimalExpected, decimalActuals)
+        assertArrayEquals(Percent4Case1Expected, case1Actuals)
+        assertArrayEquals(Percent4Case2Expected, case2Actuals)
     }
 
     private fun calculate(

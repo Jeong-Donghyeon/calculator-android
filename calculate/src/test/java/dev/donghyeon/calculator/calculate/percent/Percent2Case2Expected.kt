@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.percent
 
-val Percent2DecimalExpected =
+val Percent2Case2Expected =
     arrayOf(
         "100%",
         "99.91%",

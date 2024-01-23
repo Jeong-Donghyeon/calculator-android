@@ -1,6 +1,6 @@
 package dev.donghyeon.calculator.calculate.percent
 
-val PercentIntegerInput =
+val PercentCase1Input =
     arrayOf(
         "123",
         "023",
@@ -17,7 +17,7 @@ val PercentIntegerInput =
         }.flatten().toTypedArray()
     }
 
-val PercentDecimalInput =
+val PercentCase2Input =
     listOf(
         "123",
         "023",
