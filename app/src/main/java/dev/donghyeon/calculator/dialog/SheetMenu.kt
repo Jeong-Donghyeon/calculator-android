@@ -30,6 +30,7 @@ fun SheetMenu(
         listOf(
             Destination.GENERAL,
             Destination.PERCENT,
+            Destination.CONVERT,
         )
     BottomSheetDialog(
         onDismissRequest = close,
