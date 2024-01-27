@@ -144,7 +144,11 @@ private fun CalculateView(
                 Modifier
                     .fillMaxWidth()
                     .padding(bottom = 26.dp),
-            text = calculate.result,
+            text = if (calculate.value.text == "") {
+                ""
+            } else {
+                calculate.result
+            },
             fontSizeRange =
                 FontSizeRange(
                     min = 1.sp,
