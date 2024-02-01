@@ -33,7 +33,7 @@ class GeneralUseCase
                             when (v) {
                                 GenralOperator.MULTIPLY.value -> v2.multiply(v1)
                                 GenralOperator.DIVIDE.value -> {
-                                    if (v1 > BigDecimal.ZERO && v2 > BigDecimal.ZERO) {
+                                    if (v1 != BigDecimal.ZERO && v2 != BigDecimal.ZERO) {
                                         v2.divide(v1, 15, RoundingMode.UP)
                                     } else {
                                         BigDecimal.ZERO
@@ -57,15 +57,43 @@ class GeneralUseCase
         private fun infixToPostfix(infix: String): List<String> {
             val infixList = mutableListOf<String>()
             var row = ""
+            var minus = false
             infix.forEachIndexed { i, v ->
-                if (v.isDigit() || v == '.') {
-                    row += v.toString()
+                val value = v.toString()
+                if (v.isDigit()) {
+                    row +=
+                        if (minus) {
+                            minus = false
+                            "-$value"
+                        } else {
+                            value
+                        }
+                } else if (v == '.') {
+                    row += value
                 } else {
                     if (row != "") {
                         infixList.add(row)
                         row = ""
                     }
-                    infixList.add(v.toString())
+                    if (infixList.isEmpty()) {
+                        infixList.add(value)
+                    } else {
+                        when (infixList.last()) {
+                            GenralOperator.MULTIPLY.value,
+                            GenralOperator.DIVIDE.value,
+                            GenralOperator.OPEN.value,
+                            -> {
+                                when (value) {
+                                    GenralOperator.PLUS.value -> minus = false
+                                    GenralOperator.MINUS.value -> minus = true
+                                    else -> infixList.add(value)
+                                }
+                            }
+                            else -> {
+                                infixList.add(value)
+                            }
+                        }
+                    }
                 }
                 if (i == infix.lastIndex && row != "") {
                     infixList.add(row)
@@ -172,20 +200,33 @@ class GeneralUseCase
             formatResult.split(".").let {
                 formatResult =
                     if (it.count() > 1) {
-                        var d = it[1]
-                        if (d.count() > 4) {
-                            if (d.reversed().substring(0, 3) == "999") {
-                                d = d.toIntOrNull()?.plus(1)?.toString() ?: d
+                        var decimal = it[1]
+                        if (decimal.count() > 4) {
+                            if (decimal.reversed().substring(0, 3) == "999") {
+                                decimal = decimal.toIntOrNull()?.plus(1)?.toString() ?: decimal
                             }
-                            d = d.substring(0, 4)
+                            decimal = decimal.substring(0, 4)
                         }
-                        while (d.last() == '0') {
-                            d = d.dropLast(1)
+                        val zero =
+                            decimal.all { d ->
+                                d == '0'
+                            }
+                        if (zero) {
+                            it.first()
+                        } else {
+                            while (true) {
+                                if (decimal.last() == '0') {
+                                    decimal = decimal.dropLast(1)
+                                } else {
+                                    break
+                                }
+                            }
+                            it.first() + "." + decimal
                         }
-                        it.first() + "." + d
                     } else {
                         formatResult
                     }
+                if (formatResult == "-0") formatResult = "0"
             }
             return formatResult
         }
