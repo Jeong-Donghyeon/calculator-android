@@ -1,6 +1,7 @@
 package dev.donghyeon.calculator.general
 
 import androidx.compose.ui.text.input.TextFieldValue
+import dev.donghyeon.calculator.R
 import dev.donghyeon.calculator.calculate.GenralOperator
 
 data class GeneralState(
@@ -46,19 +47,19 @@ sealed class GeneralKey(val value: String) {
 
     data object Decimal : GeneralKey(".")
 
-    data object Back : GeneralKey("⌫")
-
     data object Clear : GeneralKey("C")
 
-    data object Left : GeneralKey("<-")
+    data object Backspace : GeneralKey(R.drawable.ic_backspace_24px.toString())
 
-    data object Right : GeneralKey("->")
+    data object Left : GeneralKey(R.drawable.ic_left_24px.toString())
 
-    data object CopyResult : GeneralKey("CP")
+    data object Right : GeneralKey(R.drawable.ic_right_24px.toString())
 
-    data object CopyExpress : GeneralKey("ECP")
+    data object Copy : GeneralKey(R.drawable.ic_copy_24px.toString())
 
-    data class Past(val past: String = "") : GeneralKey("PS")
+    data class Paste(val paste: String = "") : GeneralKey(R.drawable.ic_paste_24px.toString())
+
+    data object History : GeneralKey(R.drawable.ic_history_24px.toString())
 
     data object Multiply : GeneralKey(GenralOperator.MULTIPLY.value)
 

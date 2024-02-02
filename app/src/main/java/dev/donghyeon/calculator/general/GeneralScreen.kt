@@ -144,11 +144,12 @@ private fun CalculateView(
                 Modifier
                     .fillMaxWidth()
                     .padding(bottom = 26.dp),
-            text = if (calculate.value.text == "") {
-                ""
-            } else {
-                calculate.result
-            },
+            text =
+                if (calculate.value.text == "") {
+                    ""
+                } else {
+                    calculate.result
+                },
             fontSizeRange =
                 FontSizeRange(
                     min = 1.sp,
@@ -175,7 +176,7 @@ private fun MenuView(
         ) {
             Icon(
                 modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.ic_menu),
+                painter = painterResource(id = R.drawable.ic_menu_24px),
                 tint = ColorSet.text,
                 contentDescription = "Menu",
             )
@@ -216,11 +217,11 @@ private fun KeyView(
         listOf(
             listOf(
                 GeneralKey.Clear,
-                GeneralKey.CopyExpress,
+                GeneralKey.Paste(),
                 GeneralKey.Seven,
                 GeneralKey.Four,
                 GeneralKey.One,
-                GeneralKey.CopyResult,
+                GeneralKey.Copy,
             ),
             listOf(
                 GeneralKey.Left,
@@ -239,8 +240,8 @@ private fun KeyView(
                 GeneralKey.Decimal,
             ),
             listOf(
-                GeneralKey.Back,
-                GeneralKey.Past(),
+                GeneralKey.Backspace,
+                GeneralKey.History,
                 GeneralKey.Divide,
                 GeneralKey.Multiply,
                 GeneralKey.Minus,
@@ -265,23 +266,30 @@ private fun KeyView(
                                 .weight(1f)
                                 .padding(2.dp),
                         text = key.value,
+                        icon =
+                            when (key) {
+                                is GeneralKey.Left -> key.value.toInt() to 32.dp
+                                is GeneralKey.Right -> key.value.toInt() to 32.dp
+                                is GeneralKey.Copy -> key.value.toInt() to 26.dp
+                                is GeneralKey.Paste -> key.value.toInt() to 24.dp
+                                is GeneralKey.History -> key.value.toInt() to 28.dp
+                                is GeneralKey.Backspace -> key.value.toInt() to 32.dp
+                                else -> null
+                            },
                         onClick = {
                             when (key) {
-                                is GeneralKey.CopyResult -> {
+                                is GeneralKey.Copy -> {
                                     val copyStr =
                                         calculate.result.replace(",", "")
                                     clipboardManager.setText(
                                         AnnotatedString(copyStr),
                                     )
                                 }
-                                is GeneralKey.CopyExpress ->
-                                    clipboardManager.setText(
-                                        AnnotatedString(calculate.value.text),
-                                    )
-                                is GeneralKey.Past ->
+                                is GeneralKey.Paste ->
                                     action?.inputKey(
-                                        GeneralKey.Past(clipboardManager.getText().toString()),
+                                        GeneralKey.Paste(clipboardManager.getText().toString()),
                                     )
+                                is GeneralKey.History -> {}
                                 else -> action?.inputKey(key)
                             }
                         },

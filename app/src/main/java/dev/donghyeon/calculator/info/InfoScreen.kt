@@ -107,7 +107,7 @@ private fun InfoScreen(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.ic_back),
+                    painter = painterResource(id = R.drawable.ic_back_24px),
                     tint = ColorSet.text,
                     contentDescription = "Back",
                 )

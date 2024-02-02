@@ -53,7 +53,7 @@ fun TitleView(
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                painter = painterResource(id = R.drawable.ic_info),
+                painter = painterResource(id = R.drawable.ic_info_24px),
                 tint = ColorSet.text,
                 contentDescription = "Info",
             )

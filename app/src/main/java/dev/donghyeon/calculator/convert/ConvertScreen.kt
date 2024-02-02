@@ -87,7 +87,7 @@ private fun MenuView(
         ) {
             Icon(
                 modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.ic_menu),
+                painter = painterResource(id = R.drawable.ic_menu_24px),
                 tint = ColorSet.text,
                 contentDescription = "Menu",
             )

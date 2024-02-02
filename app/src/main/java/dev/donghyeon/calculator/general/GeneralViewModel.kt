@@ -54,12 +54,12 @@ class GeneralViewModel
             calculate: GeneralState.Calculate,
         ): GeneralState.Calculate =
             when (key) {
-                is GeneralKey.CopyResult, GeneralKey.CopyExpress -> calculate
-                is GeneralKey.Past -> {
-                    val text = calculate.value.text + key.past
+                is GeneralKey.Copy -> calculate
+                is GeneralKey.Paste -> {
+                    val text = calculate.value.text + key.paste
                     val selection =
                         calculate.value.selection.let {
-                            TextRange(it.start + key.past.count())
+                            TextRange(it.start + key.paste.count())
                         }
                     val textFieldValue =
                         calculate.value.copy(
@@ -84,7 +84,7 @@ class GeneralViewModel
                     val inputTxt = inputKey(key, calculate.value)
                     val index =
                         calculate.value.selection.start.let {
-                            if (key is GeneralKey.Back) {
+                            if (key is GeneralKey.Backspace) {
                                 if (it == 0) 0 else it - 1
                             } else {
                                 it + key.value.count()
@@ -108,7 +108,7 @@ class GeneralViewModel
             StringBuilder(value.text).let {
                 val index = value.selection.start
                 when (key) {
-                    is GeneralKey.Back -> {
+                    is GeneralKey.Backspace -> {
                         if (index == 0) {
                             it.toString()
                         } else {
