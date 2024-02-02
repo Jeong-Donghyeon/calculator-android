@@ -1,6 +1,7 @@
 package dev.donghyeon.calculator.percent
 
 import androidx.compose.ui.text.input.TextFieldValue
+import dev.donghyeon.calculator.R
 import dev.donghyeon.calculator.calculate.PercentCalculateType
 
 data class PercentState(
@@ -19,27 +20,44 @@ data class PercentState(
 }
 
 enum class PercentValueSelect(val value: String) {
-    VALUE1(PercentKey.VALUE1.value),
-    VALUE2(PercentKey.VALUE2.value),
+    VALUE1(PercentKey.Value1.value),
+    VALUE2(PercentKey.Value2.value),
 }
 
-enum class PercentKey(val value: String) {
-    ONE("1"),
-    TWO("2"),
-    THREE("3"),
-    FOUR("4"),
-    FIVE("5"),
-    SIX("6"),
-    SEVEN("7"),
-    EIGHT("8"),
-    NINE("9"),
-    ZERO("0"),
-    COPY("CP"),
-    DECIMAL("."),
-    BACK("⌫"),
-    CLEAR("C"),
-    LEFT("<-"),
-    RIGHT("->"),
-    VALUE1("V1"),
-    VALUE2("V2"),
+sealed class PercentKey(val value: String) {
+    data object One : PercentKey("1")
+
+    data object Two : PercentKey("2")
+
+    data object Three : PercentKey("3")
+
+    data object Four : PercentKey("4")
+
+    data object Five : PercentKey("5")
+
+    data object Six : PercentKey("6")
+
+    data object Seven : PercentKey("7")
+
+    data object Eight : PercentKey("8")
+
+    data object Nine : PercentKey("9")
+
+    data object Zero : PercentKey("0")
+
+    data object Decimal : PercentKey(".")
+
+    data object Value1 : PercentKey("V1")
+
+    data object Value2 : PercentKey("V2")
+
+    data object Clear : PercentKey("C")
+
+    data object Backspace : PercentKey(R.drawable.ic_backspace_24px.toString())
+
+    data object Left : PercentKey(R.drawable.ic_left_24px.toString())
+
+    data object Right : PercentKey(R.drawable.ic_right_24px.toString())
+
+    data object Copy : PercentKey(R.drawable.ic_copy_24px.toString())
 }

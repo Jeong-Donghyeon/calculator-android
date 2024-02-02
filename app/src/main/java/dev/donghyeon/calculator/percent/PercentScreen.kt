@@ -78,8 +78,8 @@ fun PercentScreen() {
                 is SideEffect.Toast -> main.showToast(it.message)
                 is SideEffect.Focus ->
                     when (it.fieldName) {
-                        PercentKey.VALUE1.value -> v1Focus.requestFocus()
-                        PercentKey.VALUE2.value -> v2Focus.requestFocus()
+                        PercentKey.Value1.value -> v1Focus.requestFocus()
+                        PercentKey.Value2.value -> v2Focus.requestFocus()
                     }
             }
         }
@@ -193,7 +193,7 @@ private fun CalculateView(
                     Modifier
                         .width(fieldLeft)
                         .padding(top = 5.dp),
-                text = PercentKey.VALUE1.value,
+                text = PercentKey.Value1.value,
                 style = TextSet.extraBold.copy(v1Color, 24.sp),
                 textAlign = TextAlign.Center,
             )
@@ -348,30 +348,30 @@ private fun KeyView(
     val keyList =
         listOf(
             listOf(
-                PercentKey.CLEAR,
-                PercentKey.SEVEN,
-                PercentKey.FOUR,
-                PercentKey.ONE,
-                PercentKey.COPY,
+                PercentKey.Clear,
+                PercentKey.Seven,
+                PercentKey.Four,
+                PercentKey.One,
+                PercentKey.Copy,
             ),
             listOf(
-                PercentKey.LEFT,
-                PercentKey.EIGHT,
-                PercentKey.FIVE,
-                PercentKey.TWO,
-                PercentKey.ZERO,
+                PercentKey.Left,
+                PercentKey.Eight,
+                PercentKey.Five,
+                PercentKey.Two,
+                PercentKey.Zero,
             ),
             listOf(
-                PercentKey.RIGHT,
-                PercentKey.NINE,
-                PercentKey.SIX,
-                PercentKey.THREE,
-                PercentKey.DECIMAL,
+                PercentKey.Right,
+                PercentKey.Nine,
+                PercentKey.Six,
+                PercentKey.Three,
+                PercentKey.Decimal,
             ),
             listOf(
-                PercentKey.BACK,
-                PercentKey.VALUE1,
-                PercentKey.VALUE2,
+                PercentKey.Backspace,
+                PercentKey.Value1,
+                PercentKey.Value2,
             ),
         )
     val height = keyList.first().count() * InputKeyHeight.value
@@ -393,7 +393,7 @@ private fun KeyView(
             Column(modifier = Modifier.weight(1f)) {
                 row.forEach { key ->
                     when (key) {
-                        PercentKey.VALUE1, PercentKey.VALUE2 -> {
+                        is PercentKey.Value1, PercentKey.Value2 -> {
                             val color =
                                 if (key.value == calculate.select.value) {
                                     ColorSet.select
@@ -410,8 +410,8 @@ private fun KeyView(
                                 color = color,
                                 onClick = {
                                     when (key) {
-                                        PercentKey.VALUE1 -> v1Focus?.requestFocus()
-                                        PercentKey.VALUE2 -> v2Focus?.requestFocus()
+                                        is PercentKey.Value1 -> v1Focus?.requestFocus()
+                                        is PercentKey.Value2 -> v2Focus?.requestFocus()
                                         else -> {}
                                     }
                                 },
@@ -425,8 +425,16 @@ private fun KeyView(
                                         .weight(1f)
                                         .padding(2.dp),
                                 text = key.value,
+                                icon =
+                                    when (key) {
+                                        is PercentKey.Left -> key.value.toInt() to 32.dp
+                                        is PercentKey.Right -> key.value.toInt() to 32.dp
+                                        is PercentKey.Copy -> key.value.toInt() to 26.dp
+                                        is PercentKey.Backspace -> key.value.toInt() to 32.dp
+                                        else -> null
+                                    },
                                 onClick = {
-                                    if (key == PercentKey.COPY) {
+                                    if (key is PercentKey.Copy) {
                                         val copyStr =
                                             calculate.result
                                                 .replace(",", "")

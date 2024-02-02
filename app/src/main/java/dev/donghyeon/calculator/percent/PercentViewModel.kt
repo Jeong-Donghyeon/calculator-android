@@ -90,15 +90,15 @@ class PercentViewModel
             calculate: PercentState.Calculate,
         ): PercentState.Calculate =
             when (key) {
-                PercentKey.COPY -> calculate
-                PercentKey.CLEAR ->
+                is PercentKey.Copy -> calculate
+                is PercentKey.Clear ->
                     when (calculate.select) {
                         PercentValueSelect.VALUE1 ->
                             calculate.copy(value1 = TextFieldValue(), result = "?")
                         PercentValueSelect.VALUE2 ->
                             calculate.copy(value2 = TextFieldValue(), result = "?")
                     }
-                PercentKey.LEFT ->
+                is PercentKey.Left ->
                     when (calculate.select) {
                         PercentValueSelect.VALUE1 -> {
                             val index =
@@ -115,7 +115,7 @@ class PercentViewModel
                             calculate.copy(value2 = calculate.value2.copy(selection = TextRange(index)))
                         }
                     }
-                PercentKey.RIGHT ->
+                is PercentKey.Right ->
                     when (calculate.select) {
                         PercentValueSelect.VALUE1 -> {
                             val index = calculate.value1.selection.start + 1
@@ -133,7 +133,7 @@ class PercentViewModel
                         PercentValueSelect.VALUE1 -> {
                             val decimalCheck = checkDecimal(calculate.value1.text)
                             val digitsLimitCheck = checkDigitsLimit(calculate.value1.text)
-                            if (key == PercentKey.DECIMAL && decimalCheck) {
+                            if (key is PercentKey.Decimal && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
@@ -147,7 +147,7 @@ class PercentViewModel
                                 val inputTxt = inputKey(key, calculate.value1)
                                 val index =
                                     calculate.value1.selection.start.let {
-                                        if (key == PercentKey.BACK) {
+                                        if (key is PercentKey.Backspace) {
                                             if (it == 0) 0 else it - 1
                                         } else {
                                             it + key.value.count()
@@ -164,7 +164,7 @@ class PercentViewModel
                         PercentValueSelect.VALUE2 -> {
                             val decimalCheck = checkDecimal(calculate.value2.text)
                             val digitsLimitCheck = checkDigitsLimit(calculate.value2.text)
-                            if (key == PercentKey.DECIMAL && decimalCheck) {
+                            if (key is PercentKey.Decimal && decimalCheck) {
                                 viewModelScope.launch {
                                     _sideEffect.emit(SideEffect.Toast(decimalMessage))
                                 }
@@ -178,7 +178,7 @@ class PercentViewModel
                                 val inputTxt = inputKey(key, calculate.value2)
                                 val index =
                                     calculate.value2.selection.start.let {
-                                        if (key == PercentKey.BACK) {
+                                        if (key is PercentKey.Backspace) {
                                             if (it == 0) 0 else it - 1
                                         } else {
                                             it + key.value.count()
@@ -211,7 +211,7 @@ class PercentViewModel
             StringBuilder(value.text).let {
                 val index = value.selection.start
                 when (key) {
-                    PercentKey.BACK -> {
+                    is PercentKey.Backspace -> {
                         if (index == 0) {
                             it.toString()
                         } else {
