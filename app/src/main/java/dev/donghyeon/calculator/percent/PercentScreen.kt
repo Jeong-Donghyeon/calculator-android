@@ -302,7 +302,7 @@ private fun MenuView(
     action: PercentAction? = null,
     menu: (() -> Unit)? = null,
 ) {
-    Row {
+    Row(verticalAlignment = Alignment.Bottom) {
         Spacer(modifier = Modifier.width(12.dp))
         IconButton(
             modifier =
@@ -320,8 +320,8 @@ private fun MenuView(
         }
         ViewScrollTab(
             modifier =
-                Modifier
-                    .fillMaxWidth()
+                Modifier.fillMaxWidth()
+                    .height(55.dp)
                     .padding(bottom = 3.dp),
             tabs = PercentCalculateType.entries.map { it.value },
             index = state.type.ordinal,

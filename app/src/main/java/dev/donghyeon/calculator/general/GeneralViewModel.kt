@@ -13,8 +13,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 interface GeneralAction {
-    fun inputGeneralSelect(select: GeneralSelect)
-
     fun inputKey(key: GeneralKey)
 }
 
@@ -30,76 +28,57 @@ class GeneralViewModel
         private val _sideEffect = MutableSharedFlow<SideEffect>()
         val sideEffect = _sideEffect.asSharedFlow()
 
-        override fun inputGeneralSelect(select: GeneralSelect) {
-            _state.value = state.value.copy(select = select)
-        }
-
         override fun inputKey(key: GeneralKey) {
+            val state = state.value
             _state.value =
-                state.value.let {
-                    when (it.select) {
-                        GeneralSelect.CALCULATE2 ->
-                            it.copy(calculate2 = input(key, it.calculate2))
-                        GeneralSelect.CALCULATE3 ->
-                            it.copy(calculate3 = input(key, it.calculate3))
-                        GeneralSelect.CALCULATE4 ->
-                            it.copy(calculate4 = input(key, it.calculate4))
-                        else -> it.copy(calculate1 = input(key, it.calculate1))
+                when (key) {
+                    is GeneralKey.Copy -> state
+                    is GeneralKey.Paste -> {
+                        val text = state.value.text + key.paste
+                        val selection =
+                            state.value.selection.let {
+                                TextRange(it.start + key.paste.count())
+                            }
+                        val textFieldValue =
+                            state.value.copy(
+                                text = text,
+                                selection = selection,
+                            )
+                        state.copy(value = textFieldValue)
                     }
+                    is GeneralKey.Clear -> state.copy(value = TextFieldValue(), result = "")
+                    is GeneralKey.Left -> {
+                        val index =
+                            state.value.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
+                        state.copy(value = state.value.copy(selection = TextRange(index)))
+                    }
+                    is GeneralKey.Right -> {
+                        val index = state.value.selection.start + 1
+                        state.copy(value = state.value.copy(selection = TextRange(index)))
+                    }
+                    else -> {
+                        val inputTxt = inputKey(key, state.value)
+                        val index =
+                            state.value.selection.start.let {
+                                if (key is GeneralKey.Backspace) {
+                                    if (it == 0) 0 else it - 1
+                                } else {
+                                    it + key.value.count()
+                                }
+                            }
+                        val v =
+                            state.value.copy(
+                                text = inputTxt,
+                                selection = TextRange(index),
+                            )
+                        state.copy(value = v)
+                    }
+                }.let {
+                    it.copy(result = generalUseCase(it.value.text))
                 }
         }
-
-        private fun input(
-            key: GeneralKey,
-            calculate: GeneralState.Calculate,
-        ): GeneralState.Calculate =
-            when (key) {
-                is GeneralKey.Copy -> calculate
-                is GeneralKey.Paste -> {
-                    val text = calculate.value.text + key.paste
-                    val selection =
-                        calculate.value.selection.let {
-                            TextRange(it.start + key.paste.count())
-                        }
-                    val textFieldValue =
-                        calculate.value.copy(
-                            text = text,
-                            selection = selection,
-                        )
-                    calculate.copy(value = textFieldValue)
-                }
-                is GeneralKey.Clear -> calculate.copy(value = TextFieldValue(), result = "")
-                is GeneralKey.Left -> {
-                    val index =
-                        calculate.value.selection.start.let {
-                            if (it == 0) 0 else it - 1
-                        }
-                    calculate.copy(value = calculate.value.copy(selection = TextRange(index)))
-                }
-                is GeneralKey.Right -> {
-                    val index = calculate.value.selection.start + 1
-                    calculate.copy(value = calculate.value.copy(selection = TextRange(index)))
-                }
-                else -> {
-                    val inputTxt = inputKey(key, calculate.value)
-                    val index =
-                        calculate.value.selection.start.let {
-                            if (key is GeneralKey.Backspace) {
-                                if (it == 0) 0 else it - 1
-                            } else {
-                                it + key.value.count()
-                            }
-                        }
-                    val v =
-                        calculate.value.copy(
-                            text = inputTxt,
-                            selection = TextRange(index),
-                        )
-                    calculate.copy(value = v)
-                }
-            }.let {
-                it.copy(result = generalUseCase(it.value.text))
-            }
 
         private fun inputKey(
             key: GeneralKey,

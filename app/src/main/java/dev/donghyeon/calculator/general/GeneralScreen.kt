@@ -5,13 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +41,6 @@ import dev.donghyeon.calculator.view.FontSizeRange
 import dev.donghyeon.calculator.view.TitleView
 import dev.donghyeon.calculator.view.ViewButtonKey
 import dev.donghyeon.calculator.view.ViewFieldGeneral
-import dev.donghyeon.calculator.view.ViewScrollTab
 import dev.donghyeon.calculator.view.ViewTextResult
 import kotlinx.coroutines.flow.collectLatest
 
@@ -96,11 +93,21 @@ private fun GeneralScreen(
                 focus = focus,
             )
         }
-        MenuView(
-            state = state,
-            action = action,
-            menu = menu,
-        )
+        IconButton(
+            modifier =
+                Modifier
+                    .padding(start = 12.dp)
+                    .clip(CircleShape)
+                    .background(ColorSet.button),
+            onClick = menu ?: {},
+        ) {
+            Icon(
+                modifier = Modifier.size(32.dp),
+                painter = painterResource(id = R.drawable.ic_menu_24px),
+                tint = ColorSet.text,
+                contentDescription = "Menu",
+            )
+        }
         KeyView(
             state = state,
             action = action,
@@ -113,13 +120,6 @@ private fun CalculateView(
     state: GeneralState,
     focus: FocusRequester? = null,
 ) {
-    val calculate =
-        when (state.select) {
-            GeneralSelect.CALCULATE1 -> state.calculate1
-            GeneralSelect.CALCULATE2 -> state.calculate2
-            GeneralSelect.CALCULATE3 -> state.calculate3
-            GeneralSelect.CALCULATE4 -> state.calculate4
-        }
     Column(
         modifier =
             Modifier
@@ -136,7 +136,7 @@ private fun CalculateView(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .focusRequester(focus ?: FocusRequester()),
-                value = calculate.value,
+                value = state.value,
             )
         }
         ViewTextResult(
@@ -145,10 +145,10 @@ private fun CalculateView(
                     .fillMaxWidth()
                     .padding(bottom = 26.dp),
             text =
-                if (calculate.value.text == "") {
+                if (state.value.text == "") {
                     ""
                 } else {
-                    calculate.result
+                    state.result
                 },
             fontSizeRange =
                 FontSizeRange(
@@ -160,59 +160,11 @@ private fun CalculateView(
 }
 
 @Composable
-private fun MenuView(
-    state: GeneralState,
-    action: GeneralAction? = null,
-    menu: (() -> Unit)? = null,
-) {
-    Row {
-        Spacer(modifier = Modifier.width(12.dp))
-        IconButton(
-            modifier =
-                Modifier
-                    .clip(CircleShape)
-                    .background(ColorSet.button),
-            onClick = menu ?: {},
-        ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.ic_menu_24px),
-                tint = ColorSet.text,
-                contentDescription = "Menu",
-            )
-        }
-        ViewScrollTab(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 3.dp),
-            tabs = GeneralSelect.entries.map { it.value },
-            index = state.select.ordinal,
-            onTab = {
-                when (it) {
-                    0 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE1)
-                    1 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE2)
-                    2 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE3)
-                    3 -> action?.inputGeneralSelect(GeneralSelect.CALCULATE4)
-                }
-            },
-        )
-    }
-}
-
-@Composable
 private fun KeyView(
     state: GeneralState,
     action: GeneralAction? = null,
 ) {
     val clipboardManager = LocalClipboardManager.current
-    val calculate =
-        when (state.select) {
-            GeneralSelect.CALCULATE1 -> state.calculate1
-            GeneralSelect.CALCULATE2 -> state.calculate2
-            GeneralSelect.CALCULATE3 -> state.calculate3
-            GeneralSelect.CALCULATE4 -> state.calculate4
-        }
     val keyList =
         listOf(
             listOf(
@@ -279,11 +231,8 @@ private fun KeyView(
                         onClick = {
                             when (key) {
                                 is GeneralKey.Copy -> {
-                                    val copyStr =
-                                        calculate.result.replace(",", "")
-                                    clipboardManager.setText(
-                                        AnnotatedString(copyStr),
-                                    )
+                                    val copyStr = state.result.replace(",", "")
+                                    clipboardManager.setText(AnnotatedString(copyStr))
                                 }
                                 is GeneralKey.Paste ->
                                     action?.inputKey(
