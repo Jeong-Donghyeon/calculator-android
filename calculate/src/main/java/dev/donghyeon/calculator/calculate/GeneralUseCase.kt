@@ -89,8 +89,26 @@ class GeneralUseCase
                                     else -> infixList.add(value)
                                 }
                             }
+                            GenralOperator.PLUS.value,
+                            GenralOperator.MINUS.value,
+                            GenralOperator.CLOSE.value,
+                            -> infixList.add(value)
                             else -> {
+                                if (value == GenralOperator.OPEN.value) {
+                                    infixList.add(GenralOperator.MULTIPLY.value)
+                                }
                                 infixList.add(value)
+                            }
+                        }
+                        if (value == GenralOperator.CLOSE.value) {
+                            if (i < infix.count() - 1) {
+                                val multiply =
+                                    GenralOperator.entries.all {
+                                        it.value != infix[i + 1].toString()
+                                    }
+                                if (multiply) {
+                                    infixList.add(GenralOperator.MULTIPLY.value)
+                                }
                             }
                         }
                     }
