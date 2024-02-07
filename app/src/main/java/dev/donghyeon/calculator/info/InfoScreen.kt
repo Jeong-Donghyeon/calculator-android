@@ -180,9 +180,11 @@ private fun TermsAlert(close: (() -> Unit)? = null) {
                     정보들의 정확성, 신뢰성 또는 적절성에 대해
                     어떠한 보증도 하지 않습니다.
 
-                    또한 제공되는 정보들에 의하여 발생 할 수 있는
+                    제공되는 정보들에 의하여 발생 할 수 있는
                     직접적, 간접적인 모든 손해에 대하여
                     책임을 지지 않습니다.
+                    
+                    또한 지속적인 업데이트에 대한 책임이 없습니다.
                     """.trimIndent(),
                 style = TextSet.regular.copy(ColorSet.text, 14.sp),
             )
