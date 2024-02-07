@@ -13,11 +13,11 @@ plugins {
 
 android {
 
-    namespace = "dev.donghyeon.calculator"
+    namespace = "com.donghyeon.dev.calculator"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "dev.donghyeon.calculator"
+        applicationId = "com.donghyeon.dev.calculator"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
