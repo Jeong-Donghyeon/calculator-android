@@ -120,16 +120,20 @@ private fun InfoScreen(
             )
         }
         Spacer(modifier = Modifier.height(70.dp))
-        Image(
-            modifier =
-                Modifier
-                    .clip(RoundedCornerShape(30.dp))
-                    .background(ColorSet.button)
-                    .size(120.dp),
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "AppIcon",
-        )
-        Spacer(modifier = Modifier.height(26.dp))
+        Box(contentAlignment = Alignment.Center) {
+            Box(
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(ColorSet.button)
+                        .size(90.dp),
+            )
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "AppIcon",
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = appName,
             style = TextSet.extraBold.copy(ColorSet.result, 26.sp),
