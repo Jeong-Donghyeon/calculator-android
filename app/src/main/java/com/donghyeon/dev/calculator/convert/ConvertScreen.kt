@@ -55,7 +55,7 @@ private fun ConvertScreen(
     navInfo: ((Destination) -> Unit)? = null,
     menu: (() -> Unit)? = null,
 ) {
-    Column(modifier = Modifier.background(ColorSet.container).fillMaxSize()) {
+    Column(modifier = Modifier.background(ColorSet.background).fillMaxSize()) {
         TitleView(
             title = Destination.CONVERT.route,
             navInfo = { navInfo?.invoke(it) },

@@ -103,7 +103,7 @@ private fun PercentScreen(
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
-    Column(modifier = Modifier.background(ColorSet.container)) {
+    Column(modifier = Modifier.background(ColorSet.background)) {
         TitleView(
             title = Destination.PERCENT.route,
             navInfo = { navInfo?.invoke(it) },

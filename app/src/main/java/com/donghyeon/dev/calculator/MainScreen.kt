@@ -43,7 +43,7 @@ fun MainScreen(viewModel: MainViewModel) {
         val context = LocalContext.current
         val navController = LocalNavController.current
         (LocalView.current.context as Activity).apply {
-            window.statusBarColor = ColorSet.container.toArgb()
+            window.statusBarColor = ColorSet.background.toArgb()
         }
         val menuState by viewModel.menuState.collectAsState()
         LaunchedEffect(Unit) {
@@ -81,7 +81,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 toast?.show()
             }
         }
-        Scaffold(containerColor = ColorSet.container) {
+        Scaffold(containerColor = ColorSet.background) {
             NavHost(
                 modifier = Modifier.padding(it),
                 navController = navController,

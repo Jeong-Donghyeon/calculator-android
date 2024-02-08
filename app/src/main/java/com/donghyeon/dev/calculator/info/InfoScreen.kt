@@ -90,14 +90,14 @@ private fun InfoScreen(
     Column(
         modifier =
             Modifier
-                .background(ColorSet.container)
+                .background(ColorSet.background)
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
             modifier =
                 Modifier
-                    .background(ColorSet.container)
+                    .background(ColorSet.background)
                     .fillMaxWidth()
                     .height(50.dp),
             contentAlignment = Alignment.CenterStart,

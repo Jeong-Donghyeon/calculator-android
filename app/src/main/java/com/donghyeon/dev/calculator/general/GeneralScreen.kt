@@ -82,7 +82,7 @@ private fun GeneralScreen(
     menu: (() -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
-    Column(modifier = Modifier.background(ColorSet.container)) {
+    Column(modifier = Modifier.background(ColorSet.background)) {
         TitleView(
             title = Destination.GENERAL.route,
             navInfo = { navInfo?.invoke(it) },

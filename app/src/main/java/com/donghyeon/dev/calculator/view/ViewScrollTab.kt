@@ -46,7 +46,7 @@ import com.donghyeon.dev.calculator.theme.TextSet
 @Composable
 fun Preview_ViewScrollTab() {
     ViewScrollTab(
-        modifier = Modifier.background(ColorSet.container),
+        modifier = Modifier.background(ColorSet.background),
         tabs = listOf("비율", "일부", "증값", "증율"),
     )
 }
@@ -106,7 +106,7 @@ fun ViewScrollTab(
 @UiComposable
 private fun CustomScrollableTabRow(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = ColorSet.container,
+    backgroundColor: Color = ColorSet.background,
     contentColor: Color = contentColorFor(backgroundColor),
     edgePadding: Dp = 52.dp,
     indicator: @Composable (tabPositions: List<TabPos>) -> Unit,

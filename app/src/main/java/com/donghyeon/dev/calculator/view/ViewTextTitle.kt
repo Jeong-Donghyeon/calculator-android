@@ -37,7 +37,7 @@ fun TitleView(
     Box(
         modifier =
             Modifier
-                .background(ColorSet.container)
+                .background(ColorSet.background)
                 .fillMaxWidth()
                 .height(50.dp),
         contentAlignment = Alignment.CenterEnd,
