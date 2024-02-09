@@ -2,6 +2,7 @@ package com.donghyeon.dev.calculator.percent
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -127,6 +129,30 @@ private fun PercentScreen(
             v1Focus = v1Focus,
             v2Focus = v2Focus,
         )
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 12.dp)
+                    .padding(top = 5.dp, bottom = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
+        ) {
+            listOf(
+                R.drawable.ic_all_24px to 24.dp,
+                R.drawable.ic_calculate_24px to 26.dp,
+                R.drawable.ic_percent_24px to 24.dp,
+                R.drawable.ic_ratio_24px to 24.dp,
+                R.drawable.ic_unit_24px to 26.dp,
+                R.drawable.ic_date_24px to 24.dp,
+            ).forEach {
+                ViewButtonKey(
+                    modifier = Modifier.height(40.dp),
+                    icon = it,
+                    text = it.first.toString(),
+                )
+            }
+        }
     }
 }
 
@@ -302,7 +328,10 @@ private fun MenuView(
     action: PercentAction? = null,
     menu: (() -> Unit)? = null,
 ) {
-    Row(verticalAlignment = Alignment.Bottom) {
+    Row(
+        modifier = Modifier.padding(bottom = 10.dp),
+        verticalAlignment = Alignment.Bottom,
+    ) {
         Spacer(modifier = Modifier.width(12.dp))
         IconButton(
             modifier =
@@ -385,8 +414,7 @@ private fun KeyView(
     Row(
         modifier =
             Modifier
-                .padding(10.dp)
-                .padding(bottom = 20.dp)
+                .padding(horizontal = 10.dp)
                 .height(height.dp),
     ) {
         keyList.forEach { row ->
