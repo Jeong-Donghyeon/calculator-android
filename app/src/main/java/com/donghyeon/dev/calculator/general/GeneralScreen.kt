@@ -2,7 +2,6 @@ package com.donghyeon.dev.calculator.general
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,7 +45,9 @@ import com.donghyeon.dev.calculator.view.ViewFieldGeneral
 import com.donghyeon.dev.calculator.view.ViewTextResult
 import kotlinx.coroutines.flow.collectLatest
 
-@Preview
+@Preview(
+    widthDp = 400,
+)
 @Composable
 private fun Preview_GeneralScreen() {
     GeneralScreen(
@@ -119,21 +119,21 @@ private fun GeneralScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
                     .padding(horizontal = 12.dp)
                     .padding(top = 5.dp, bottom = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(7.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             listOf(
-                R.drawable.ic_all_24px to 24.dp,
-                R.drawable.ic_calculate_24px to 26.dp,
-                R.drawable.ic_percent_24px to 24.dp,
                 R.drawable.ic_ratio_24px to 24.dp,
+                R.drawable.ic_percent_24px to 24.dp,
+                R.drawable.ic_calculate_24px to 26.dp,
+                R.drawable.ic_all_24px to 24.dp,
                 R.drawable.ic_unit_24px to 26.dp,
+                R.drawable.ic_currency_24px to 24.dp,
                 R.drawable.ic_date_24px to 24.dp,
             ).forEach {
                 ViewButtonKey(
-                    modifier = Modifier.height(40.dp),
+                    modifier = Modifier.weight(1f).height(40.dp),
                     icon = it,
                     text = it.first.toString(),
                 )
