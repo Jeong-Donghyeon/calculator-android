@@ -2,7 +2,6 @@ package com.donghyeon.dev.calculator.general
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,10 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,11 +16,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,21 +26,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.donghyeon.dev.calculator.Destination
 import com.donghyeon.dev.calculator.Navigation
-import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.view.FontSizeRange
-import com.donghyeon.dev.calculator.view.TitleView
 import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldGeneral
 import com.donghyeon.dev.calculator.view.ViewTextResult
+import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
-@Preview(
-    widthDp = 400,
-)
+@Preview
 @Composable
 private fun Preview_GeneralScreen() {
     GeneralScreen(
@@ -71,8 +61,7 @@ fun GeneralScreen() {
     GeneralScreen(
         state = state,
         action = viewModel,
-        navInfo = { main.navigation(Navigation.Push(it)) },
-        menu = { main.openMenu() },
+        nav = { main.navigation(it) },
         focus = focus,
     )
 }
@@ -81,14 +70,13 @@ fun GeneralScreen() {
 private fun GeneralScreen(
     state: GeneralState,
     action: GeneralAction? = null,
-    navInfo: ((Destination) -> Unit)? = null,
-    menu: (() -> Unit)? = null,
+    nav: ((Navigation) -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.background)) {
-        TitleView(
+        ViewTitle(
             title = Destination.GENERAL.route,
-            navInfo = { navInfo?.invoke(it) },
+            nav = { nav?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
@@ -96,49 +84,10 @@ private fun GeneralScreen(
                 focus = focus,
             )
         }
-        IconButton(
-            modifier =
-                Modifier
-                    .padding(start = 12.dp, bottom = 10.dp)
-                    .clip(CircleShape)
-                    .background(ColorSet.button),
-            onClick = menu ?: {},
-        ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.ic_menu_24px),
-                tint = ColorSet.text,
-                contentDescription = "Menu",
-            )
-        }
         KeyView(
             state = state,
             action = action,
         )
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-                    .padding(top = 5.dp, bottom = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-        ) {
-            listOf(
-                R.drawable.ic_ratio_24px to 24.dp,
-                R.drawable.ic_percent_24px to 24.dp,
-                R.drawable.ic_calculate_24px to 26.dp,
-                R.drawable.ic_all_24px to 24.dp,
-                R.drawable.ic_unit_24px to 26.dp,
-                R.drawable.ic_currency_24px to 24.dp,
-                R.drawable.ic_date_24px to 24.dp,
-            ).forEach {
-                ViewButtonKey(
-                    modifier = Modifier.weight(1f).height(40.dp),
-                    icon = it,
-                    text = it.first.toString(),
-                )
-            }
-        }
     }
 }
 

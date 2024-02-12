@@ -17,22 +17,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.donghyeon.dev.calculator.Destination
+import com.donghyeon.dev.calculator.Navigation
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_TitleView() {
-    TitleView(
+fun Preview_ViewTitle() {
+    ViewTitle(
         title = Destination.GENERAL.route,
     )
 }
 
 @Composable
-fun TitleView(
+fun ViewTitle(
     title: String,
-    navInfo: ((Destination) -> Unit)? = null,
+    nav: ((Navigation) -> Unit)? = null,
 ) {
     Box(
         modifier =
@@ -49,7 +50,7 @@ fun TitleView(
             textAlign = TextAlign.Center,
         )
         IconButton(
-            onClick = { navInfo?.invoke(Destination.INTRO) },
+            onClick = { nav?.invoke(Navigation.Push(Destination.INFO)) },
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),

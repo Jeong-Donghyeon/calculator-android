@@ -10,11 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,12 +19,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.donghyeon.dev.calculator.Destination
 import com.donghyeon.dev.calculator.Navigation
-import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.PercentCalculateType
 import com.donghyeon.dev.calculator.calculate.PercentUnit
 import com.donghyeon.dev.calculator.common.InputKeyHeight
@@ -47,12 +40,12 @@ import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
 import com.donghyeon.dev.calculator.view.FontSizeRange
-import com.donghyeon.dev.calculator.view.TitleView
 import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewButtonKeyValue
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTextResult
+import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
@@ -87,8 +80,7 @@ fun PercentScreen() {
     PercentScreen(
         state = state,
         action = viewModel,
-        navInfo = { main.navigation(Navigation.Push(it)) },
-        menu = { main.openMenu() },
+        nav = { main.navigation(it) },
         v1Focus = v1Focus,
         v2Focus = v2Focus,
     )
@@ -98,15 +90,14 @@ fun PercentScreen() {
 private fun PercentScreen(
     state: PercentState,
     action: PercentAction? = null,
-    navInfo: ((Destination) -> Unit)? = null,
-    menu: (() -> Unit)? = null,
+    nav: ((Navigation) -> Unit)? = null,
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.background)) {
-        TitleView(
+        ViewTitle(
             title = Destination.PERCENT.route,
-            navInfo = { navInfo?.invoke(it) },
+            nav = { nav?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(
@@ -119,7 +110,6 @@ private fun PercentScreen(
         MenuView(
             state = state,
             action = action,
-            menu = menu,
         )
         KeyView(
             state = state,
@@ -127,30 +117,6 @@ private fun PercentScreen(
             v1Focus = v1Focus,
             v2Focus = v2Focus,
         )
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
-                    .padding(top = 5.dp, bottom = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-        ) {
-            listOf(
-                R.drawable.ic_ratio_24px to 24.dp,
-                R.drawable.ic_percent_24px to 24.dp,
-                R.drawable.ic_calculate_24px to 26.dp,
-                R.drawable.ic_all_24px to 24.dp,
-                R.drawable.ic_unit_24px to 26.dp,
-                R.drawable.ic_currency_24px to 24.dp,
-                R.drawable.ic_date_24px to 24.dp,
-            ).forEach {
-                ViewButtonKey(
-                    modifier = Modifier.weight(1f).height(40.dp),
-                    icon = it,
-                    text = it.first.toString(),
-                )
-            }
-        }
     }
 }
 
@@ -324,27 +290,12 @@ private fun CalculateView(
 private fun MenuView(
     state: PercentState,
     action: PercentAction? = null,
-    menu: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier.padding(bottom = 10.dp),
         verticalAlignment = Alignment.Bottom,
     ) {
         Spacer(modifier = Modifier.width(12.dp))
-        IconButton(
-            modifier =
-                Modifier
-                    .clip(CircleShape)
-                    .background(ColorSet.button),
-            onClick = menu ?: {},
-        ) {
-            Icon(
-                modifier = Modifier.size(32.dp),
-                painter = painterResource(id = R.drawable.ic_menu_24px),
-                tint = ColorSet.text,
-                contentDescription = "Menu",
-            )
-        }
         ViewScrollTab(
             modifier =
                 Modifier.fillMaxWidth()

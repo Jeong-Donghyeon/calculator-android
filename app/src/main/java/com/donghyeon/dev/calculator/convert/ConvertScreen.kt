@@ -25,7 +25,7 @@ import com.donghyeon.dev.calculator.Navigation
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.theme.ColorSet
-import com.donghyeon.dev.calculator.view.TitleView
+import com.donghyeon.dev.calculator.view.ViewTitle
 
 @Preview
 @Composable
@@ -43,7 +43,7 @@ fun ConvertScreen() {
     ConvertScreen(
         state = state,
         action = viewModel,
-        navInfo = { main.navigation(Navigation.Push(it)) },
+        nav = { main.navigation(it) },
         menu = { main.openMenu() },
     )
 }
@@ -52,13 +52,13 @@ fun ConvertScreen() {
 private fun ConvertScreen(
     state: ConvertState,
     action: ConvertAction? = null,
-    navInfo: ((Destination) -> Unit)? = null,
+    nav: ((Navigation) -> Unit)? = null,
     menu: (() -> Unit)? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.background).fillMaxSize()) {
-        TitleView(
+        ViewTitle(
             title = Destination.CONVERT.route,
-            navInfo = { navInfo?.invoke(it) },
+            nav = { nav?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f))
         MenuView(

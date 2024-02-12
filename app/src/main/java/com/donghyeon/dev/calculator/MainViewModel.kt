@@ -23,6 +23,9 @@ class MainViewModel
             MutableSharedFlow<Triple<Boolean, Destination, Navigation>>()
         val navigationFlow = _navigationFlow.asSharedFlow()
 
+        private val _bottomMunu = MutableStateFlow(true to StartSceen)
+        val bottomMunu = _bottomMunu.asStateFlow()
+
         private val _menuState = MutableStateFlow(false)
         val menuState = _menuState.asStateFlow()
 
@@ -39,32 +42,47 @@ class MainViewModel
             _menuState.value = false
         }
 
-        fun navigation(navigation: Navigation) {
+        fun navigation(next: Navigation) {
             viewModelScope.launch {
                 val current = screenStack.peek()
-                when (navigation) {
+                when (next) {
                     is Navigation.Pop -> screenStack.pop()
                     is Navigation.PopToDestination -> {
                         while (true) {
                             val peek = screenStack.peek()
-                            if (peek == navigation.destination) {
+                            if (peek == next.destination) {
                                 break
                             } else {
                                 screenStack.pop()
                             }
                         }
                     }
-                    is Navigation.Push -> screenStack.push(navigation.destination)
+                    is Navigation.Push -> screenStack.push(next.destination)
                     is Navigation.PopPush -> {
-                        screenStack.pop()
-                        screenStack.push(navigation.destination)
+                        when (next.destination) {
+                            Destination.INFO, Destination.GENERAL, Destination.PERCENT -> {
+                                screenStack.pop()
+                                screenStack.push(next.destination)
+                            }
+                            else -> return@launch
+                        }
+                    }
+                }
+                if (screenStack.isNotEmpty()) {
+                    when (screenStack.peek()) {
+                        Destination.MENU, Destination.INFO -> {
+                            _bottomMunu.value = bottomMunu.value.copy(false)
+                        }
+                        else -> {
+                            _bottomMunu.value = bottomMunu.value.copy(true, screenStack.peek())
+                        }
                     }
                 }
                 _navigationFlow.emit(
                     Triple(
                         screenStack.empty(),
                         current,
-                        navigation,
+                        next,
                     ),
                 )
             }

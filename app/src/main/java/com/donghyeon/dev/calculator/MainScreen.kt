@@ -6,6 +6,9 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -24,12 +27,12 @@ import androidx.navigation.compose.rememberNavController
 import com.donghyeon.dev.calculator.common.LocalNavController
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.StartSceen
-import com.donghyeon.dev.calculator.convert.ConvertScreen
 import com.donghyeon.dev.calculator.dialog.SheetMenu
 import com.donghyeon.dev.calculator.general.GeneralScreen
 import com.donghyeon.dev.calculator.info.InfoScreen
 import com.donghyeon.dev.calculator.percent.PercentScreen
 import com.donghyeon.dev.calculator.theme.ColorSet
+import com.donghyeon.dev.calculator.view.ViewBottomMenu
 import kotlinx.coroutines.flow.collectLatest
 
 private var toast: Toast? = null
@@ -46,27 +49,28 @@ fun MainScreen(viewModel: MainViewModel) {
             window.statusBarColor = ColorSet.background.toArgb()
         }
         val menuState by viewModel.menuState.collectAsState()
+        val bottomMenu by viewModel.bottomMunu.collectAsState()
         LaunchedEffect(Unit) {
             viewModel.navigationFlow.collectLatest {
-                val (exit, current, navigation) = it
+                val (exit, current, next) = it
                 if (exit) {
                     (context as Activity).finish()
                 } else {
-                    when (navigation) {
+                    when (next) {
                         is Navigation.Pop -> {
                             navController.popBackStack()
                         }
                         is Navigation.PopToDestination -> {
                             navController.popBackStack(
-                                route = navigation.destination.route,
+                                route = next.destination.route,
                                 inclusive = false,
                             )
                         }
                         is Navigation.Push -> {
-                            navController.navigate(navigation.destination.route)
+                            navController.navigate(next.destination.route)
                         }
                         is Navigation.PopPush -> {
-                            navController.navigate(navigation.destination.route) {
+                            navController.navigate(next.destination.route) {
                                 popUpTo(current.route) { inclusive = true }
                             }
                         }
@@ -82,31 +86,41 @@ fun MainScreen(viewModel: MainViewModel) {
             }
         }
         Scaffold(containerColor = ColorSet.background) {
-            NavHost(
-                modifier = Modifier.padding(it),
-                navController = navController,
-                startDestination = StartSceen.route,
-            ) {
-                val pushEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-                    slideIntoContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Start,
-                        tween(200),
+            Column {
+                NavHost(
+                    modifier = Modifier.padding(it).weight(1f),
+                    navController = navController,
+                    startDestination = StartSceen.route,
+                    enterTransition = { fadeIn(animationSpec = tween(0)) },
+                    exitTransition = { fadeOut(animationSpec = tween(0)) },
+                ) {
+                    val pushEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+                        slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Up,
+                            tween(100),
+                        )
+                    }
+                    val pushPopExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+                        slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Down,
+                            tween(100),
+                        )
+                    }
+                    composable(
+                        route = Destination.INFO.route,
+                        enterTransition = pushEnterTransition,
+                        popExitTransition = pushPopExitTransition,
+                    ) { InfoScreen() }
+                    composable(Destination.GENERAL.route) { GeneralScreen() }
+                    composable(Destination.PERCENT.route) { PercentScreen() }
+                }
+                if (bottomMenu.first) {
+                    ViewBottomMenu(
+                        destination = bottomMenu.second,
+                        menu = { viewModel.openMenu() },
+                        nav = { viewModel.navigation(it) },
                     )
                 }
-                val pushPopExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-                    slideOutOfContainer(
-                        AnimatedContentTransitionScope.SlideDirection.End,
-                        tween(200),
-                    )
-                }
-                composable(
-                    route = Destination.INTRO.route,
-                    enterTransition = pushEnterTransition,
-                    popExitTransition = pushPopExitTransition,
-                ) { InfoScreen() }
-                composable(Destination.GENERAL.route) { GeneralScreen() }
-                composable(Destination.PERCENT.route) { PercentScreen() }
-                composable(Destination.CONVERT.route) { ConvertScreen() }
             }
         }
         if (menuState) {
