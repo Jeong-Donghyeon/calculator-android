@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.donghyeon.dev.calculator.BuildConfig
+import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.LocalViewModel
@@ -114,7 +115,7 @@ private fun InfoScreen(
             }
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "정보",
+                text = stringResource(id = Dest.INFO.title),
                 style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
                 textAlign = TextAlign.Center,
             )
@@ -145,21 +146,21 @@ private fun InfoScreen(
         )
         Spacer(modifier = Modifier.height(100.dp))
         Text(
-            text = "개인정보 처리방침",
+            text = stringResource(id = R.string.privacy_policy),
             style = TextSet.regular.copy(linkColor, 18.sp),
             textDecoration = TextDecoration.Underline,
         )
         Spacer(modifier = Modifier.height(30.dp))
         Text(
             modifier = Modifier.clickable { license?.invoke() },
-            text = "오픈소스 라이선스",
+            text = stringResource(id = R.string.open_source_license),
             style = TextSet.regular.copy(linkColor, 18.sp),
             textDecoration = TextDecoration.Underline,
         )
         Spacer(modifier = Modifier.height(30.dp))
         Text(
             modifier = Modifier.clickable { terms?.invoke() },
-            text = "면책 조항",
+            text = stringResource(id = R.string.disclaimer),
             style = TextSet.regular.copy(linkColor, 18.sp),
             textDecoration = TextDecoration.Underline,
         )
@@ -175,21 +176,7 @@ private fun TermsAlert(close: (() -> Unit)? = null) {
         Column(modifier = Modifier.background(ColorSet.button)) {
             Text(
                 modifier = Modifier.padding(16.dp),
-                text =
-                    """
-                    본 앱을 사용함으로써 귀하는
-                    아래의 이용약관에 동의하게 됩니다.
-
-                    앱을 통해 제공되는 모든 계산 결과 값이나
-                    정보들의 정확성, 신뢰성 또는 적절성에 대해
-                    어떠한 보증도 하지 않습니다.
-
-                    제공되는 정보들에 의하여 발생 할 수 있는
-                    직접적, 간접적인 모든 손해에 대하여
-                    책임을 지지 않습니다.
-                    
-                    또한 지속적인 업데이트에 대한 책임이 없습니다.
-                    """.trimIndent(),
+                text = stringResource(id = R.string.disclaimer_content).trimIndent(),
                 style = TextSet.regular.copy(ColorSet.text, 14.sp),
             )
             Box(

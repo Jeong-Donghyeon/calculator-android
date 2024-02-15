@@ -5,17 +5,17 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import javax.inject.Inject
 
-enum class PercentCalculateType(val value: String) {
-    TYPE1("비율값"),
-    TYPE2("일부값"),
-    TYPE3("증감값"),
-    TYPE4("증감율"),
+enum class PercentCalculateType {
+    TYPE1,
+    TYPE2,
+    TYPE3,
+    TYPE4,
 }
 
 enum class PercentUnit(val value: String) {
     PERCENT("%"),
-    UP("증가"),
-    DOWN("감소"),
+    UP("UP"),
+    DOWN("DOWN"),
 }
 
 class PercentUseCase

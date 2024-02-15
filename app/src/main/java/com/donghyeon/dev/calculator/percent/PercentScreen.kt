@@ -2,7 +2,6 @@ package com.donghyeon.dev.calculator.percent
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,15 +22,17 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
+import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.PercentCalculateType
 import com.donghyeon.dev.calculator.calculate.PercentUnit
 import com.donghyeon.dev.calculator.common.InputKeyHeight
@@ -96,7 +97,7 @@ private fun PercentScreen(
 ) {
     Column(modifier = Modifier.background(ColorSet.background)) {
         ViewTitle(
-            title = Dest.PERCENT.title,
+            title = stringResource(id = Dest.PERCENT.title),
             navDest = { navDest?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f)) {
@@ -109,10 +110,11 @@ private fun PercentScreen(
         }
         ViewScrollTab(
             modifier =
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .height(55.dp)
                     .padding(bottom = 7.dp),
-            tabs = PercentCalculateType.entries.map { it.value },
+            tabs = stringArrayResource(id = R.array.percent_type).toList(),
             index = state.type.ordinal,
             onTab = {
                 when (it) {
@@ -139,42 +141,13 @@ private fun CalculateView(
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
-    val fieldTotalWith: Dp = 320.dp
-    val fieldLeft: Dp = 50.dp
-    val fieldRight: Dp = 60.dp
-    val guideStrList =
+    val guideStrArr = stringArrayResource(id = R.array.percent_guide)
+    val (calculate, guideStr) =
         when (state.type) {
-            PercentCalculateType.TYPE1 ->
-                listOf(
-                    "의",
-                    "% 는",
-                    "예) 100 의 10% 는 10",
-                )
-            PercentCalculateType.TYPE2 ->
-                listOf(
-                    "의",
-                    "은",
-                    "예) 100 의 10 은 10%",
-                )
-            PercentCalculateType.TYPE3 ->
-                listOf(
-                    "이/가",
-                    "(으)로\n변하면",
-                    "예) 100 이 10 으로 변하면 90% 감소",
-                )
-            PercentCalculateType.TYPE4 ->
-                listOf(
-                    "이/가",
-                    "%\n증가하면",
-                    "예) 100 이 10% 증가하면 110",
-                )
-        }
-    val calculate =
-        when (state.type) {
-            PercentCalculateType.TYPE1 -> state.calculate1
-            PercentCalculateType.TYPE2 -> state.calculate2
-            PercentCalculateType.TYPE3 -> state.calculate3
-            PercentCalculateType.TYPE4 -> state.calculate4
+            PercentCalculateType.TYPE1 -> state.calculate1 to guideStrArr[0]
+            PercentCalculateType.TYPE2 -> state.calculate2 to guideStrArr[1]
+            PercentCalculateType.TYPE3 -> state.calculate3 to guideStrArr[2]
+            PercentCalculateType.TYPE4 -> state.calculate4 to guideStrArr[3]
         }
     val (v1Color, v2Color) =
         when (calculate.select) {
@@ -186,15 +159,11 @@ private fun CalculateView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
-            modifier = Modifier.width(fieldTotalWith),
+            modifier = Modifier.padding(end = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                modifier =
-                    Modifier
-                        .width(fieldLeft)
-                        .padding(top = 5.dp),
+                modifier = Modifier.padding(end = 10.dp),
                 text = PercentKey.Value1.value,
                 style = TextSet.extraBold.copy(v1Color, 24.sp),
                 textAlign = TextAlign.Center,
@@ -202,7 +171,7 @@ private fun CalculateView(
             ViewFieldNumber(
                 modifier =
                     Modifier
-                        .weight(1f)
+                        .width(220.dp)
                         .focusRequester(v1Focus ?: FocusRequester())
                         .onFocusChanged {
                             if (it.isFocused) {
@@ -212,26 +181,13 @@ private fun CalculateView(
                 value = calculate.value1,
                 color = v1Color,
             )
-            Text(
-                modifier =
-                    Modifier
-                        .width(fieldRight)
-                        .padding(top = 5.dp, start = 10.dp),
-                text = guideStrList[0],
-                style = TextSet.extraBold.copy(v1Color, 20.sp),
-                textAlign = TextAlign.Start,
-            )
         }
         Row(
-            modifier = Modifier.width(fieldTotalWith),
+            modifier = Modifier.padding(end = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                modifier =
-                    Modifier
-                        .width(fieldLeft)
-                        .padding(top = 5.dp),
+                modifier = Modifier.padding(end = 10.dp),
                 text = "V2",
                 style = TextSet.extraBold.copy(v2Color, 24.sp),
                 textAlign = TextAlign.Center,
@@ -239,7 +195,7 @@ private fun CalculateView(
             ViewFieldNumber(
                 modifier =
                     Modifier
-                        .weight(1f)
+                        .width(220.dp)
                         .focusRequester(v2Focus ?: FocusRequester())
                         .onFocusChanged {
                             if (it.isFocused) {
@@ -248,26 +204,6 @@ private fun CalculateView(
                         },
                 value = calculate.value2,
                 color = v2Color,
-            )
-            val v2FontSize =
-                when (state.type) {
-                    PercentCalculateType.TYPE3 -> 14.sp
-                    PercentCalculateType.TYPE4 -> 14.sp
-                    else -> 20.sp
-                }
-            Text(
-                modifier =
-                    Modifier
-                        .width(fieldRight)
-                        .padding(top = 5.dp, start = 10.dp),
-                text = guideStrList[1],
-                style =
-                    TextSet.extraBold.copy(
-                        v2Color,
-                        v2FontSize,
-                        lineHeight = 18.sp,
-                    ),
-                textAlign = TextAlign.Start,
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -280,8 +216,11 @@ private fun CalculateView(
                 contentAlignment = Alignment.Center,
             ) {
                 ViewTextResult(
-                    modifier = Modifier.width(fieldTotalWith),
-                    text = calculate.result,
+                    modifier = Modifier.width(300.dp),
+                    text =
+                        calculate.result
+                            .replace(PercentUnit.UP.value, stringResource(id = R.string.up))
+                            .replace(PercentUnit.DOWN.value, stringResource(id = R.string.down)),
                     fontSizeRange =
                         FontSizeRange(
                             min = 1.sp,
@@ -291,8 +230,8 @@ private fun CalculateView(
             }
             Text(
                 modifier = Modifier.weight(1f),
-                text = guideStrList[2],
-                style = TextSet.extraBold.copy(ColorSet.text, 16.sp),
+                text = guideStr,
+                style = TextSet.bold.copy(ColorSet.text, 18.sp),
             )
         }
     }
