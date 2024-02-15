@@ -26,21 +26,10 @@ class MainViewModel
         private val _bottomMunu = MutableStateFlow(true to StartSceen)
         val bottomMunu = _bottomMunu.asStateFlow()
 
-        private val _menuState = MutableStateFlow(false)
-        val menuState = _menuState.asStateFlow()
-
         private val screenStack =
             Stack<Destination>().apply {
                 push(StartSceen)
             }
-
-        fun openMenu() {
-            _menuState.value = true
-        }
-
-        fun closeMenu() {
-            _menuState.value = false
-        }
 
         fun navigation(next: Navigation) {
             viewModelScope.launch {

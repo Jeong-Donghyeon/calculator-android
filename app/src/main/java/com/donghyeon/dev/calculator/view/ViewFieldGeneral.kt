@@ -72,7 +72,7 @@ fun ViewFieldGeneral(
                                     when (it) {
                                         GenralOperator.OPEN.value,
                                         GenralOperator.CLOSE.value,
-                                        -> ColorSet.bracket
+                                        -> ColorSet.select
                                         else -> ColorSet.select
                                     },
                             )

@@ -44,7 +44,6 @@ fun ConvertScreen() {
         state = state,
         action = viewModel,
         nav = { main.navigation(it) },
-        menu = { main.openMenu() },
     )
 }
 
@@ -53,7 +52,6 @@ private fun ConvertScreen(
     state: ConvertState,
     action: ConvertAction? = null,
     nav: ((Navigation) -> Unit)? = null,
-    menu: (() -> Unit)? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.background).fillMaxSize()) {
         ViewTitle(
@@ -64,7 +62,6 @@ private fun ConvertScreen(
         MenuView(
             state = state,
             action = action,
-            menu = menu,
         )
         Box(modifier = Modifier.weight(1f))
     }
@@ -74,7 +71,6 @@ private fun ConvertScreen(
 private fun MenuView(
     state: ConvertState,
     action: ConvertAction? = null,
-    menu: (() -> Unit)? = null,
 ) {
     Row {
         Spacer(modifier = Modifier.width(12.dp))
@@ -83,7 +79,7 @@ private fun MenuView(
                 Modifier
                     .clip(CircleShape)
                     .background(ColorSet.button),
-            onClick = menu ?: {},
+            onClick = {},
         ) {
             Icon(
                 modifier = Modifier.size(32.dp),

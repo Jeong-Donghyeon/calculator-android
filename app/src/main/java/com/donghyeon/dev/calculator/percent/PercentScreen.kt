@@ -107,9 +107,21 @@ private fun PercentScreen(
                 v2Focus = v2Focus,
             )
         }
-        MenuView(
-            state = state,
-            action = action,
+        ViewScrollTab(
+            modifier =
+                Modifier.fillMaxWidth()
+                    .height(55.dp)
+                    .padding(bottom = 7.dp),
+            tabs = PercentCalculateType.entries.map { it.value },
+            index = state.type.ordinal,
+            onTab = {
+                when (it) {
+                    0 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE1)
+                    1 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE2)
+                    2 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE3)
+                    3 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE4)
+                }
+            },
         )
         KeyView(
             state = state,
@@ -283,35 +295,6 @@ private fun CalculateView(
                 style = TextSet.extraBold.copy(ColorSet.text, 16.sp),
             )
         }
-    }
-}
-
-@Composable
-private fun MenuView(
-    state: PercentState,
-    action: PercentAction? = null,
-) {
-    Row(
-        modifier = Modifier.padding(bottom = 10.dp),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        Spacer(modifier = Modifier.width(12.dp))
-        ViewScrollTab(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .height(55.dp)
-                    .padding(bottom = 3.dp),
-            tabs = PercentCalculateType.entries.map { it.value },
-            index = state.type.ordinal,
-            onTab = {
-                when (it) {
-                    0 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE1)
-                    1 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE2)
-                    2 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE3)
-                    3 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE4)
-                }
-            },
-        )
     }
 }
 

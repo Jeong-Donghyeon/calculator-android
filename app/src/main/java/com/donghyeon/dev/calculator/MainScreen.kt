@@ -8,8 +8,18 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,6 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,12 +40,10 @@ import androidx.navigation.compose.rememberNavController
 import com.donghyeon.dev.calculator.common.LocalNavController
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.StartSceen
-import com.donghyeon.dev.calculator.dialog.SheetMenu
 import com.donghyeon.dev.calculator.general.GeneralScreen
 import com.donghyeon.dev.calculator.info.InfoScreen
 import com.donghyeon.dev.calculator.percent.PercentScreen
 import com.donghyeon.dev.calculator.theme.ColorSet
-import com.donghyeon.dev.calculator.view.ViewBottomMenu
 import kotlinx.coroutines.flow.collectLatest
 
 private var toast: Toast? = null
@@ -48,7 +59,6 @@ fun MainScreen(viewModel: MainViewModel) {
         (LocalView.current.context as Activity).apply {
             window.statusBarColor = ColorSet.background.toArgb()
         }
-        val menuState by viewModel.menuState.collectAsState()
         val bottomMenu by viewModel.bottomMunu.collectAsState()
         LaunchedEffect(Unit) {
             viewModel.navigationFlow.collectLatest {
@@ -115,22 +125,71 @@ fun MainScreen(viewModel: MainViewModel) {
                     composable(Destination.PERCENT.route) { PercentScreen() }
                 }
                 if (bottomMenu.first) {
-                    ViewBottomMenu(
+                    MainBottomMenu(
                         destination = bottomMenu.second,
-                        menu = { viewModel.openMenu() },
                         nav = { viewModel.navigation(it) },
                     )
                 }
             }
         }
-        if (menuState) {
-            SheetMenu(
-                close = { viewModel.closeMenu() },
-                nav = {
-                    viewModel.closeMenu()
-                    viewModel.navigation(Navigation.PopPush(it))
+    }
+}
+
+@Preview
+@Composable
+private fun Preview_MainBottomMenu() {
+    MainBottomMenu(destination = Destination.GENERAL)
+}
+
+@Composable
+private fun MainBottomMenu(
+    destination: Destination,
+    nav: ((Navigation) -> Unit)? = null,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
+                .padding(top = 5.dp, bottom = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        listOf(
+            Destination.GENERAL to 26.dp,
+            Destination.PERCENT to 24.dp,
+            Destination.RATIO to 24.dp,
+            Destination.CONVERT to 26.dp,
+            Destination.CURRENCY to 24.dp,
+            Destination.DATE to 24.dp,
+        ).forEach {
+            Button(
+                modifier = Modifier.weight(1f).height(40.dp),
+                shape = RoundedCornerShape(5.dp),
+                contentPadding = PaddingValues(),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = ColorSet.button,
+                    ),
+                elevation = null,
+                onClick = {
+                    nav?.invoke(Navigation.PopPush(it.first))
                 },
-            )
+            ) {
+                Icon(
+                    modifier =
+                        Modifier
+                            .padding(top = 1.dp)
+                            .size(it.second),
+                    painter = painterResource(id = it.first.icon),
+                    tint =
+                        if (it.first == destination) {
+                            ColorSet.select
+                        } else {
+                            ColorSet.text
+                        },
+                    contentDescription = "KeyIcon",
+                )
+            }
         }
     }
 }
