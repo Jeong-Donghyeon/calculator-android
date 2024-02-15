@@ -61,27 +61,27 @@ fun MainScreen(viewModel: MainViewModel) {
         }
         val bottomMenu by viewModel.bottomMunu.collectAsState()
         LaunchedEffect(Unit) {
-            viewModel.navigationFlow.collectLatest {
-                val (exit, current, next) = it
-                if (exit) {
-                    (context as Activity).finish()
-                } else {
-                    when (next) {
-                        is Navigation.Pop -> {
-                            navController.popBackStack()
-                        }
-                        is Navigation.PopToDestination -> {
+            viewModel.navFlow.collectLatest {
+                when (it.first) {
+                    Nav.EXIT -> (context as Activity).finish()
+                    Nav.POP -> navController.popBackStack()
+                    Nav.POP_TO, Nav.POP_ROOT -> {
+                        it.third?.let { dest ->
                             navController.popBackStack(
-                                route = next.destination.route,
+                                route = dest.route,
                                 inclusive = false,
                             )
                         }
-                        is Navigation.Push -> {
-                            navController.navigate(next.destination.route)
+                    }
+                    Nav.PUSH -> {
+                        it.third?.let { dest ->
+                            navController.navigate(dest.route)
                         }
-                        is Navigation.PopPush -> {
-                            navController.navigate(next.destination.route) {
-                                popUpTo(current.route) { inclusive = true }
+                    }
+                    Nav.POP_PUSH -> {
+                        it.third?.let { dest ->
+                            navController.navigate(dest.route) {
+                                popUpTo(it.second.route) { inclusive = true }
                             }
                         }
                     }
@@ -117,17 +117,17 @@ fun MainScreen(viewModel: MainViewModel) {
                         )
                     }
                     composable(
-                        route = Destination.INFO.route,
+                        route = Dest.INFO.route,
                         enterTransition = pushEnterTransition,
                         popExitTransition = pushPopExitTransition,
                     ) { InfoScreen() }
-                    composable(Destination.GENERAL.route) { GeneralScreen() }
-                    composable(Destination.PERCENT.route) { PercentScreen() }
+                    composable(Dest.GENERAL.route) { GeneralScreen() }
+                    composable(Dest.PERCENT.route) { PercentScreen() }
                 }
                 if (bottomMenu.first) {
                     MainBottomMenu(
-                        destination = bottomMenu.second,
-                        nav = { viewModel.navigation(it) },
+                        dest = bottomMenu.second,
+                        nav = { viewModel.navigation(Nav.POP_PUSH, it) },
                     )
                 }
             }
@@ -138,13 +138,13 @@ fun MainScreen(viewModel: MainViewModel) {
 @Preview
 @Composable
 private fun Preview_MainBottomMenu() {
-    MainBottomMenu(destination = Destination.GENERAL)
+    MainBottomMenu(dest = Dest.GENERAL)
 }
 
 @Composable
 private fun MainBottomMenu(
-    destination: Destination,
-    nav: ((Navigation) -> Unit)? = null,
+    dest: Dest,
+    nav: ((Dest) -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -155,12 +155,12 @@ private fun MainBottomMenu(
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         listOf(
-            Destination.GENERAL to 26.dp,
-            Destination.PERCENT to 24.dp,
-            Destination.RATIO to 24.dp,
-            Destination.CONVERT to 26.dp,
-            Destination.CURRENCY to 24.dp,
-            Destination.DATE to 24.dp,
+            Dest.GENERAL to 26.dp,
+            Dest.PERCENT to 24.dp,
+            Dest.RATIO to 24.dp,
+            Dest.CONVERT to 26.dp,
+            Dest.CURRENCY to 24.dp,
+            Dest.DATE to 24.dp,
         ).forEach {
             Button(
                 modifier = Modifier.weight(1f).height(40.dp),
@@ -171,9 +171,7 @@ private fun MainBottomMenu(
                         containerColor = ColorSet.button,
                     ),
                 elevation = null,
-                onClick = {
-                    nav?.invoke(Navigation.PopPush(it.first))
-                },
+                onClick = { nav?.invoke(it.first) },
             ) {
                 Icon(
                     modifier =
@@ -182,7 +180,7 @@ private fun MainBottomMenu(
                             .size(it.second),
                     painter = painterResource(id = it.first.icon),
                     tint =
-                        if (it.first == destination) {
+                        if (it.first == dest) {
                             ColorSet.select
                         } else {
                             ColorSet.text

@@ -24,8 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.donghyeon.dev.calculator.Destination
-import com.donghyeon.dev.calculator.Navigation
+import com.donghyeon.dev.calculator.Dest
+import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
@@ -51,7 +51,7 @@ fun GeneralScreen() {
     val state by viewModel.state.collectAsState()
     val main = LocalViewModel.current
     val focus = remember { FocusRequester() }
-    BackHandler { main.navigation(Navigation.Pop) }
+    BackHandler { main.navigation(Nav.POP, null) }
     LaunchedEffect(Unit) {
         focus.requestFocus()
         viewModel.sideEffect.collectLatest {
@@ -61,7 +61,7 @@ fun GeneralScreen() {
     GeneralScreen(
         state = state,
         action = viewModel,
-        nav = { main.navigation(it) },
+        navDest = { main.navigation(Nav.PUSH, it) },
         focus = focus,
     )
 }
@@ -70,13 +70,13 @@ fun GeneralScreen() {
 private fun GeneralScreen(
     state: GeneralState,
     action: GeneralAction? = null,
-    nav: ((Navigation) -> Unit)? = null,
+    navDest: ((Dest) -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.background)) {
         ViewTitle(
-            title = Destination.GENERAL.route,
-            nav = { nav?.invoke(it) },
+            title = Dest.GENERAL.title,
+            navDest = { navDest?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(

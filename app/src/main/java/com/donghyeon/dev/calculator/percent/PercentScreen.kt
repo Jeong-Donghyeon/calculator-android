@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.donghyeon.dev.calculator.Destination
-import com.donghyeon.dev.calculator.Navigation
+import com.donghyeon.dev.calculator.Dest
+import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.calculate.PercentCalculateType
 import com.donghyeon.dev.calculator.calculate.PercentUnit
 import com.donghyeon.dev.calculator.common.InputKeyHeight
@@ -63,7 +63,7 @@ fun PercentScreen() {
     val main = LocalViewModel.current
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
-    BackHandler { main.navigation(Navigation.Pop) }
+    BackHandler { main.navigation(Nav.POP, null) }
     LaunchedEffect(Unit) {
         v1Focus.requestFocus()
         viewModel.sideEffect.collectLatest {
@@ -80,7 +80,7 @@ fun PercentScreen() {
     PercentScreen(
         state = state,
         action = viewModel,
-        nav = { main.navigation(it) },
+        navDest = { main.navigation(Nav.PUSH, it) },
         v1Focus = v1Focus,
         v2Focus = v2Focus,
     )
@@ -90,14 +90,14 @@ fun PercentScreen() {
 private fun PercentScreen(
     state: PercentState,
     action: PercentAction? = null,
-    nav: ((Navigation) -> Unit)? = null,
+    navDest: ((Dest) -> Unit)? = null,
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
     Column(modifier = Modifier.background(ColorSet.background)) {
         ViewTitle(
-            title = Destination.PERCENT.route,
-            nav = { nav?.invoke(it) },
+            title = Dest.PERCENT.title,
+            navDest = { navDest?.invoke(it) },
         )
         Box(modifier = Modifier.weight(1f)) {
             CalculateView(

@@ -19,59 +19,76 @@ class MainViewModel
         private val _toast = MutableSharedFlow<String>()
         val toast = _toast.asSharedFlow()
 
-        private val _navigationFlow =
-            MutableSharedFlow<Triple<Boolean, Destination, Navigation>>()
-        val navigationFlow = _navigationFlow.asSharedFlow()
+        private val _navFlow = MutableSharedFlow<Triple<Nav, Dest, Dest?>>()
+        val navFlow = _navFlow.asSharedFlow()
 
         private val _bottomMunu = MutableStateFlow(true to StartSceen)
         val bottomMunu = _bottomMunu.asStateFlow()
 
-        private val screenStack =
-            Stack<Destination>().apply {
-                push(StartSceen)
-            }
+        private val screenStack = Stack<Dest>().apply { push(StartSceen) }
 
-        fun navigation(next: Navigation) {
+        fun navigation(
+            nav: Nav,
+            dest: Dest?,
+        ) {
             viewModelScope.launch {
                 val current = screenStack.peek()
-                when (next) {
-                    is Navigation.Pop -> screenStack.pop()
-                    is Navigation.PopToDestination -> {
-                        while (true) {
-                            val peek = screenStack.peek()
-                            if (peek == next.destination) {
-                                break
-                            } else {
-                                screenStack.pop()
+                when (nav) {
+                    Nav.EXIT -> {
+                        screenStack.clear()
+                    }
+                    Nav.POP -> {
+                        screenStack.pop()
+                    }
+                    Nav.POP_TO -> {
+                        dest?.let {
+                            while (true) {
+                                if (screenStack.peek() == it) {
+                                    break
+                                } else {
+                                    screenStack.pop()
+                                }
                             }
                         }
                     }
-                    is Navigation.Push -> screenStack.push(next.destination)
-                    is Navigation.PopPush -> {
-                        when (next.destination) {
-                            Destination.INFO, Destination.GENERAL, Destination.PERCENT -> {
+                    Nav.POP_ROOT -> {
+                        while (true) {
+                            if (screenStack.count() > 1) {
                                 screenStack.pop()
-                                screenStack.push(next.destination)
+                            } else {
+                                break
                             }
-                            else -> return@launch
+                        }
+                    }
+                    Nav.PUSH -> {
+                        dest?.let {
+                            screenStack.push(it)
+                        }
+                    }
+                    Nav.POP_PUSH -> {
+                        dest?.let {
+                            when (it) {
+                                Dest.INFO, Dest.GENERAL, Dest.PERCENT -> {
+                                    screenStack.pop()
+                                    screenStack.push(it)
+                                }
+                                else -> return@launch
+                            }
                         }
                     }
                 }
                 if (screenStack.isNotEmpty()) {
-                    when (screenStack.peek()) {
-                        Destination.MENU, Destination.INFO -> {
-                            _bottomMunu.value = bottomMunu.value.copy(false)
-                        }
-                        else -> {
-                            _bottomMunu.value = bottomMunu.value.copy(true, screenStack.peek())
-                        }
+                    if (screenStack.peek() == Dest.INFO) {
+                        _bottomMunu.value = bottomMunu.value.copy(false)
+                    } else {
+                        _bottomMunu.value = bottomMunu.value.copy(true, screenStack.peek())
                     }
                 }
-                _navigationFlow.emit(
+                _navFlow.emit(
                     Triple(
-                        screenStack.empty(),
+                        nav,
                         current,
-                        next,
+                        dest,
                     ),
                 )
             }

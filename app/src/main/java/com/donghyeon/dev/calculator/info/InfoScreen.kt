@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.donghyeon.dev.calculator.BuildConfig
-import com.donghyeon.dev.calculator.Navigation
+import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.theme.ColorSet
@@ -63,11 +63,11 @@ fun InfoScreen() {
     val context = LocalContext.current
     val main = LocalViewModel.current
     var termsAlet by remember { mutableStateOf(false) }
-    BackHandler { main.navigation(Navigation.Pop) }
+    BackHandler { main.navigation(Nav.POP, null) }
     InfoScreen(
         appName = stringResource(id = R.string.app_name),
         version = BuildConfig.VERSION_NAME,
-        navBack = { main.navigation(Navigation.Pop) },
+        navBack = { main.navigation(Nav.POP, null) },
         license = {
             context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
         },
