@@ -5,10 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -74,64 +77,53 @@ private fun GeneralScreen(
     navDest: ((Dest) -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
-    Column(modifier = Modifier.background(ColorSet.background)) {
+    val scrollState = rememberScrollState()
+    Column(
+        modifier =
+            Modifier
+                .background(ColorSet.background)
+                .fillMaxSize()
+                .verticalScroll(scrollState),
+    ) {
         ViewTitle(
             title = stringResource(id = Dest.GENERAL.title),
             navDest = { navDest?.invoke(it) },
         )
-        Box(modifier = Modifier.weight(1f)) {
-            CalculateView(
-                state = state,
-                focus = focus,
+        Spacer(modifier = Modifier.weight(1f))
+        ViewFieldGeneral(
+            modifier =
+                Modifier
+                    .padding(horizontal = 5.dp)
+                    .fillMaxWidth()
+                    .focusRequester(focus ?: FocusRequester()),
+            value = state.value,
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Box(
+            modifier =
+                Modifier
+                    .padding(horizontal = 10.dp)
+                    .fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            ViewTextResult(
+                text =
+                    if (state.value.text == "") {
+                        ""
+                    } else {
+                        state.result
+                    },
+                fontSizeRange =
+                    FontSizeRange(
+                        min = 1.sp,
+                        max = 30.sp,
+                    ),
             )
         }
+        Spacer(modifier = Modifier.height(20.dp))
         KeyView(
             state = state,
             action = action,
-        )
-    }
-}
-
-@Composable
-private fun CalculateView(
-    state: GeneralState,
-    focus: FocusRequester? = null,
-) {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(horizontal = 10.dp),
-    ) {
-        Box(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center,
-        ) {
-            ViewFieldGeneral(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .focusRequester(focus ?: FocusRequester()),
-                value = state.value,
-            )
-        }
-        ViewTextResult(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 26.dp),
-            text =
-                if (state.value.text == "") {
-                    ""
-                } else {
-                    state.result
-                },
-            fontSizeRange =
-                FontSizeRange(
-                    min = 1.sp,
-                    max = 34.sp,
-                ),
         )
     }
 }
