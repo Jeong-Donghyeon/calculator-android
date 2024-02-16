@@ -113,7 +113,7 @@ private fun PercentScreen(
                 Modifier
                     .fillMaxWidth()
                     .height(55.dp)
-                    .padding(bottom = 7.dp),
+                    .padding(bottom = 3.dp),
             tabs = stringArrayResource(id = R.array.percent_type).toList(),
             index = state.type.ordinal,
             onTab = {

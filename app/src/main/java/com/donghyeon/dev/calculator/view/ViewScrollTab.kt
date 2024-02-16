@@ -47,7 +47,7 @@ import com.donghyeon.dev.calculator.theme.TextSet
 fun Preview_ViewScrollTab() {
     ViewScrollTab(
         modifier = Modifier.background(ColorSet.background),
-        tabs = listOf("비율", "일부", "증값", "증율"),
+        tabs = listOf("비율값", "일부값", "증감값", "증감율"),
     )
 }
 
@@ -59,7 +59,7 @@ fun ViewScrollTab(
     onTab: (Int) -> Unit = {},
 ) {
     CustomScrollableTabRow(
-        modifier = modifier.then(Modifier.padding(horizontal = 5.dp)),
+        modifier = modifier,
         backgroundColor = Color.Transparent,
         contentColor = ColorSet.text,
         edgePadding = 0.dp,
@@ -82,7 +82,7 @@ fun ViewScrollTab(
                         Text(
                             modifier =
                                 Modifier
-                                    .padding(10.dp)
+                                    .padding(horizontal = 7.dp, vertical = 5.dp)
                                     .pointerInput(Unit) {
                                         detectTapGestures(onTap = { onTab(tabIndex) })
                                     },
@@ -90,9 +90,9 @@ fun ViewScrollTab(
                             textAlign = TextAlign.Center,
                             style =
                                 if (value) {
-                                    TextSet.extraBold.copy(ColorSet.select, 20.sp)
+                                    TextSet.bold.copy(ColorSet.select, 20.sp)
                                 } else {
-                                    TextSet.bold.copy(ColorSet.text, 20.sp)
+                                    TextSet.semiBold.copy(ColorSet.text, 20.sp)
                                 },
                         )
                     },
@@ -124,7 +124,8 @@ private fun CustomScrollableTabRow(
                 .wrapContentSize(align = Alignment.CenterStart)
                 .horizontalScroll(scrollState)
                 .selectableGroup()
-                .clipToBounds(),
+                .clipToBounds()
+                .padding(horizontal = 14.dp),
         ) { constraints ->
             val minTabWidth = 50.dp.roundToPx()
             val padding = edgePadding.roundToPx()
@@ -220,12 +221,12 @@ private fun Modifier.customTabIndicatorOffset2(currentTabPosition: TabPos): Modi
     ) {
         val currentTabWidth by animateDpAsState(
             label = "",
-            targetValue = currentTabPosition.width - 20.dp,
+            targetValue = currentTabPosition.width - 14.dp,
             animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
         )
         val indicatorOffset by animateDpAsState(
             label = "",
-            targetValue = currentTabPosition.left + 10.dp,
+            targetValue = currentTabPosition.left + 7.dp,
             animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
         )
         fillMaxWidth()
