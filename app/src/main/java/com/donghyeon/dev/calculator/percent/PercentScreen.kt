@@ -2,7 +2,6 @@ package com.donghyeon.dev.calculator.percent
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -95,19 +96,94 @@ private fun PercentScreen(
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
-    Column(modifier = Modifier.background(ColorSet.background)) {
+    val guideStrArr = stringArrayResource(id = R.array.percent_guide)
+    val (calculate, guideStr) =
+        when (state.type) {
+            PercentCalculateType.TYPE1 -> state.calculate1 to guideStrArr[0]
+            PercentCalculateType.TYPE2 -> state.calculate2 to guideStrArr[1]
+            PercentCalculateType.TYPE3 -> state.calculate3 to guideStrArr[2]
+            PercentCalculateType.TYPE4 -> state.calculate4 to guideStrArr[3]
+        }
+    val (v1Color, v2Color) =
+        when (calculate.select) {
+            PercentValueSelect.VALUE1 -> ColorSet.select to ColorSet.text
+            PercentValueSelect.VALUE2 -> ColorSet.text to ColorSet.select
+        }
+    Column(
+        modifier =
+            Modifier
+                .background(ColorSet.background)
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         ViewTitle(
             title = stringResource(id = Dest.PERCENT.title),
             navDest = { navDest?.invoke(it) },
         )
-        Box(modifier = Modifier.weight(1f)) {
-            CalculateView(
-                state = state,
-                action = action,
-                v1Focus = v1Focus,
-                v2Focus = v2Focus,
-            )
+        Spacer(modifier = Modifier.weight(1f))
+        listOf(
+            PercentKey.Value1.value,
+            PercentKey.Value2.value,
+        ).forEachIndexed { index, value ->
+            val (color, focus, field) =
+                if (index == 0) {
+                    Triple(v1Color, v1Focus, calculate.value1)
+                } else {
+                    Triple(v2Color, v2Focus, calculate.value2)
+                }
+            Row(
+                modifier = Modifier.padding(end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.padding(end = 10.dp, top = 5.dp),
+                    text = value,
+                    style = TextSet.extraBold.copy(color, 24.sp),
+                    textAlign = TextAlign.Center,
+                )
+                ViewFieldNumber(
+                    modifier =
+                        Modifier
+                            .width(220.dp)
+                            .focusRequester(focus ?: FocusRequester())
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    action?.inputPercentValueSelect(
+                                        if (index == 0) {
+                                            PercentValueSelect.VALUE1
+                                        } else {
+                                            PercentValueSelect.VALUE2
+                                        },
+                                    )
+                                }
+                            },
+                    value = field,
+                    color = color,
+                )
+            }
         }
+        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.weight(2f))
+        ViewTextResult(
+            modifier = Modifier.width(300.dp),
+            text =
+                calculate.result
+                    .replace(PercentUnit.UP.value, stringResource(id = R.string.up))
+                    .replace(PercentUnit.DOWN.value, stringResource(id = R.string.down)),
+            fontSizeRange =
+                FontSizeRange(
+                    min = 1.sp,
+                    max = 30.sp,
+                ),
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.weight(0.5f))
+        Text(
+            text = guideStr,
+            style = TextSet.bold.copy(ColorSet.text, 18.sp),
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.weight(1f))
         ViewScrollTab(
             modifier =
                 Modifier
@@ -131,109 +207,6 @@ private fun PercentScreen(
             v1Focus = v1Focus,
             v2Focus = v2Focus,
         )
-    }
-}
-
-@Composable
-private fun CalculateView(
-    state: PercentState,
-    action: PercentAction? = null,
-    v1Focus: FocusRequester? = null,
-    v2Focus: FocusRequester? = null,
-) {
-    val guideStrArr = stringArrayResource(id = R.array.percent_guide)
-    val (calculate, guideStr) =
-        when (state.type) {
-            PercentCalculateType.TYPE1 -> state.calculate1 to guideStrArr[0]
-            PercentCalculateType.TYPE2 -> state.calculate2 to guideStrArr[1]
-            PercentCalculateType.TYPE3 -> state.calculate3 to guideStrArr[2]
-            PercentCalculateType.TYPE4 -> state.calculate4 to guideStrArr[3]
-        }
-    val (v1Color, v2Color) =
-        when (calculate.select) {
-            PercentValueSelect.VALUE1 -> ColorSet.select to ColorSet.text
-            PercentValueSelect.VALUE2 -> ColorSet.text to ColorSet.select
-        }
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Row(
-            modifier = Modifier.padding(end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.padding(end = 10.dp),
-                text = PercentKey.Value1.value,
-                style = TextSet.extraBold.copy(v1Color, 24.sp),
-                textAlign = TextAlign.Center,
-            )
-            ViewFieldNumber(
-                modifier =
-                    Modifier
-                        .width(220.dp)
-                        .focusRequester(v1Focus ?: FocusRequester())
-                        .onFocusChanged {
-                            if (it.isFocused) {
-                                action?.inputPercentValueSelect(PercentValueSelect.VALUE1)
-                            }
-                        },
-                value = calculate.value1,
-                color = v1Color,
-            )
-        }
-        Row(
-            modifier = Modifier.padding(end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.padding(end = 10.dp),
-                text = "V2",
-                style = TextSet.extraBold.copy(v2Color, 24.sp),
-                textAlign = TextAlign.Center,
-            )
-            ViewFieldNumber(
-                modifier =
-                    Modifier
-                        .width(220.dp)
-                        .focusRequester(v2Focus ?: FocusRequester())
-                        .onFocusChanged {
-                            if (it.isFocused) {
-                                action?.inputPercentValueSelect(PercentValueSelect.VALUE2)
-                            }
-                        },
-                value = calculate.value2,
-                color = v2Color,
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center,
-            ) {
-                ViewTextResult(
-                    modifier = Modifier.width(300.dp),
-                    text =
-                        calculate.result
-                            .replace(PercentUnit.UP.value, stringResource(id = R.string.up))
-                            .replace(PercentUnit.DOWN.value, stringResource(id = R.string.down)),
-                    fontSizeRange =
-                        FontSizeRange(
-                            min = 1.sp,
-                            max = 34.sp,
-                        ),
-                )
-            }
-            Text(
-                modifier = Modifier.weight(1f),
-                text = guideStr,
-                style = TextSet.bold.copy(ColorSet.text, 18.sp),
-            )
-        }
     }
 }
 

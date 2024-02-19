@@ -77,13 +77,12 @@ private fun GeneralScreen(
     navDest: ((Dest) -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
-    val scrollState = rememberScrollState()
     Column(
         modifier =
             Modifier
                 .background(ColorSet.background)
                 .fillMaxSize()
-                .verticalScroll(scrollState),
+                .verticalScroll(rememberScrollState()),
     ) {
         ViewTitle(
             title = stringResource(id = Dest.GENERAL.title),
