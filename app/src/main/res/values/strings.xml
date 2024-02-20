@@ -10,9 +10,9 @@
 
     <string-array name="percent_type">
         <item>비율값</item>
-        <item>일부값</item>
-        <item>증감값</item>
-        <item>증감률</item>
+        <item>백분율</item>
+        <item>증감율</item>
+        <item>증가값</item>
     </string-array>
     <string-array name="percent_guide">
         <item>예) 100 의 10% 는 10</item>
