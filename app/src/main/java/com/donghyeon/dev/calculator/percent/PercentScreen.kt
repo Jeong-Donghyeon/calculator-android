@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -34,7 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
-import com.donghyeon.dev.calculator.calculate.PercentCalculateType
 import com.donghyeon.dev.calculator.calculate.PercentUnit
 import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.LocalViewModel
@@ -97,18 +97,10 @@ private fun PercentScreen(
     v2Focus: FocusRequester? = null,
 ) {
     val guideStrArr = stringArrayResource(id = R.array.percent_guide)
-    val (calculate, guideStr) =
-        when (state.type) {
-            PercentCalculateType.TYPE1 -> state.calculate1 to guideStrArr[0]
-            PercentCalculateType.TYPE2 -> state.calculate2 to guideStrArr[1]
-            PercentCalculateType.TYPE3 -> state.calculate3 to guideStrArr[2]
-            PercentCalculateType.TYPE4 -> state.calculate4 to guideStrArr[3]
-        }
-    val (v1Color, v2Color) =
-        when (calculate.select) {
-            PercentValueSelect.VALUE1 -> ColorSet.select to ColorSet.text
-            PercentValueSelect.VALUE2 -> ColorSet.text to ColorSet.select
-        }
+    val calculate = state.getCalculate()
+    val selectColor: (Boolean) -> Color = {
+        if (it) ColorSet.select else ColorSet.text
+    }
     Column(
         modifier =
             Modifier
@@ -121,23 +113,16 @@ private fun PercentScreen(
             navDest = { navDest?.invoke(it) },
         )
         Spacer(modifier = Modifier.weight(1f))
-        listOf(
-            PercentKey.Value1.value,
-            PercentKey.Value2.value,
-        ).forEachIndexed { index, value ->
-            val (color, focus, field) =
-                if (index == 0) {
-                    Triple(v1Color, v1Focus, calculate.value1)
-                } else {
-                    Triple(v2Color, v2Focus, calculate.value2)
-                }
+        PercentValue.entries.forEach { value ->
+            val color = selectColor(calculate.select == value)
+            val focus = if (value == PercentValue.VALUE1) v1Focus else v2Focus
             Row(
                 modifier = Modifier.padding(end = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.padding(end = 10.dp, top = 5.dp),
-                    text = value,
+                    text = value.value,
                     style = TextSet.extraBold.copy(color, 24.sp),
                     textAlign = TextAlign.Center,
                 )
@@ -148,16 +133,16 @@ private fun PercentScreen(
                             .focusRequester(focus ?: FocusRequester())
                             .onFocusChanged {
                                 if (it.isFocused) {
-                                    action?.inputPercentValueSelect(
-                                        if (index == 0) {
-                                            PercentValueSelect.VALUE1
+                                    action?.inputKey(
+                                        if (value == PercentValue.VALUE1) {
+                                            PercentKey.Value1
                                         } else {
-                                            PercentValueSelect.VALUE2
+                                            PercentKey.Value2
                                         },
                                     )
                                 }
                             },
-                    value = field,
+                    value = calculate.getValue(value),
                     color = color,
                 )
             }
@@ -179,7 +164,7 @@ private fun PercentScreen(
         Spacer(modifier = Modifier.height(5.dp))
         Spacer(modifier = Modifier.weight(0.5f))
         Text(
-            text = guideStr,
+            text = guideStrArr[state.type.index],
             style = TextSet.bold.copy(ColorSet.text, 18.sp),
         )
         Spacer(modifier = Modifier.height(10.dp))
@@ -192,14 +177,7 @@ private fun PercentScreen(
                     .padding(bottom = 3.dp),
             tabs = stringArrayResource(id = R.array.percent_type).toList(),
             index = state.type.ordinal,
-            onTab = {
-                when (it) {
-                    0 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE1)
-                    1 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE2)
-                    2 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE3)
-                    3 -> action?.inputPercentCalculateType(PercentCalculateType.TYPE4)
-                }
-            },
+            onTab = { action?.inputType(it) },
         )
         KeyView(
             state = state,
@@ -248,13 +226,7 @@ private fun KeyView(
             ),
         )
     val height = keyList.first().count() * InputKeyHeight.value
-    val calculate =
-        when (state.type) {
-            PercentCalculateType.TYPE1 -> state.calculate1
-            PercentCalculateType.TYPE2 -> state.calculate2
-            PercentCalculateType.TYPE3 -> state.calculate3
-            PercentCalculateType.TYPE4 -> state.calculate4
-        }
+    val calculate = state.getCalculate()
     Row(
         modifier =
             Modifier

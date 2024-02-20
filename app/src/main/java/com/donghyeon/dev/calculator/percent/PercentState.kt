@@ -2,26 +2,47 @@ package com.donghyeon.dev.calculator.percent
 
 import androidx.compose.ui.text.input.TextFieldValue
 import com.donghyeon.dev.calculator.R
-import com.donghyeon.dev.calculator.calculate.PercentCalculateType
+import com.donghyeon.dev.calculator.calculate.PercentType
 
 data class PercentState(
-    val type: PercentCalculateType = PercentCalculateType.TYPE1,
-    val calculate1: Calculate = Calculate(),
-    val calculate2: Calculate = Calculate(),
-    val calculate3: Calculate = Calculate(),
-    val calculate4: Calculate = Calculate(),
+    val type: PercentType = PercentType.RATIO_VALUE,
+    val calculateList: List<Calculate> =
+        List(
+            size = PercentType.entries.count(),
+            init = { Calculate() },
+        ),
 ) {
     data class Calculate(
-        val select: PercentValueSelect = PercentValueSelect.VALUE1,
-        val value1: TextFieldValue = TextFieldValue(),
-        val value2: TextFieldValue = TextFieldValue(),
+        val select: PercentValue = PercentValue.VALUE1,
+        val valueList: List<TextFieldValue> =
+            List(
+                size = PercentValue.entries.count(),
+                init = { TextFieldValue() },
+            ),
         val result: String = "?",
-    )
+    ) {
+        fun getValue(): TextFieldValue = getValue(select)
+
+        fun getValue(select: PercentValue): TextFieldValue = valueList[select.index]
+    }
+
+    fun getCalculate(): Calculate = getCalculate(type)
+
+    fun getCalculate(type: PercentType): Calculate = calculateList[type.index]
 }
 
-enum class PercentValueSelect(val value: String) {
-    VALUE1(PercentKey.Value1.value),
-    VALUE2(PercentKey.Value2.value),
+enum class PercentValue(
+    val index: Int,
+    val value: String,
+) {
+    VALUE1(
+        index = 0,
+        value = PercentKey.Value1.value,
+    ),
+    VALUE2(
+        index = 1,
+        value = PercentKey.Value2.value,
+    ),
 }
 
 sealed class PercentKey(val value: String) {

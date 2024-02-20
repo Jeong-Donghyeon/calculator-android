@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.donghyeon.dev.calculator.percent.PercentValueSelect
+import com.donghyeon.dev.calculator.percent.PercentValue
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
 
@@ -20,7 +20,7 @@ import com.donghyeon.dev.calculator.theme.TextSet
 @Composable
 fun Preview_ViewButtonKeyValue() {
     ViewButtonKeyValue(
-        text = PercentValueSelect.VALUE1.value,
+        text = PercentValue.VALUE1.value,
         color = ColorSet.select,
     )
 }

@@ -5,39 +5,39 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import javax.inject.Inject
 
-enum class PercentCalculateType {
-    TYPE1,
-    TYPE2,
-    TYPE3,
-    TYPE4,
+enum class PercentType(val index: Int) {
+    RATIO_VALUE(0),
+    PERCENTAGE(1),
+    RATE_OF_CHANGE(2),
+    INCREMENT(3),
 }
 
 enum class PercentUnit(val value: String) {
     PERCENT("%"),
-    UP("UP"),
-    DOWN("DOWN"),
+    UP("Up"),
+    DOWN("Down"),
 }
 
 class PercentUseCase
     @Inject
     constructor() {
         operator fun invoke(
-            type: PercentCalculateType,
+            type: PercentType,
             value1: String,
             value2: String,
         ): String =
             try {
                 when (type) {
-                    PercentCalculateType.TYPE1 -> type1(value1, value2)
-                    PercentCalculateType.TYPE2 -> type2(value1, value2)
-                    PercentCalculateType.TYPE3 -> type3(value1, value2)
-                    PercentCalculateType.TYPE4 -> type4(value1, value2)
+                    PercentType.RATIO_VALUE -> ratioValue(value1, value2)
+                    PercentType.PERCENTAGE -> percentage(value1, value2)
+                    PercentType.RATE_OF_CHANGE -> rateOfChange(value1, value2)
+                    PercentType.INCREMENT -> increment(value1, value2)
                 }
             } catch (e: Exception) {
                 "?"
             }
 
-        private fun type1(
+        private fun ratioValue(
             value1: String,
             value2: String,
         ): String {
@@ -51,7 +51,7 @@ class PercentUseCase
             return format(result)
         }
 
-        private fun type2(
+        private fun percentage(
             value1: String,
             value2: String,
         ): String {
@@ -63,7 +63,7 @@ class PercentUseCase
             return format(result) + PercentUnit.PERCENT.value
         }
 
-        private fun type3(
+        private fun rateOfChange(
             value1: String,
             value2: String,
         ): String {
@@ -82,7 +82,7 @@ class PercentUseCase
             return format(result) + "${PercentUnit.PERCENT.value} $updown"
         }
 
-        private fun type4(
+        private fun increment(
             value1: String,
             value2: String,
         ): String {

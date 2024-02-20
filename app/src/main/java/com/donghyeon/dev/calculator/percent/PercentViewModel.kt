@@ -4,7 +4,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
-import com.donghyeon.dev.calculator.calculate.PercentCalculateType
+import com.donghyeon.dev.calculator.calculate.PercentType
 import com.donghyeon.dev.calculator.calculate.PercentUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
@@ -17,9 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface PercentAction {
-    fun inputPercentCalculateType(type: PercentCalculateType)
-
-    fun inputPercentValueSelect(select: PercentValueSelect)
+    fun inputType(index: Int)
 
     fun inputKey(key: PercentKey)
 }
@@ -36,193 +34,137 @@ class PercentViewModel
         private val _sideEffect = MutableSharedFlow<SideEffect>()
         val sideEffect = _sideEffect.asSharedFlow()
 
-        override fun inputPercentCalculateType(type: PercentCalculateType) {
+        override fun inputType(index: Int) {
             _state.value =
-                state.value.let {
-                    viewModelScope.launch {
-                        val calculate =
-                            when (type) {
-                                PercentCalculateType.TYPE1 -> it.calculate1
-                                PercentCalculateType.TYPE2 -> it.calculate2
-                                PercentCalculateType.TYPE3 -> it.calculate3
-                                PercentCalculateType.TYPE4 -> it.calculate4
-                            }
-                        _sideEffect.emit(SideEffect.Focus(calculate.select.value))
-                    }
-                    it.copy(type = type)
-                }
-        }
-
-        override fun inputPercentValueSelect(select: PercentValueSelect) {
-            _state.value =
-                state.value.let {
-                    when (it.type) {
-                        PercentCalculateType.TYPE1 ->
-                            it.copy(calculate1 = it.calculate1.copy(select = select))
-                        PercentCalculateType.TYPE2 ->
-                            it.copy(calculate2 = it.calculate2.copy(select = select))
-                        PercentCalculateType.TYPE3 ->
-                            it.copy(calculate3 = it.calculate3.copy(select = select))
-                        PercentCalculateType.TYPE4 ->
-                            it.copy(calculate4 = it.calculate4.copy(select = select))
-                    }
+                state.value.let { state ->
+                    PercentType.entries.find { it.index == index }?.let {
+                        viewModelScope.launch {
+                            _sideEffect.emit(SideEffect.Focus(state.getCalculate(it).select.value))
+                        }
+                        state.copy(type = it)
+                    } ?: state
                 }
         }
 
         override fun inputKey(key: PercentKey) {
             _state.value =
-                state.value.let {
-                    when (it.type) {
-                        PercentCalculateType.TYPE1 ->
-                            it.copy(calculate1 = input(key, it.calculate1))
-                        PercentCalculateType.TYPE2 ->
-                            it.copy(calculate2 = input(key, it.calculate2))
-                        PercentCalculateType.TYPE3 ->
-                            it.copy(calculate3 = input(key, it.calculate3))
-                        PercentCalculateType.TYPE4 ->
-                            it.copy(calculate4 = input(key, it.calculate4))
-                    }
+                state.value.let { state ->
+                    state.copy(
+                        calculateList =
+                            state.calculateList.mapIndexed { index, calculate ->
+                                if (index == state.type.index) {
+                                    input(key, calculate)
+                                } else {
+                                    calculate
+                                }
+                            },
+                    )
                 }
         }
 
         private fun input(
             key: PercentKey,
             calculate: PercentState.Calculate,
-        ): PercentState.Calculate =
-            when (key) {
-                is PercentKey.Copy -> calculate
-                is PercentKey.Clear ->
-                    when (calculate.select) {
-                        PercentValueSelect.VALUE1 ->
-                            calculate.copy(value1 = TextFieldValue(), result = "?")
-                        PercentValueSelect.VALUE2 ->
-                            calculate.copy(value2 = TextFieldValue(), result = "?")
-                    }
-                is PercentKey.Left ->
-                    when (calculate.select) {
-                        PercentValueSelect.VALUE1 -> {
-                            val index =
-                                calculate.value1.selection.start.let {
-                                    if (it == 0) 0 else it - 1
-                                }
-                            calculate.copy(value1 = calculate.value1.copy(selection = TextRange(index)))
-                        }
-                        PercentValueSelect.VALUE2 -> {
-                            val index =
-                                calculate.value2.selection.start.let {
-                                    if (it == 0) 0 else it - 1
-                                }
-                            calculate.copy(value2 = calculate.value2.copy(selection = TextRange(index)))
-                        }
-                    }
-                is PercentKey.Right ->
-                    when (calculate.select) {
-                        PercentValueSelect.VALUE1 -> {
-                            val index = calculate.value1.selection.start + 1
-                            calculate.copy(value1 = calculate.value1.copy(selection = TextRange(index)))
-                        }
-                        PercentValueSelect.VALUE2 -> {
-                            val index = calculate.value2.selection.start + 1
-                            calculate.copy(value2 = calculate.value2.copy(selection = TextRange(index)))
-                        }
-                    }
-                else -> {
-                    val decimalMessage = "소수점은 하나만 입력하세요"
-                    val digitsLimitMessage = "최대 10 자리수 입니다"
-                    when (calculate.select) {
-                        PercentValueSelect.VALUE1 -> {
-                            val decimalCheck = checkDecimal(calculate.value1.text)
-                            val digitsLimitCheck = checkDigitsLimit(calculate.value1.text)
-                            if (key is PercentKey.Decimal && decimalCheck) {
-                                viewModelScope.launch {
-                                    _sideEffect.emit(SideEffect.Toast(decimalMessage))
-                                }
-                                calculate
-                            } else if (key.value.isDigitsOnly() && digitsLimitCheck) {
-                                viewModelScope.launch {
-                                    _sideEffect.emit(SideEffect.Toast(digitsLimitMessage))
-                                }
-                                calculate
-                            } else {
-                                val inputTxt = inputKey(key, calculate.value1)
-                                val index =
-                                    calculate.value1.selection.start.let {
-                                        if (key is PercentKey.Backspace) {
-                                            if (it == 0) 0 else it - 1
-                                        } else {
-                                            it + key.value.count()
-                                        }
-                                    }
-                                val v1 =
-                                    calculate.value1.copy(
-                                        text = inputTxt,
-                                        selection = TextRange(index),
-                                    )
-                                calculate.copy(value1 = v1)
-                            }
-                        }
-                        PercentValueSelect.VALUE2 -> {
-                            val decimalCheck = checkDecimal(calculate.value2.text)
-                            val digitsLimitCheck = checkDigitsLimit(calculate.value2.text)
-                            if (key is PercentKey.Decimal && decimalCheck) {
-                                viewModelScope.launch {
-                                    _sideEffect.emit(SideEffect.Toast(decimalMessage))
-                                }
-                                calculate
-                            } else if (key.value.isDigitsOnly() && digitsLimitCheck) {
-                                viewModelScope.launch {
-                                    _sideEffect.emit(SideEffect.Toast(digitsLimitMessage))
-                                }
-                                calculate
-                            } else {
-                                val inputTxt = inputKey(key, calculate.value2)
-                                val index =
-                                    calculate.value2.selection.start.let {
-                                        if (key is PercentKey.Backspace) {
-                                            if (it == 0) 0 else it - 1
-                                        } else {
-                                            it + key.value.count()
-                                        }
-                                    }
-                                val v2 =
-                                    calculate.value2.copy(
-                                        text = inputTxt,
-                                        selection = TextRange(index),
-                                    )
-                                calculate.copy(value2 = v2)
-                            }
-                        }
-                    }.let {
-                        val result =
-                            percentUseCase(
-                                type = state.value.type,
-                                value1 = it.value1.text,
-                                value2 = it.value2.text,
-                            )
-                        it.copy(result = result)
-                    }
+        ): PercentState.Calculate {
+            val value = calculate.getValue()
+            val newValueList: (TextFieldValue) -> List<TextFieldValue> = {
+                calculate.valueList.mapIndexed { index, value ->
+                    if (index == calculate.select.index) it else value
                 }
             }
-
-        private fun inputKey(
-            key: PercentKey,
-            value: TextFieldValue,
-        ): String =
-            StringBuilder(value.text).let {
-                val index = value.selection.start
+            val newCalculate =
                 when (key) {
-                    is PercentKey.Backspace -> {
-                        if (index == 0) {
-                            it.toString()
+                    is PercentKey.Copy -> calculate
+                    is PercentKey.Clear ->
+                        calculate.copy(
+                            valueList = newValueList(TextFieldValue()),
+                            result = "?",
+                        )
+                    is PercentKey.Left -> {
+                        val index =
+                            value.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
+                        calculate.copy(
+                            valueList =
+                                newValueList(
+                                    value.copy(selection = TextRange(index)),
+                                ),
+                        )
+                    }
+                    is PercentKey.Right -> {
+                        val index = value.selection.start + 1
+                        calculate.copy(
+                            valueList =
+                                newValueList(
+                                    value.copy(selection = TextRange(index)),
+                                ),
+                        )
+                    }
+                    is PercentKey.Value1, PercentKey.Value2 ->
+                        PercentValue.entries.find { it.value == key.value }?.let { select ->
+                            calculate.copy(select = select)
+                        } ?: calculate
+                    else -> {
+                        val decimalMessage = "소수점은 하나만 입력하세요"
+                        val decimalCheck = value.text.any { it == '.' }
+                        val digitsLimitMessage = "최대 10 자리수 입니다"
+                        val digitsLimitCheck =
+                            value.text
+                                .replace(".", "")
+                                .count() >= 10
+                        if (key is PercentKey.Decimal && decimalCheck) {
+                            viewModelScope.launch {
+                                _sideEffect.emit(SideEffect.Toast(decimalMessage))
+                            }
+                            calculate
+                        } else if (key.value.isDigitsOnly() && digitsLimitCheck) {
+                            viewModelScope.launch {
+                                _sideEffect.emit(SideEffect.Toast(digitsLimitMessage))
+                            }
+                            calculate
                         } else {
-                            it.delete(index - 1, index).toString()
+                            val text =
+                                StringBuilder(value.text).let {
+                                    val index = value.selection.start
+                                    when (key) {
+                                        is PercentKey.Backspace -> {
+                                            if (index == 0) {
+                                                it.toString()
+                                            } else {
+                                                it.delete(index - 1, index).toString()
+                                            }
+                                        }
+                                        else -> it.insert(index, key.value).toString()
+                                    }
+                                }
+                            val index =
+                                value.selection.start.let {
+                                    if (key is PercentKey.Backspace) {
+                                        if (it == 0) 0 else it - 1
+                                    } else {
+                                        it + key.value.count()
+                                    }
+                                }
+                            calculate.copy(
+                                valueList =
+                                    newValueList(
+                                        value.copy(
+                                            text = text,
+                                            selection = TextRange(index),
+                                        ),
+                                    ),
+                            )
                         }
                     }
-                    else -> it.insert(index, key.value).toString()
                 }
-            }
-
-        private fun checkDecimal(v: String) = v.any { it == '.' }
-
-        private fun checkDigitsLimit(v: String): Boolean = v.replace(".", "").count() >= 10
+            return newCalculate.copy(
+                result =
+                    percentUseCase(
+                        type = state.value.type,
+                        value1 = newCalculate.valueList[PercentValue.VALUE1.index].text,
+                        value2 = newCalculate.valueList[PercentValue.VALUE2.index].text,
+                    ),
+            )
+        }
     }
