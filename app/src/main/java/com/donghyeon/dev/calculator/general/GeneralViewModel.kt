@@ -5,6 +5,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.donghyeon.dev.calculator.calculate.GeneralUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
+import com.donghyeon.dev.calculator.data.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ class GeneralViewModel
     @Inject
     constructor(
         private val generalUseCase: GeneralUseCase,
+        private val repository: Repository,
     ) : BaseViewModel(), GeneralAction {
         private val _state = MutableStateFlow(GeneralState())
         val state = _state.asStateFlow()

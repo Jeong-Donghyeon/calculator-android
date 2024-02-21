@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "calculator"
 include(":app")
+include(":data")
 include(":calculate")
