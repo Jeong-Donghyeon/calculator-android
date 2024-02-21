@@ -30,7 +30,11 @@ sealed class GeneralKey(val value: String) {
 
     data object Zero : GeneralKey("0")
 
+    data object ZeroZero : GeneralKey("00")
+
     data object Decimal : GeneralKey(".")
+
+    data object Equal : GeneralKey("=")
 
     data object Clear : GeneralKey("C")
 

@@ -203,7 +203,7 @@ private fun KeyView(
                 PercentKey.Seven,
                 PercentKey.Four,
                 PercentKey.One,
-                PercentKey.Copy,
+                PercentKey.ZeroZero,
             ),
             listOf(
                 PercentKey.Left,

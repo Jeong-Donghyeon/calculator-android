@@ -66,6 +66,8 @@ sealed class PercentKey(val value: String) {
 
     data object Zero : PercentKey("0")
 
+    data object ZeroZero : PercentKey("00")
+
     data object Decimal : PercentKey(".")
 
     data object Value1 : PercentKey("V1")

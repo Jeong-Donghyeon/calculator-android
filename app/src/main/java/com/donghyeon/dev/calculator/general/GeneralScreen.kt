@@ -137,11 +137,11 @@ private fun KeyView(
         listOf(
             listOf(
                 GeneralKey.Clear,
-                GeneralKey.Paste(),
+                GeneralKey.History,
                 GeneralKey.Seven,
                 GeneralKey.Four,
                 GeneralKey.One,
-                GeneralKey.Copy,
+                GeneralKey.ZeroZero,
             ),
             listOf(
                 GeneralKey.Left,
@@ -161,11 +161,11 @@ private fun KeyView(
             ),
             listOf(
                 GeneralKey.Backspace,
-                GeneralKey.History,
                 GeneralKey.Divide,
                 GeneralKey.Multiply,
                 GeneralKey.Minus,
                 GeneralKey.Plus,
+                GeneralKey.Equal,
             ),
         )
     val height = keyList.first().count() * InputKeyHeight.value
@@ -207,6 +207,7 @@ private fun KeyView(
                                         GeneralKey.Paste(clipboardManager.getText().toString()),
                                     )
                                 is GeneralKey.History -> {}
+                                is GeneralKey.Equal -> {}
                                 else -> action?.inputKey(key)
                             }
                         },
