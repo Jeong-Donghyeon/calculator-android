@@ -151,7 +151,7 @@ private fun MainBottomMenu(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
-                .padding(top = 5.dp, bottom = 20.dp),
+                .padding(top = 1.dp, bottom = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         listOf(

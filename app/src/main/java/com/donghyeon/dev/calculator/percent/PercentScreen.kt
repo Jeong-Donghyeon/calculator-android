@@ -231,6 +231,7 @@ private fun KeyView(
         modifier =
             Modifier
                 .padding(horizontal = 10.dp)
+                .padding(bottom = 3.dp)
                 .height(height.dp),
     ) {
         keyList.forEach { row ->
