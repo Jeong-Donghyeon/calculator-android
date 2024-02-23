@@ -69,6 +69,13 @@ class GeneralViewModel
                         }
                     }
                     else -> {
+                        val checkOperator = listOf(
+                            GeneralKey.Plus,
+                            GeneralKey.Minus,
+                            GeneralKey.Multiply,
+                            GeneralKey.Divide,
+                        ).any { it == key }
+                        if (state.value.text == "" && checkOperator) return
                         val inputTxt = inputKey(key, state.value)
                         val index =
                             state.value.selection.start.let {
