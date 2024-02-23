@@ -60,6 +60,14 @@ class GeneralViewModel
                         val index = state.value.selection.start + 1
                         state.copy(value = state.value.copy(selection = TextRange(index)))
                     }
+                    is GeneralKey.Equal -> {
+                        if (state.result == "") {
+                            state
+                        } else {
+                            val value = state.result.replace(",", "")
+                            state.copy(value = state.value.copy(text = value))
+                        }
+                    }
                     else -> {
                         val inputTxt = inputKey(key, state.value)
                         val index =

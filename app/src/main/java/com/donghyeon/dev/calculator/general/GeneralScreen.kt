@@ -207,7 +207,6 @@ private fun KeyView(
                                         GeneralKey.Paste(clipboardManager.getText().toString()),
                                     )
                                 is GeneralKey.History -> {}
-                                is GeneralKey.Equal -> {}
                                 else -> action?.inputKey(key)
                             }
                         },
