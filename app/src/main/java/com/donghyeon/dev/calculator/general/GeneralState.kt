@@ -5,6 +5,8 @@ import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.GenralOperator
 
 data class GeneralState(
+    val history: Boolean = false,
+    val historyList: List<Pair<String, String>> = emptyList(),
     val value: TextFieldValue = TextFieldValue(),
     val result: String = "",
 )
@@ -43,10 +45,6 @@ sealed class GeneralKey(val value: String) {
     data object Left : GeneralKey(R.drawable.ic_left_24px.toString())
 
     data object Right : GeneralKey(R.drawable.ic_right_24px.toString())
-
-    data object Copy : GeneralKey(R.drawable.ic_copy_24px.toString())
-
-    data class Paste(val paste: String = "") : GeneralKey(R.drawable.ic_paste_24px.toString())
 
     data object History : GeneralKey(R.drawable.ic_history_24px.toString())
 

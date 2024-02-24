@@ -15,6 +15,8 @@ import javax.inject.Inject
 
 interface GeneralAction {
     fun inputKey(key: GeneralKey)
+
+    fun history()
 }
 
 @HiltViewModel
@@ -34,20 +36,6 @@ class GeneralViewModel
             val state = state.value
             _state.value =
                 when (key) {
-                    is GeneralKey.Copy -> state
-                    is GeneralKey.Paste -> {
-                        val text = state.value.text + key.paste
-                        val selection =
-                            state.value.selection.let {
-                                TextRange(it.start + key.paste.count())
-                            }
-                        val textFieldValue =
-                            state.value.copy(
-                                text = text,
-                                selection = selection,
-                            )
-                        state.copy(value = textFieldValue)
-                    }
                     is GeneralKey.Clear -> state.copy(value = TextFieldValue(), result = "")
                     is GeneralKey.Left -> {
                         val index =
@@ -69,12 +57,13 @@ class GeneralViewModel
                         }
                     }
                     else -> {
-                        val checkOperator = listOf(
-                            GeneralKey.Plus,
-                            GeneralKey.Minus,
-                            GeneralKey.Multiply,
-                            GeneralKey.Divide,
-                        ).any { it == key }
+                        val checkOperator =
+                            listOf(
+                                GeneralKey.Plus,
+                                GeneralKey.Minus,
+                                GeneralKey.Multiply,
+                                GeneralKey.Divide,
+                            ).any { it == key }
                         if (state.value.text == "" && checkOperator) return
                         val inputTxt = inputKey(key, state.value)
                         val index =
@@ -95,6 +84,11 @@ class GeneralViewModel
                 }.let {
                     it.copy(result = generalUseCase(it.value.text))
                 }
+        }
+
+        override fun history() {
+            val state = state.value
+            _state.value = state.copy(history = !state.history)
         }
 
         private fun inputKey(
