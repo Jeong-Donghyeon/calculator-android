@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
+import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
@@ -227,48 +232,59 @@ private fun KeyView(
             Column(modifier = Modifier.weight(3f)) {
                 if (state.history) {
                     val height = keyList2.count() * InputKeyHeight.value - 4
-                    Column(
+                    Box(
                         modifier =
                             Modifier
                                 .padding(2.dp)
                                 .clip(RoundedCornerShape(5.dp))
                                 .background(ColorSet.button)
                                 .fillMaxWidth()
-                                .height(height.dp)
-                                .verticalScroll(scrollState),
+                                .height(height.dp),
                     ) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        state.historyList.forEach {
-                            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-                                Text(
+                        Column(modifier = Modifier.verticalScroll(scrollState)) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            state.historyList.forEach {
+                                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
+                                    Text(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .clickable {},
+                                        text = it.first,
+                                        textAlign = TextAlign.End,
+                                        style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                                    )
+                                    Text(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .clickable {},
+                                        text = it.second,
+                                        textAlign = TextAlign.End,
+                                        style = TextSet.bold.copy(ColorSet.result, 19.sp),
+                                    )
+                                }
+                                Box(
                                     modifier =
                                         Modifier
+                                            .padding(horizontal = 5.dp)
+                                            .background(ColorSet.text.copy(alpha = 0.2f))
                                             .fillMaxWidth()
-                                            .clickable {},
-                                    text = it.first,
-                                    textAlign = TextAlign.End,
-                                    style = TextSet.bold.copy(ColorSet.text, 20.sp),
-                                )
-                                Text(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .clickable {},
-                                    text = it.second,
-                                    textAlign = TextAlign.End,
-                                    style = TextSet.bold.copy(ColorSet.result, 22.sp),
+                                            .height(1.dp),
                                 )
                             }
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .padding(horizontal = 5.dp)
-                                        .background(ColorSet.text.copy(alpha = 0.2f))
-                                        .fillMaxWidth()
-                                        .height(1.dp),
+                            Spacer(modifier = Modifier.height(30.dp))
+                        }
+                        IconButton(
+                            onClick = { action?.clearHistory() },
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(id = R.drawable.ic_cancel_24px),
+                                tint = ColorSet.text,
+                                contentDescription = "Delete",
                             )
                         }
-                        Spacer(modifier = Modifier.height(30.dp))
                     }
                 } else {
                     keyList2.forEach { keyList ->

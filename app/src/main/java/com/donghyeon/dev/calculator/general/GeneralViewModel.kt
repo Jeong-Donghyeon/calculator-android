@@ -23,6 +23,8 @@ interface GeneralAction {
     fun inputKey(key: GeneralKey)
 
     fun history()
+
+    fun clearHistory()
 }
 
 @HiltViewModel
@@ -40,14 +42,12 @@ class GeneralViewModel
 
         init {
             viewModelScope.launch {
-                repository.generalHistory.collectLatest { gh ->
-                    gh?.let { generalHistory ->
-                        val historyList =
-                            generalHistory.historyList.map {
-                                it.express to it.result
-                            }
-                        _state.value = state.value.copy(historyList = historyList)
-                    }
+                repository.generalHistory.collectLatest { generalHistory ->
+                    val historyList =
+                        generalHistory.historyList.map {
+                            it.express to it.result
+                        }
+                    _state.value = state.value.copy(historyList = historyList)
                 }
             }
         }
@@ -127,6 +127,13 @@ class GeneralViewModel
                             historyList = state.historyList,
                         )
                 }
+            }
+        }
+
+        override fun clearHistory() {
+            _state.value = state.value.copy(history = false)
+            viewModelScope.launch {
+                repository.clearGeneralHistory()
             }
         }
 

@@ -22,11 +22,15 @@ class DataStoreService
             val generalHistoryKey = stringPreferencesKey("GeneralHistory")
         }
 
-        val generalHistory: Flow<GeneralHistory?> =
+        val generalHistory: Flow<GeneralHistory> =
             dataStore.data.map { pref ->
                 pref[generalHistoryKey]?.let {
-                    gson.fromJson(it, GeneralHistory::class.java)
-                }
+                    try {
+                        gson.fromJson(it, GeneralHistory::class.java)
+                    } catch (e: Exception) {
+                        GeneralHistory(emptyList())
+                    }
+                } ?: GeneralHistory(emptyList())
             }
 
         suspend fun saveGeneralHistory(history: GeneralHistory.History) {
@@ -36,6 +40,12 @@ class DataStoreService
                         it + listOf(history)
                     } ?: listOf(history)
                 pref[generalHistoryKey] = gson.toJson(GeneralHistory(historyList))
+            }
+        }
+
+        suspend fun clearGeneralHistory() {
+            dataStore.edit { pref ->
+                pref[generalHistoryKey] = ""
             }
         }
     }

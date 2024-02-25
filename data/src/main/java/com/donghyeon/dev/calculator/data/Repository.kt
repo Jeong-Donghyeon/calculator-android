@@ -17,6 +17,11 @@ class Repository
                 dataStoreService.saveGeneralHistory(history)
             }
 
-        val generalHistory: Flow<GeneralHistory?> =
+        suspend fun clearGeneralHistory() =
+            withContext(dispatcher.io) {
+                dataStoreService.clearGeneralHistory()
+            }
+
+        val generalHistory: Flow<GeneralHistory> =
             dataStoreService.generalHistory.flowOn(dispatcher.io)
     }
