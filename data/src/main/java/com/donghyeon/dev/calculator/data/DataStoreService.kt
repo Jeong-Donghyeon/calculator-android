@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.donghyeon.dev.calculator.data.entity.GeneralHistory
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -21,16 +22,20 @@ class DataStoreService
             val generalHistoryKey = stringPreferencesKey("GeneralHistory")
         }
 
-        suspend fun saveGeneralHistory(generalHistory: GeneralHistory) {
-            dataStore.edit {
-                it[generalHistoryKey] = gson.toJson(generalHistory)
-            }
-        }
-
-        fun loadGeneralHistory(): Flow<GeneralHistory?> =
+        val generalHistory: Flow<GeneralHistory?> =
             dataStore.data.map { pref ->
                 pref[generalHistoryKey]?.let {
                     gson.fromJson(it, GeneralHistory::class.java)
                 }
             }
+
+        suspend fun saveGeneralHistory(history: GeneralHistory.History) {
+            dataStore.edit { pref ->
+                val historyList =
+                    generalHistory.firstOrNull()?.historyList?.let {
+                        it + listOf(history)
+                    } ?: listOf(history)
+                pref[generalHistoryKey] = gson.toJson(GeneralHistory(historyList))
+            }
+        }
     }

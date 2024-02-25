@@ -3,7 +3,6 @@ package com.donghyeon.dev.calculator.general
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -237,7 +236,6 @@ private fun KeyView(
                                 .fillMaxWidth()
                                 .height(height.dp)
                                 .verticalScroll(scrollState),
-                        verticalArrangement = Arrangement.Center,
                     ) {
                         Spacer(modifier = Modifier.height(10.dp))
                         state.historyList.forEach {

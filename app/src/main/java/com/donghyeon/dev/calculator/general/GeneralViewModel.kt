@@ -8,11 +8,14 @@ import com.donghyeon.dev.calculator.calculate.GeneralUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.data.Repository
+import com.donghyeon.dev.calculator.data.entity.GeneralHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,11 +32,25 @@ class GeneralViewModel
         private val generalUseCase: GeneralUseCase,
         private val repository: Repository,
     ) : BaseViewModel(), GeneralAction {
-        private val _state = MutableStateFlow(GeneralState())
-        val state = _state.asStateFlow()
+        private val _state: MutableStateFlow<GeneralState> = MutableStateFlow(GeneralState())
+        val state: StateFlow<GeneralState> = _state.asStateFlow()
 
         private val _sideEffect = MutableSharedFlow<SideEffect>()
         val sideEffect = _sideEffect.asSharedFlow()
+
+        init {
+            viewModelScope.launch {
+                repository.generalHistory.collectLatest { gh ->
+                    gh?.let { generalHistory ->
+                        val historyList =
+                            generalHistory.historyList.map {
+                                it.express to it.result
+                            }
+                        _state.value = state.value.copy(historyList = historyList)
+                    }
+                }
+            }
+        }
 
         override fun inputKey(key: GeneralKey) {
             val state = state.value
@@ -56,6 +73,15 @@ class GeneralViewModel
                             state
                         } else {
                             val value = state.result.replace(",", "")
+                            viewModelScope.launch {
+                                repository.saveGeneralHistory(
+                                    GeneralHistory.History(
+                                        date = System.currentTimeMillis(),
+                                        express = state.value.text,
+                                        result = state.result,
+                                    ),
+                                )
+                            }
                             state.copy(value = state.value.copy(text = value))
                         }
                     }
@@ -91,12 +117,16 @@ class GeneralViewModel
 
         override fun history() {
             val state = state.value
-            if (state.historyList.isEmpty()) {
-                viewModelScope.launch {
+            viewModelScope.launch {
+                if (state.historyList.isEmpty()) {
                     _sideEffect.emit(SideEffect.Toast(R.string.error_history))
+                } else {
+                    _state.value =
+                        state.copy(
+                            history = !state.history,
+                            historyList = state.historyList,
+                        )
                 }
-            } else {
-                _state.value = state.copy(history = !state.history)
             }
         }
 
