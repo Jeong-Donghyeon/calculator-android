@@ -24,6 +24,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -65,12 +66,13 @@ fun PercentScreen() {
     val main = LocalViewModel.current
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
+    val context = LocalContext.current
     BackHandler { main.navigation(Nav.POP, null) }
     LaunchedEffect(Unit) {
         v1Focus.requestFocus()
         viewModel.sideEffect.collectLatest {
             when (it) {
-                is SideEffect.Toast -> main.showToast(it.message)
+                is SideEffect.Toast -> main.showToast(context.getString(it.id))
                 is SideEffect.Focus ->
                     when (it.fieldName) {
                         PercentKey.Value1.value -> v1Focus.requestFocus()

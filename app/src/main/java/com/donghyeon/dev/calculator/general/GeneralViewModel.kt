@@ -2,6 +2,8 @@ package com.donghyeon.dev.calculator.general
 
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.viewModelScope
+import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.GeneralUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface GeneralAction {
@@ -88,7 +91,13 @@ class GeneralViewModel
 
         override fun history() {
             val state = state.value
-            _state.value = state.copy(history = !state.history)
+            if (state.historyList.isEmpty()) {
+                viewModelScope.launch {
+                    _sideEffect.emit(SideEffect.Toast(R.string.error_history))
+                }
+            } else {
+                _state.value = state.copy(history = !state.history)
+            }
         }
 
         private fun inputKey(

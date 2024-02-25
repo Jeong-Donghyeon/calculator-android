@@ -4,6 +4,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
+import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.PercentType
 import com.donghyeon.dev.calculator.calculate.PercentUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
@@ -106,21 +107,19 @@ class PercentViewModel
                             calculate.copy(select = select)
                         } ?: calculate
                     else -> {
-                        val decimalMessage = "소수점은 하나만 입력하세요"
                         val decimalCheck = value.text.any { it == '.' }
-                        val digitsLimitMessage = "최대 10 자리수 입니다"
                         val digitsLimitCheck =
                             value.text
                                 .replace(".", "")
                                 .count() >= 10
                         if (key is PercentKey.Decimal && decimalCheck) {
                             viewModelScope.launch {
-                                _sideEffect.emit(SideEffect.Toast(decimalMessage))
+                                _sideEffect.emit(SideEffect.Toast(R.string.error_decimal))
                             }
                             calculate
                         } else if (key.value.isDigitsOnly() && digitsLimitCheck) {
                             viewModelScope.launch {
-                                _sideEffect.emit(SideEffect.Toast(digitsLimitMessage))
+                                _sideEffect.emit(SideEffect.Toast(R.string.error_digit))
                             }
                             calculate
                         } else {

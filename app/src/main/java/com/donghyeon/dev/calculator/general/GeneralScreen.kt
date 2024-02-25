@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,11 +62,12 @@ fun GeneralScreen() {
     val state by viewModel.state.collectAsState()
     val main = LocalViewModel.current
     val focus = remember { FocusRequester() }
+    val context = LocalContext.current
     BackHandler { main.navigation(Nav.POP, null) }
     LaunchedEffect(Unit) {
         focus.requestFocus()
         viewModel.sideEffect.collectLatest {
-            if (it is SideEffect.Toast) main.showToast(it.message)
+            if (it is SideEffect.Toast) main.showToast(context.getString(it.id))
         }
     }
     GeneralScreen(
