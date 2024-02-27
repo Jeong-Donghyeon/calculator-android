@@ -5,6 +5,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.GeneralUseCase
+import com.donghyeon.dev.calculator.calculate.GenralOperator
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.data.Repository
@@ -72,7 +73,13 @@ class GeneralViewModel
                         if (state.result == "") {
                             state
                         } else {
-                            val value = state.result.replace(",", "")
+                            val value = state.result.replace(",", "").let {
+                                if (it.first().toString() == GenralOperator.MINUS.value) {
+                                    "($it"
+                                } else {
+                                    it
+                                }
+                            }
                             viewModelScope.launch {
                                 repository.saveGeneralHistory(
                                     GeneralHistory.History(
