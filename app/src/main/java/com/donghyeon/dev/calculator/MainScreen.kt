@@ -43,6 +43,7 @@ import com.donghyeon.dev.calculator.common.StartSceen
 import com.donghyeon.dev.calculator.general.GeneralScreen
 import com.donghyeon.dev.calculator.info.InfoScreen
 import com.donghyeon.dev.calculator.percent.PercentScreen
+import com.donghyeon.dev.calculator.ratio.RatioScreen
 import com.donghyeon.dev.calculator.theme.ColorSet
 import kotlinx.coroutines.flow.collectLatest
 
@@ -123,6 +124,7 @@ fun MainScreen(viewModel: MainViewModel) {
                     ) { InfoScreen() }
                     composable(Dest.GENERAL.route) { GeneralScreen() }
                     composable(Dest.PERCENT.route) { PercentScreen() }
+                    composable(Dest.RATIO.route) { RatioScreen() }
                 }
                 if (bottomMenu.first) {
                     MainBottomMenu(

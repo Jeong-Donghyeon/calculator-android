@@ -68,7 +68,11 @@ class MainViewModel
                     Nav.POP_PUSH -> {
                         dest?.let {
                             when (it) {
-                                Dest.INFO, Dest.GENERAL, Dest.PERCENT -> {
+                                Dest.INFO,
+                                Dest.GENERAL,
+                                Dest.PERCENT,
+                                Dest.RATIO,
+                                -> {
                                     screenStack.pop()
                                     screenStack.push(it)
                                 }

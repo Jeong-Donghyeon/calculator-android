@@ -73,13 +73,14 @@ class GeneralViewModel
                         if (state.result == "") {
                             state
                         } else {
-                            val value = state.result.replace(",", "").let {
-                                if (it.first().toString() == GenralOperator.MINUS.value) {
-                                    "($it"
-                                } else {
-                                    it
+                            val value =
+                                state.result.replace(",", "").let {
+                                    if (it.first().toString() == GenralOperator.MINUS.value) {
+                                        "($it"
+                                    } else {
+                                        it
+                                    }
                                 }
-                            }
                             viewModelScope.launch {
                                 repository.saveGeneralHistory(
                                     GeneralHistory.History(
