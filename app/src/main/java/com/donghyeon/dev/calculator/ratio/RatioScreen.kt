@@ -1,5 +1,6 @@
 package com.donghyeon.dev.calculator.ratio
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,27 +10,44 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.donghyeon.dev.calculator.Dest
+import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.RatioType
 import com.donghyeon.dev.calculator.common.InputKeyHeight
+import com.donghyeon.dev.calculator.common.LocalViewModel
+import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
+import com.donghyeon.dev.calculator.theme.TextSet
 import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewButtonKeyValue
+import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTitle
+import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
@@ -43,9 +61,32 @@ private fun Preview_RatioScreen() {
 fun RatioScreen() {
     val viewModel: RatioViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    val main = LocalViewModel.current
+    val v1Focus = remember { FocusRequester() }
+    val v2Focus = remember { FocusRequester() }
+    val v3Focus = remember { FocusRequester() }
+    val context = LocalContext.current
+    BackHandler { main.navigation(Nav.POP, null) }
+    LaunchedEffect(Unit) {
+        v1Focus.requestFocus()
+        viewModel.sideEffect.collectLatest {
+            when (it) {
+                is SideEffect.Toast -> main.showToast(context.getString(it.id))
+                is SideEffect.Focus ->
+                    when (it.fieldName) {
+                        RatioKey.Value1.value -> v1Focus.requestFocus()
+                        RatioKey.Value2.value -> v2Focus.requestFocus()
+                        RatioKey.Value3.value -> v3Focus.requestFocus()
+                    }
+            }
+        }
+    }
     RatioScreen(
         state = state,
         action = viewModel,
+        v1Focus = v1Focus,
+        v2Focus = v2Focus,
+        v3Focus = v3Focus,
     )
 }
 
@@ -54,7 +95,17 @@ private fun RatioScreen(
     state: RatioState,
     action: RatioAction? = null,
     navDest: ((Dest) -> Unit)? = null,
+    v1Focus: FocusRequester? = null,
+    v2Focus: FocusRequester? = null,
+    v3Focus: FocusRequester? = null,
 ) {
+    val calculate = state.getCalculate()
+    val selectColor: (Boolean) -> Color = {
+        if (it) ColorSet.select else ColorSet.text
+    }
+    val v1Color = selectColor(calculate.select == RatioValue.VALUE1)
+    val v2Color = selectColor(calculate.select == RatioValue.VALUE2)
+    val v3Color = selectColor(calculate.select == RatioValue.VALUE3)
     Column(
         modifier =
             Modifier
@@ -66,6 +117,105 @@ private fun RatioScreen(
             title = stringResource(id = Dest.RATIO.title),
             navDest = { navDest?.invoke(it) },
         )
+        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(modifier = Modifier.width(300.dp)) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = RatioKey.Value1.value,
+                style = TextSet.bold.copy(v1Color, 20.sp),
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.width(30.dp))
+            Text(
+                modifier = Modifier.weight(1f),
+                text = RatioKey.Value2.value,
+                style = TextSet.bold.copy(v2Color, 20.sp),
+                textAlign = TextAlign.Center,
+            )
+        }
+        Row(
+            modifier = Modifier.width(300.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ViewFieldNumber(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .focusRequester(v1Focus ?: FocusRequester())
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                action?.inputKey(RatioKey.Value1)
+                            }
+                        },
+                value = state.getCalculate().valueList[0],
+                color = v1Color,
+                align = TextAlign.Center,
+            )
+            Text(
+                modifier = Modifier.width(30.dp),
+                text = ":",
+                style = TextSet.bold.copy(ColorSet.text, 20.sp),
+                textAlign = TextAlign.Center,
+            )
+            ViewFieldNumber(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .focusRequester(v2Focus ?: FocusRequester())
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                action?.inputKey(RatioKey.Value2)
+                            }
+                        },
+                value = state.getCalculate().valueList[1],
+                color = v2Color,
+                align = TextAlign.Center,
+            )
+        }
+        if (state.type == RatioType.RATIO) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(modifier = Modifier.width(300.dp)) {
+                Text(
+                    modifier = Modifier.width(135.dp),
+                    text = RatioKey.Value3.value,
+                    style = TextSet.bold.copy(v3Color, 20.sp),
+                    textAlign = TextAlign.Center,
+                )
+            }
+            Row(
+                modifier = Modifier.width(300.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                ViewFieldNumber(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .focusRequester(v3Focus ?: FocusRequester())
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    action?.inputKey(RatioKey.Value3)
+                                }
+                            },
+                    value = state.getCalculate().valueList[2],
+                    color = v3Color,
+                    align = TextAlign.Center,
+                )
+                Text(
+                    modifier = Modifier.width(30.dp),
+                    text = ":",
+                    style = TextSet.bold.copy(ColorSet.text, 20.sp),
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "?",
+                    style = TextSet.bold.copy(ColorSet.select, 26.sp),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
         Spacer(modifier = Modifier.weight(1f))
         ViewScrollTab(
             modifier =
@@ -80,6 +230,9 @@ private fun RatioScreen(
         KeyView(
             state = state,
             action = action,
+            v1Focus = v1Focus,
+            v2Focus = v2Focus,
+            v3Focus = v3Focus,
         )
     }
 }
@@ -88,6 +241,9 @@ private fun RatioScreen(
 private fun KeyView(
     state: RatioState,
     action: RatioAction? = null,
+    v1Focus: FocusRequester? = null,
+    v2Focus: FocusRequester? = null,
+    v3Focus: FocusRequester? = null,
 ) {
     val keyList1 =
         listOf(
@@ -172,12 +328,35 @@ private fun KeyView(
                     }
                 }
             }
-            Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+            ) {
                 keyList3.forEach {
+                    val color =
+                        if (it.value == state.getCalculate().select.value) {
+                            ColorSet.select
+                        } else {
+                            ColorSet.text
+                        }
                     ViewButtonKeyValue(
-                        modifier = Modifier.fillMaxWidth().weight(1f).padding(2.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .padding(2.dp),
                         text = it.value,
-                        color = ColorSet.text,
+                        color = color,
+                        onClick = {
+                            when (it) {
+                                is RatioKey.Value1 -> v1Focus?.requestFocus()
+                                is RatioKey.Value2 -> v2Focus?.requestFocus()
+                                is RatioKey.Value3 -> v3Focus?.requestFocus()
+                                else -> {}
+                            }
+                        },
                     )
                 }
             }

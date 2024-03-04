@@ -6,22 +6,51 @@ import com.donghyeon.dev.calculator.calculate.RatioType
 
 data class RatioState(
     val type: RatioType = RatioType.RATIO,
-    val ratio: Ratio = Ratio(),
-    val simplify: Simplify = Simplify(),
+    val calculateList: List<Calculate> =
+        List(
+            size = RatioType.entries.count(),
+            init = {
+                Calculate(
+                    valueList =
+                        List(
+                            size = if (it == 0) 3 else 2,
+                            init = { TextFieldValue() },
+                        ),
+                )
+            },
+        ),
 ) {
-    data class Ratio(
-        val value1: TextFieldValue = TextFieldValue(),
-        val value2: TextFieldValue = TextFieldValue(),
-        val value3: TextFieldValue = TextFieldValue(),
+    data class Calculate(
+        val select: RatioValue = RatioValue.VALUE1,
+        val valueList: List<TextFieldValue>,
         val result: String = "",
-    )
+    ) {
+        fun getValue(): TextFieldValue = getValue(select)
 
-    data class Simplify(
-        val value1: TextFieldValue = TextFieldValue(),
-        val value2: TextFieldValue = TextFieldValue(),
-        val result1: String = "",
-        val result2: String = "",
-    )
+        fun getValue(select: RatioValue): TextFieldValue = valueList[select.index]
+    }
+
+    fun getCalculate(): Calculate = getCalculate(type)
+
+    fun getCalculate(type: RatioType): Calculate = calculateList[type.index]
+}
+
+enum class RatioValue(
+    val index: Int,
+    val value: String,
+) {
+    VALUE1(
+        index = 0,
+        value = RatioKey.Value1.value,
+    ),
+    VALUE2(
+        index = 1,
+        value = RatioKey.Value2.value,
+    ),
+    VALUE3(
+        index = 2,
+        value = RatioKey.Value3.value,
+    ),
 }
 
 sealed class RatioKey(val value: String) {

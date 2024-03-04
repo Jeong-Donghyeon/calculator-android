@@ -28,6 +28,7 @@ fun ViewFieldNumber(
     modifier: Modifier = Modifier,
     value: TextFieldValue,
     color: Color,
+    align: TextAlign = TextAlign.End,
 ) {
     CompositionLocalProvider(
         LocalTextInputService provides null,
@@ -40,7 +41,7 @@ fun ViewFieldNumber(
                 TextSet.extraBold.copy(
                     color = color,
                     fontSize = 26.sp,
-                    textAlign = TextAlign.End,
+                    textAlign = align,
                 ),
             colors =
                 TextFieldDefaults.colors(
