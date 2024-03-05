@@ -6,6 +6,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.RatioType
+import com.donghyeon.dev.calculator.calculate.RatioUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,9 @@ interface RatioAction {
 @HiltViewModel
 class RatioViewModel
     @Inject
-    constructor() : BaseViewModel(), RatioAction {
+    constructor(
+        private val ratioUseCase: RatioUseCase,
+    ) : BaseViewModel(), RatioAction {
         private val _state = MutableStateFlow(RatioState())
         val state = _state.asStateFlow()
 
@@ -160,7 +163,11 @@ class RatioViewModel
                     }
                 }
             return newCalculate.copy(
-                result = "?",
+                result =
+                    ratioUseCase(
+                        type = state.value.type,
+                        valueList = newCalculate.valueList.map { it.text },
+                    ),
             )
         }
     }

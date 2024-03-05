@@ -209,8 +209,8 @@ private fun RatioScreen(
                 )
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = "?",
-                    style = TextSet.bold.copy(ColorSet.select, 26.sp),
+                    text = calculate.result,
+                    style = TextSet.bold.copy(ColorSet.result, 26.sp),
                     textAlign = TextAlign.Center,
                 )
             }
