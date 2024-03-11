@@ -23,7 +23,7 @@ data class RatioState(
     data class Calculate(
         val select: RatioValue = RatioValue.VALUE1,
         val valueList: List<TextFieldValue>,
-        val result: String = "",
+        val result: String = "?",
     ) {
         fun getValue(): TextFieldValue = getValue(select)
 

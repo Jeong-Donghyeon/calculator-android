@@ -2,6 +2,7 @@ package com.donghyeon.dev.calculator.ratio
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -173,8 +174,8 @@ private fun RatioScreen(
                 align = TextAlign.Center,
             )
         }
+        Spacer(modifier = Modifier.height(20.dp))
         if (state.type == RatioType.RATIO) {
-            Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.width(300.dp)) {
                 Text(
                     modifier = Modifier.width(135.dp),
@@ -212,6 +213,41 @@ private fun RatioScreen(
                     text = calculate.result,
                     style = TextSet.bold.copy(ColorSet.result, 26.sp),
                     textAlign = TextAlign.Center,
+                )
+            }
+        } else {
+            val result = calculate.result.split(":")
+            val (result1, result2) =
+                if (result.count() == 2) {
+                    result[0] to result[1]
+                } else {
+                    "?" to "?"
+                }
+            Row(
+                modifier =
+                    Modifier
+                        .padding(top = 20.dp)
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.padding(end = 16.dp).weight(1f),
+                    text = result1,
+                    style = TextSet.bold.copy(ColorSet.result, 28.sp),
+                    textAlign = TextAlign.Right,
+                )
+                Text(
+                    text = ":",
+                    style = TextSet.bold.copy(ColorSet.result, 28.sp),
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp).weight(1f),
+                    text = result2,
+                    style = TextSet.bold.copy(ColorSet.result, 28.sp),
+                    textAlign = TextAlign.Left,
                 )
             }
         }
