@@ -72,6 +72,7 @@ class MainViewModel
                                 Dest.GENERAL,
                                 Dest.PERCENT,
                                 Dest.RATIO,
+                                Dest.CONVERT,
                                 -> {
                                     screenStack.pop()
                                     screenStack.push(it)

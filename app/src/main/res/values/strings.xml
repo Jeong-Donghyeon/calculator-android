@@ -32,6 +32,18 @@
         <item>비율 단순화</item>
     </string-array>
 
+    <string-array name="convert_type">
+        <item>길이</item>
+        <item>면적</item>
+        <item>무게</item>
+        <item>부피</item>
+        <item>속도</item>
+        <item>시간</item>
+        <item>온도</item>
+        <item>데이터</item>
+        <item>팁</item>
+    </string-array>
+
     <string name="privacy_policy">개인정보 처리방침</string>
     <string name="open_source_license">오픈소스 라이선스</string>
     <string name="disclaimer">면책 조항</string>

@@ -40,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.donghyeon.dev.calculator.common.LocalNavController
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.StartSceen
+import com.donghyeon.dev.calculator.convert.ConvertScreen
 import com.donghyeon.dev.calculator.general.GeneralScreen
 import com.donghyeon.dev.calculator.info.InfoScreen
 import com.donghyeon.dev.calculator.percent.PercentScreen
@@ -125,6 +126,7 @@ fun MainScreen(viewModel: MainViewModel) {
                     composable(Dest.GENERAL.route) { GeneralScreen() }
                     composable(Dest.PERCENT.route) { PercentScreen() }
                     composable(Dest.RATIO.route) { RatioScreen() }
+                    composable(Dest.CONVERT.route) { ConvertScreen() }
                 }
                 if (bottomMenu.first) {
                     MainBottomMenu(
