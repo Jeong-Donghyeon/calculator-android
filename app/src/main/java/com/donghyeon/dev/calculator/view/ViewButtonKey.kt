@@ -1,5 +1,8 @@
 package com.donghyeon.dev.calculator.view
 
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -36,13 +40,26 @@ fun ViewButtonKey(
     icon: Pair<Int, Dp>? = null,
     onClick: (() -> Unit)? = null,
 ) {
+    val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
     val interactionSource = remember { MutableInteractionSource() }
     val press = interactionSource.collectIsPressedAsState()
     val pressColor = if (press.value) ColorSet.select else ColorSet.text
     Button(
         modifier = modifier,
         shape = RoundedCornerShape(5.dp),
-        onClick = onClick ?: {},
+        onClick = {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        10,
+                        VibrationEffect.DEFAULT_AMPLITUDE,
+                    ),
+                )
+            } else {
+                vibrator.vibrate(10)
+            }
+            onClick?.invoke()
+        },
         contentPadding = PaddingValues(),
         colors =
             ButtonDefaults.buttonColors(
