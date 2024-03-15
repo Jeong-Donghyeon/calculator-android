@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -33,7 +32,6 @@ import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.view.ViewButtonKey
-import com.donghyeon.dev.calculator.view.ViewButtonKeyValue
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
@@ -92,7 +90,7 @@ private fun ConvertScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ViewTitle(
-            title = stringResource(id = Dest.PERCENT.title),
+            title = stringResource(id = Dest.CONVERT.title),
             navDest = { navDest?.invoke(it) },
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -122,91 +120,63 @@ private fun KeyView(
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
-    val clipboardManager = LocalClipboardManager.current
     val keyList =
         listOf(
             listOf(
                 ConvertKey.Clear,
-                ConvertKey.Seven,
-                ConvertKey.Four,
-                ConvertKey.One,
-                ConvertKey.ZeroZero,
-            ),
-            listOf(
                 ConvertKey.Left,
-                ConvertKey.Eight,
-                ConvertKey.Five,
-                ConvertKey.Two,
-                ConvertKey.Zero,
-            ),
-            listOf(
                 ConvertKey.Right,
-                ConvertKey.Nine,
-                ConvertKey.Six,
-                ConvertKey.Three,
-                ConvertKey.Decimal,
+                ConvertKey.Backspace,
             ),
             listOf(
-                ConvertKey.Backspace,
+                ConvertKey.Seven,
+                ConvertKey.Eight,
+                ConvertKey.Nine,
                 ConvertKey.Value1,
+            ),
+            listOf(
+                ConvertKey.Four,
+                ConvertKey.Five,
+                ConvertKey.Six,
+                ConvertKey.Unit1,
+            ),
+            listOf(
+                ConvertKey.One,
+                ConvertKey.Two,
+                ConvertKey.Three,
                 ConvertKey.Value2,
             ),
+            listOf(
+                ConvertKey.ZeroZero,
+                ConvertKey.Zero,
+                ConvertKey.Decimal,
+                ConvertKey.Unit2,
+            ),
         )
-    val height = keyList.first().count() * InputKeyHeight.value
-    val calculate = state.getCalculate()
-    Row(
+    Column(
         modifier =
             Modifier
                 .padding(horizontal = 10.dp)
-                .padding(bottom = 3.dp)
-                .height(height.dp),
+                .padding(bottom = 3.dp),
     ) {
-        keyList.forEach { row ->
-            Column(modifier = Modifier.weight(1f)) {
-                row.forEach { key ->
-                    when (key) {
-                        is ConvertKey.Value1, ConvertKey.Value2 -> {
-                            val color =
-                                if (key.value == calculate.select.value) {
-                                    ColorSet.select
-                                } else {
-                                    ColorSet.text
-                                }
-                            ViewButtonKeyValue(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .weight(2f)
-                                        .padding(2.dp),
-                                text = key.value,
-                                color = color,
-                                onClick = {
-                                    when (key) {
-                                        is ConvertKey.Value1 -> v1Focus?.requestFocus()
-                                        is ConvertKey.Value2 -> v2Focus?.requestFocus()
-                                        else -> {}
-                                    }
-                                },
-                            )
-                        }
-                        else ->
-                            ViewButtonKey(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                        .padding(2.dp),
-                                text = key.value,
-                                icon =
-                                    when (key) {
-                                        is ConvertKey.Left -> key.value.toInt() to 32.dp
-                                        is ConvertKey.Right -> key.value.toInt() to 32.dp
-                                        is ConvertKey.Backspace -> key.value.toInt() to 32.dp
-                                        else -> null
-                                    },
-                                onClick = { action?.inputKey(key) },
-                            )
-                    }
+        keyList.forEach {
+            Row {
+                it.forEach {
+                    ViewButtonKey(
+                        modifier =
+                            Modifier
+                                .padding(2.dp)
+                                .weight(1f)
+                                .height(InputKeyHeight),
+                        text = it.value,
+                        icon =
+                            when (it) {
+                                is ConvertKey.Left -> it.value.toInt() to 32.dp
+                                is ConvertKey.Right -> it.value.toInt() to 32.dp
+                                is ConvertKey.Backspace -> it.value.toInt() to 32.dp
+                                else -> null
+                            },
+                    )
                 }
             }
         }

@@ -74,6 +74,10 @@ sealed class ConvertKey(val value: String) {
 
     data object Value2 : ConvertKey("V2")
 
+    data object Unit1 : ConvertKey("U1")
+
+    data object Unit2 : ConvertKey("U2")
+
     data object Clear : ConvertKey("C")
 
     data object Backspace : ConvertKey(R.drawable.ic_backspace_24px.toString())
