@@ -3,7 +3,9 @@ package com.donghyeon.dev.calculator.percent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,11 +25,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -197,106 +197,104 @@ private fun KeyView(
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
-    val clipboardManager = LocalClipboardManager.current
-    val keyList =
+    val keyList1 =
+        listOf(
+            PercentKey.Clear,
+            PercentKey.Left,
+            PercentKey.Right,
+            PercentKey.Backspace,
+        )
+    val keyList2 =
         listOf(
             listOf(
-                PercentKey.Clear,
                 PercentKey.Seven,
-                PercentKey.Four,
-                PercentKey.One,
-                PercentKey.ZeroZero,
-            ),
-            listOf(
-                PercentKey.Left,
                 PercentKey.Eight,
-                PercentKey.Five,
-                PercentKey.Two,
-                PercentKey.Zero,
+                PercentKey.Nine,
             ),
             listOf(
-                PercentKey.Right,
-                PercentKey.Nine,
+                PercentKey.Four,
+                PercentKey.Five,
                 PercentKey.Six,
+            ),
+            listOf(
+                PercentKey.One,
+                PercentKey.Two,
                 PercentKey.Three,
+            ),
+            listOf(
+                PercentKey.ZeroZero,
+                PercentKey.Zero,
                 PercentKey.Decimal,
             ),
-            listOf(
-                PercentKey.Backspace,
-                PercentKey.Value1,
-                PercentKey.Value2,
-            ),
         )
-    val height = keyList.first().count() * InputKeyHeight.value
-    val calculate = state.getCalculate()
-    Row(
+    val keyList3 =
+        listOf(
+            PercentKey.Value1,
+            PercentKey.Value2,
+        )
+    val viewButtonKey: @Composable RowScope.(PercentKey) -> Unit = {
+        ViewButtonKey(
+            modifier =
+                Modifier
+                    .padding(2.dp)
+                    .weight(1f)
+                    .height(InputKeyHeight.value.dp),
+            text = it.value,
+            icon =
+                when (it) {
+                    is PercentKey.Left -> it.value.toInt() to 32.dp
+                    is PercentKey.Right -> it.value.toInt() to 32.dp
+                    is PercentKey.Backspace -> it.value.toInt() to 32.dp
+                    else -> null
+                },
+            onClick = { action?.inputKey(it) },
+        )
+    }
+    Column(
         modifier =
             Modifier
                 .padding(horizontal = 10.dp)
-                .padding(bottom = 3.dp)
-                .height(height.dp),
+                .padding(bottom = 3.dp),
     ) {
-        keyList.forEach { row ->
-            Column(modifier = Modifier.weight(1f)) {
-                row.forEach { key ->
-                    when (key) {
-                        is PercentKey.Value1, PercentKey.Value2 -> {
-                            val color =
-                                if (key.value == calculate.select.value) {
-                                    ColorSet.select
-                                } else {
-                                    ColorSet.text
-                                }
-                            ViewButtonKeyValue(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .weight(2f)
-                                        .padding(2.dp),
-                                text = key.value,
-                                color = color,
-                                onClick = {
-                                    when (key) {
-                                        is PercentKey.Value1 -> v1Focus?.requestFocus()
-                                        is PercentKey.Value2 -> v2Focus?.requestFocus()
-                                        else -> {}
-                                    }
-                                },
-                            )
+        Row {
+            keyList1.forEach {
+                viewButtonKey(it)
+            }
+        }
+        Row(modifier = Modifier.height(IntrinsicSize.Max)) {
+            Column(modifier = Modifier.weight(3f)) {
+                keyList2.forEach {
+                    Row {
+                        it.forEach {
+                            viewButtonKey(it)
                         }
-                        else ->
-                            ViewButtonKey(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                        .padding(2.dp),
-                                text = key.value,
-                                icon =
-                                    when (key) {
-                                        is PercentKey.Left -> key.value.toInt() to 32.dp
-                                        is PercentKey.Right -> key.value.toInt() to 32.dp
-                                        is PercentKey.Copy -> key.value.toInt() to 26.dp
-                                        is PercentKey.Backspace -> key.value.toInt() to 32.dp
-                                        else -> null
-                                    },
-                                onClick = {
-                                    if (key is PercentKey.Copy) {
-                                        val copyStr =
-                                            calculate.result
-                                                .replace(",", "")
-                                                .replace(PercentUnit.PERCENT.value, "")
-                                                .replace(PercentUnit.UP.value, "")
-                                                .replace(PercentUnit.DOWN.value, "")
-                                                .trim()
-                                        clipboardManager.setText(
-                                            AnnotatedString(copyStr),
-                                        )
-                                    }
-                                    action?.inputKey(key)
-                                },
-                            )
                     }
+                }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                keyList3.forEach {
+                    val color =
+                        if (it.value == state.getCalculate().select.value) {
+                            ColorSet.select
+                        } else {
+                            ColorSet.text
+                        }
+                    ViewButtonKeyValue(
+                        modifier =
+                            Modifier
+                                .padding(2.dp)
+                                .fillMaxWidth()
+                                .weight(1f),
+                        text = it.value,
+                        color = color,
+                        onClick = {
+                            when (it) {
+                                is PercentKey.Value1 -> v1Focus?.requestFocus()
+                                is PercentKey.Value2 -> v2Focus?.requestFocus()
+                                else -> {}
+                            }
+                        },
+                    )
                 }
             }
         }

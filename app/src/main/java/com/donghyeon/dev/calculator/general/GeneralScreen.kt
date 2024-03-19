@@ -193,9 +193,9 @@ private fun KeyView(
         ViewButtonKey(
             modifier =
                 Modifier
+                    .padding(2.dp)
                     .weight(1f)
-                    .height(InputKeyHeight.value.dp)
-                    .padding(2.dp),
+                    .height(InputKeyHeight.value.dp),
             text = it.value,
             icon =
                 when (it) {

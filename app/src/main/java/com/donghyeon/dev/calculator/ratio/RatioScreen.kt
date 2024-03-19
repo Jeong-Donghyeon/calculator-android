@@ -4,10 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -328,9 +328,9 @@ private fun KeyView(
         ViewButtonKey(
             modifier =
                 Modifier
+                    .padding(2.dp)
                     .weight(1f)
-                    .height(InputKeyHeight.value.dp)
-                    .padding(2.dp),
+                    .height(InputKeyHeight.value.dp),
             text = it.value,
             icon =
                 when (it) {
@@ -353,23 +353,17 @@ private fun KeyView(
                 viewButtonKey(it)
             }
         }
-        val height = InputKeyHeight.value * keyList2.count()
-        Row(modifier = Modifier.height(height.dp)) {
+        Row(modifier = Modifier.height(IntrinsicSize.Max)) {
             Column(modifier = Modifier.weight(3f)) {
-                keyList2.forEach { keyList ->
+                keyList2.forEach {
                     Row {
-                        keyList.forEach {
+                        it.forEach {
                             viewButtonKey(it)
                         }
                     }
                 }
             }
-            Column(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 keyList3.forEach {
                     val color =
                         if (it.value == state.getCalculate().select.value) {
@@ -380,9 +374,9 @@ private fun KeyView(
                     ViewButtonKeyValue(
                         modifier =
                             Modifier
+                                .padding(2.dp)
                                 .fillMaxWidth()
-                                .weight(1f)
-                                .padding(2.dp),
+                                .weight(1f),
                         text = it.value,
                         color = color,
                         onClick = {
