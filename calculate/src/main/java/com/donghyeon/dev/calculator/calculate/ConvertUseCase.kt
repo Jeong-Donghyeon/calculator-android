@@ -4,6 +4,14 @@ import javax.inject.Inject
 
 enum class ConvertType(val index: Int) {
     LENGTH(0),
+    AREA(1),
+    WEIGHT(2),
+    VOLUME(3),
+    SPEED(4),
+    TIME(5),
+    TEMPERATURE(6),
+    DATA(7),
+    TIP(8),
 }
 
 enum class ConvertUnit(val value: String) {

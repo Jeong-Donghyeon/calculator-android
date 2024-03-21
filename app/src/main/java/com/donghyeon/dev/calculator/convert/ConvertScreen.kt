@@ -59,8 +59,8 @@ fun ConvertScreen() {
                 is SideEffect.Toast -> main.showToast(context.getString(it.id))
                 is SideEffect.Focus ->
                     when (it.fieldName) {
-                        ConvertKey.Value1.value -> v1Focus.requestFocus()
-                        ConvertKey.Value2.value -> v2Focus.requestFocus()
+//                        ConvertKey.Value1.value -> v1Focus.requestFocus()
+//                        ConvertKey.Value2.value -> v2Focus.requestFocus()
                     }
             }
         }
