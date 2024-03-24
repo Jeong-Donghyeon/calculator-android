@@ -166,21 +166,26 @@ private fun PercentScreen(
         Spacer(modifier = Modifier.height(5.dp))
         Spacer(modifier = Modifier.weight(0.5f))
         Text(
-            text = guideStrArr[state.type.index],
+            text =
+                state.type?.ordinal?.let {
+                    guideStrArr[it]
+                } ?: "",
             style = TextSet.bold.copy(ColorSet.text, 18.sp),
         )
         Spacer(modifier = Modifier.height(10.dp))
         Spacer(modifier = Modifier.weight(1f))
-        ViewScrollTab(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-                    .padding(bottom = 3.dp),
-            tabs = stringArrayResource(id = R.array.percent_type).toList(),
-            index = state.type.ordinal,
-            onTab = { action?.inputType(it) },
-        )
+        state.type?.ordinal?.let {
+            ViewScrollTab(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .padding(bottom = 3.dp),
+                tabs = stringArrayResource(id = R.array.percent_type).toList(),
+                index = it,
+                onTab = { action?.inputType(it) },
+            )
+        } ?: Spacer(modifier = Modifier.height(55.dp))
         KeyView(
             state = state,
             action = action,

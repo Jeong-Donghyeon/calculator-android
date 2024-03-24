@@ -9,6 +9,7 @@ import com.donghyeon.dev.calculator.calculate.PercentType
 import com.donghyeon.dev.calculator.calculate.PercentUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
+import com.donghyeon.dev.calculator.data.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ class PercentViewModel
     @Inject
     constructor(
         private val percentUseCase: PercentUseCase,
+        private val repository: Repository,
     ) : BaseViewModel(), PercentAction {
         private val _state = MutableStateFlow(PercentState())
         val state = _state.asStateFlow()
@@ -35,10 +37,20 @@ class PercentViewModel
         private val _sideEffect = MutableSharedFlow<SideEffect>()
         val sideEffect = _sideEffect.asSharedFlow()
 
+        init {
+            viewModelScope.launch {
+                val type = PercentType.entries[repository.loadPersentType()]
+                _state.value = PercentState(type = type)
+            }
+        }
+
         override fun inputType(index: Int) {
+            viewModelScope.launch {
+                repository.savePersentType(index)
+            }
             _state.value =
                 state.value.let { state ->
-                    PercentType.entries.find { it.index == index }?.let {
+                    PercentType.entries.find { it.ordinal == index }?.let {
                         viewModelScope.launch {
                             _sideEffect.emit(SideEffect.Focus(state.getCalculate(it).select.value))
                         }
@@ -53,7 +65,7 @@ class PercentViewModel
                     state.copy(
                         calculateList =
                             state.calculateList.mapIndexed { index, calculate ->
-                                if (index == state.type.index) {
+                                if (index == state.type?.ordinal) {
                                     input(key, calculate)
                                 } else {
                                     calculate
@@ -67,6 +79,7 @@ class PercentViewModel
             key: PercentKey,
             calculate: PercentState.Calculate,
         ): PercentState.Calculate {
+            val type = state.value.type ?: return calculate
             val value = calculate.getValue()
             val newValueList: (TextFieldValue) -> List<TextFieldValue> = {
                 calculate.valueList.mapIndexed { index, value ->
@@ -160,7 +173,7 @@ class PercentViewModel
             return newCalculate.copy(
                 result =
                     percentUseCase(
-                        type = state.value.type,
+                        type = type,
                         value1 = newCalculate.valueList[PercentValue.VALUE1.index].text,
                         value2 = newCalculate.valueList[PercentValue.VALUE2.index].text,
                     ),

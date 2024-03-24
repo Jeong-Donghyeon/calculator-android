@@ -3,6 +3,7 @@ package com.donghyeon.dev.calculator.data
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.donghyeon.dev.calculator.data.entity.GeneralHistory
 import com.google.gson.Gson
@@ -20,6 +21,9 @@ class DataStoreService
 
         private companion object DataStoreKey {
             val generalHistoryKey = stringPreferencesKey("GeneralHistory")
+            val persentTypeKey = intPreferencesKey("PersentType")
+            val persentValue1Key = stringPreferencesKey("PersentValue1")
+            val persentValue2Key = stringPreferencesKey("PersentValue2")
         }
 
         val generalHistory: Flow<GeneralHistory> =
@@ -47,5 +51,12 @@ class DataStoreService
             dataStore.edit { pref ->
                 pref[generalHistoryKey] = ""
             }
+        }
+
+        val persentType: Flow<Int> =
+            dataStore.data.map { it[persentTypeKey] ?: 0 }
+
+        suspend fun savePersentType(type: Int) {
+            dataStore.edit { it[persentTypeKey] = type }
         }
     }

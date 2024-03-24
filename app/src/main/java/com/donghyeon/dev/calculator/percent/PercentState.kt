@@ -5,7 +5,7 @@ import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.PercentType
 
 data class PercentState(
-    val type: PercentType = PercentType.RATIO_VALUE,
+    val type: PercentType? = null,
     val calculateList: List<Calculate> =
         List(
             size = PercentType.entries.count(),
@@ -28,7 +28,7 @@ data class PercentState(
 
     fun getCalculate(): Calculate = getCalculate(type)
 
-    fun getCalculate(type: PercentType): Calculate = calculateList[type.index]
+    fun getCalculate(type: PercentType?): Calculate = calculateList[type?.ordinal ?: 0]
 }
 
 enum class PercentValue(

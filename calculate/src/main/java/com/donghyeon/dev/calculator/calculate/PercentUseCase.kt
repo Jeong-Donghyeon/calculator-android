@@ -5,11 +5,11 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 import javax.inject.Inject
 
-enum class PercentType(val index: Int) {
-    RATIO_VALUE(0),
-    PERCENTAGE(1),
-    RATE_OF_CHANGE(2),
-    INCREMENT(3),
+enum class PercentType {
+    RATIO_VALUE,
+    PERCENTAGE,
+    RATE_OF_CHANGE,
+    INCREMENT,
 }
 
 enum class PercentUnit(val value: String) {
