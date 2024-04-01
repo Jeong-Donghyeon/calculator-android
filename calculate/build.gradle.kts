@@ -1,7 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("io.gitlab.arturbosch.detekt")
+    alias(libs.plugins.jlleitschuhGradleKtlint)
+    alias(libs.plugins.gitlabArturboschDetekt)
 }
 
 detekt {
@@ -10,6 +10,6 @@ detekt {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.junit)
     implementation(group = "javax.inject", name = "javax.inject", version = "1")
 }
