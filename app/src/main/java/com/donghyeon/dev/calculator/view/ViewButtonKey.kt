@@ -70,6 +70,7 @@ fun ViewButtonKey(
     ) {
         if (icon == null) {
             Text(
+                modifier = Modifier.padding(bottom = 1.dp),
                 text = text,
                 style = TextSet.bold.copy(pressColor, 24.sp),
             )
