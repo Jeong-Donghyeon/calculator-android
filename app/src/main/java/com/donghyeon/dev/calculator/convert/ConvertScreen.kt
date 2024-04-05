@@ -20,10 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,9 +37,11 @@ import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
+import com.donghyeon.dev.calculator.view.FontSizeRange
 import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
+import com.donghyeon.dev.calculator.view.ViewTextResult
 import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
@@ -56,19 +58,13 @@ fun ConvertScreen() {
     val viewModel: ConvertViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val main = LocalViewModel.current
-    val v1Focus = remember { FocusRequester() }
-    val v2Focus = remember { FocusRequester() }
     val context = LocalContext.current
     BackHandler { main.navigation(Nav.POP, null) }
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collectLatest {
             when (it) {
                 is SideEffect.Toast -> main.showToast(context.getString(it.id))
-                is SideEffect.Focus ->
-                    when (it.fieldName) {
-//                        ConvertKey.Value1.value -> v1Focus.requestFocus()
-//                        ConvertKey.Value2.value -> v2Focus.requestFocus()
-                    }
+                else -> {}
             }
         }
     }
@@ -76,8 +72,6 @@ fun ConvertScreen() {
         state = state,
         action = viewModel,
         navDest = { main.navigation(Nav.PUSH, it) },
-        v1Focus = v1Focus,
-        v2Focus = v2Focus,
     )
 }
 
@@ -86,9 +80,9 @@ private fun ConvertScreen(
     state: ConvertState,
     action: ConvertAction? = null,
     navDest: ((Dest) -> Unit)? = null,
-    v1Focus: FocusRequester? = null,
-    v2Focus: FocusRequester? = null,
 ) {
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focus.requestFocus() }
     Column(
         modifier =
             Modifier
@@ -101,23 +95,64 @@ private fun ConvertScreen(
             navDest = { navDest?.invoke(it) },
         )
         Spacer(modifier = Modifier.weight(1f))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Spacer(modifier = Modifier.weight(1.5f))
+            Text(
+                modifier = Modifier.padding(top = 5.dp),
+                text = ConvertKey.Unit.value,
+                style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            ViewFieldNumber(
+                modifier =
+                    Modifier
+                        .width(200.dp)
+                        .focusRequester(focus),
+                value = state.unitValue,
+                color = ColorSet.select,
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                modifier = Modifier.width(50.dp),
+                text = state.unit,
+                style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
         Spacer(modifier = Modifier.height(20.dp))
-        UnitInputView(
-            u = "U1",
-            unit = "km",
-            v = "V1",
-            value = TextFieldValue(""),
-            select = true,
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        UnitInputView(
-            u = "U2",
-            unit = "m",
-            v = "V2",
-            value = TextFieldValue(""),
-            select = false,
-        )
-        Spacer(modifier = Modifier.height(20.dp))
+        state.resultList.forEachIndexed { i, it ->
+            Row(
+                modifier = Modifier.width(300.dp).height(50.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.width(45.dp),
+                    text = "R${i + 1}",
+                    style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                ViewTextResult(
+                    text = state.resultValueList[i],
+                    fontSizeRange =
+                        FontSizeRange(
+                            min = 1.sp,
+                            max = 24.sp,
+                        ),
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    modifier = Modifier.width(50.dp),
+                    text = it,
+                    style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
         Spacer(modifier = Modifier.weight(1f))
         ViewScrollTab(
             modifier =
@@ -132,54 +167,7 @@ private fun ConvertScreen(
         KeyView(
             state = state,
             action = action,
-            v1Focus = v1Focus,
-            v2Focus = v2Focus,
         )
-    }
-}
-
-@Composable
-private fun UnitInputView(
-    u: String,
-    unit: String,
-    v: String,
-    value: TextFieldValue,
-    select: Boolean,
-) {
-    val color =
-        if (select) {
-            ColorSet.select
-        } else {
-            ColorSet.text
-        }
-    Column(modifier = Modifier.width(300.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                modifier = Modifier.width(50.dp),
-                text = u,
-                style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
-            )
-            ViewButtonKey(text = unit)
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                modifier = Modifier.padding(end = 10.dp, top = 5.dp),
-                text = v,
-                style = TextSet.extraBold.copy(color, 24.sp),
-                textAlign = TextAlign.Center,
-            )
-            ViewFieldNumber(
-                modifier = Modifier.weight(1f),
-                value = value,
-                color = color,
-            )
-            Text(
-                modifier = Modifier.padding(start = 5.dp, top = 5.dp),
-                text = unit,
-                style = TextSet.extraBold.copy(color, 24.sp),
-                textAlign = TextAlign.Center,
-            )
-        }
     }
 }
 
@@ -187,8 +175,6 @@ private fun UnitInputView(
 private fun KeyView(
     state: ConvertState,
     action: ConvertAction? = null,
-    v1Focus: FocusRequester? = null,
-    v2Focus: FocusRequester? = null,
 ) {
     val keyList =
         listOf(
@@ -202,25 +188,25 @@ private fun KeyView(
                 ConvertKey.Seven,
                 ConvertKey.Eight,
                 ConvertKey.Nine,
-                ConvertKey.Unit1,
+                ConvertKey.Unit,
             ),
             listOf(
                 ConvertKey.Four,
                 ConvertKey.Five,
                 ConvertKey.Six,
-                ConvertKey.Value1,
+                ConvertKey.Result1,
             ),
             listOf(
                 ConvertKey.One,
                 ConvertKey.Two,
                 ConvertKey.Three,
-                ConvertKey.Unit2,
+                ConvertKey.Result2,
             ),
             listOf(
                 ConvertKey.ZeroZero,
                 ConvertKey.Zero,
                 ConvertKey.Decimal,
-                ConvertKey.Value2,
+                ConvertKey.Result3,
             ),
         )
     Column(

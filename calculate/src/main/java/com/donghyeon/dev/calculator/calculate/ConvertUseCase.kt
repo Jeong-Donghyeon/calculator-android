@@ -33,7 +33,7 @@ val unitAreaList =
         "ac",
         "a",
         "ha",
-        "평(≈3.3m²)",
+        "평",
     )
 
 val unitVolumeList =
@@ -54,8 +54,8 @@ val unitWeightList =
         "t",
         "lb",
         "oz",
-        "근(=600g)",
-        "돈(=3.75g)",
+        "근",
+        "돈",
     )
 
 val unitTimeList =
@@ -93,12 +93,4 @@ val unitDataList =
 
 class ConvertUseCase
     @Inject
-    constructor() {
-        private val defaultValue: String = "?"
-
-        operator fun invoke(
-            type: ConvertType,
-            value1: String,
-            value2: String,
-        ): String = "?"
-    }
+    constructor()

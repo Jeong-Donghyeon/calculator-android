@@ -3,47 +3,20 @@ package com.donghyeon.dev.calculator.convert
 import androidx.compose.ui.text.input.TextFieldValue
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.ConvertType
+import com.donghyeon.dev.calculator.calculate.unitLengthList
 
 data class ConvertState(
     val type: ConvertType = ConvertType.LENGTH,
-    val calculateList: List<Calculate> =
-        List(
-            size = ConvertType.entries.count(),
-            init = { Calculate() },
+    val unit: String = unitLengthList[2],
+    val unitValue: TextFieldValue = TextFieldValue(),
+    val resultList: List<String> =
+        listOf(
+            unitLengthList[3],
+            unitLengthList[4],
+            unitLengthList[5],
         ),
-) {
-    data class Calculate(
-        val select: ConvertValue = ConvertValue.VALUE1,
-        val valueList: List<TextFieldValue> =
-            List(
-                size = ConvertValue.entries.count(),
-                init = { TextFieldValue() },
-            ),
-        val result: String = "?",
-    ) {
-        fun getValue(): TextFieldValue = getValue(select)
-
-        fun getValue(select: ConvertValue): TextFieldValue = valueList[select.index]
-    }
-
-    fun getCalculate(): Calculate = getCalculate(type)
-
-    fun getCalculate(type: ConvertType): Calculate = calculateList[type.ordinal]
-}
-
-enum class ConvertValue(
-    val index: Int,
-    val value: String,
-) {
-    VALUE1(
-        index = 0,
-        value = ConvertKey.Value1.value,
-    ),
-    VALUE2(
-        index = 1,
-        value = ConvertKey.Value2.value,
-    ),
-}
+    val resultValueList: List<String> = listOf("?", "?", "?"),
+)
 
 sealed class ConvertKey(val value: String) {
     data object One : ConvertKey("1")
@@ -70,13 +43,13 @@ sealed class ConvertKey(val value: String) {
 
     data object Decimal : ConvertKey(".")
 
-    data object Value1 : ConvertKey("V1")
+    data object Unit : ConvertKey("U")
 
-    data object Value2 : ConvertKey("V2")
+    data object Result1 : ConvertKey("R1")
 
-    data object Unit1 : ConvertKey("U1")
+    data object Result2 : ConvertKey("R2")
 
-    data object Unit2 : ConvertKey("U2")
+    data object Result3 : ConvertKey("R3")
 
     data object Clear : ConvertKey("C")
 
