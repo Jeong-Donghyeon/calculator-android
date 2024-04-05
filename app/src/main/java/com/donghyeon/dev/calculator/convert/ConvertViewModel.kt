@@ -38,7 +38,7 @@ class ConvertViewModel
         override fun inputType(index: Int) {
             _state.value =
                 state.value.let { state ->
-                    ConvertType.entries.find { it.index == index }?.let {
+                    ConvertType.entries.find { it.ordinal == index }?.let {
                         viewModelScope.launch {
                             _sideEffect.emit(SideEffect.Focus(state.getCalculate(it).select.value))
                         }
@@ -53,7 +53,7 @@ class ConvertViewModel
                     state.copy(
                         calculateList =
                             state.calculateList.mapIndexed { index, calculate ->
-                                if (index == state.type.index) {
+                                if (index == state.type.ordinal) {
                                     input(key, calculate)
                                 } else {
                                     calculate

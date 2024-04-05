@@ -28,7 +28,7 @@ data class ConvertState(
 
     fun getCalculate(): Calculate = getCalculate(type)
 
-    fun getCalculate(type: ConvertType): Calculate = calculateList[type.index]
+    fun getCalculate(type: ConvertType): Calculate = calculateList[type.ordinal]
 }
 
 enum class ConvertValue(

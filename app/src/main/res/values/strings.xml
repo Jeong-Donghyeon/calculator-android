@@ -7,6 +7,7 @@
     <string name="convert">단위 계산</string>
     <string name="currency">환율 계산</string>
     <string name="date">날짜 계산</string>
+    <string name="close">닫기</string>
 
     <string name="error_history">계산기록이 없습니다</string>
 
@@ -35,13 +36,11 @@
     <string-array name="convert_type">
         <item>길이</item>
         <item>면적</item>
-        <item>무게</item>
         <item>부피</item>
+        <item>무게</item>
         <item>속도</item>
         <item>시간</item>
-        <item>온도</item>
         <item>데이터</item>
-        <item>팁</item>
     </string-array>
 
     <string name="privacy_policy">개인정보 처리방침</string>
