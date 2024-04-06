@@ -2,6 +2,8 @@ package com.donghyeon.dev.calculator.convert
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +36,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
+import com.donghyeon.dev.calculator.calculate.ConvertType
+import com.donghyeon.dev.calculator.calculate.unitAreaList
+import com.donghyeon.dev.calculator.calculate.unitDataList
+import com.donghyeon.dev.calculator.calculate.unitLengthList
+import com.donghyeon.dev.calculator.calculate.unitSppedList
+import com.donghyeon.dev.calculator.calculate.unitTimeList
+import com.donghyeon.dev.calculator.calculate.unitVolumeList
+import com.donghyeon.dev.calculator.calculate.unitWeightList
 import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
@@ -43,6 +55,8 @@ import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTextResult
 import com.donghyeon.dev.calculator.view.ViewTitle
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
+import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
@@ -50,6 +64,14 @@ import kotlinx.coroutines.flow.collectLatest
 private fun Preview_ConvertScreen() {
     ConvertScreen(
         state = ConvertState(),
+    )
+}
+
+@Preview
+@Composable
+fun Preview_SheetUnit() {
+    SheetUnit(
+        unitList = unitLengthList,
     )
 }
 
@@ -73,6 +95,22 @@ fun ConvertScreen() {
         action = viewModel,
         navDest = { main.navigation(Nav.PUSH, it) },
     )
+    if (state.sheet) {
+        SheetUnit(
+            unitList =
+                when (state.type) {
+                    ConvertType.LENGTH -> unitLengthList
+                    ConvertType.AREA -> unitAreaList
+                    ConvertType.VOLUME -> unitVolumeList
+                    ConvertType.WEIGHT -> unitWeightList
+                    ConvertType.SPEED -> unitSppedList
+                    ConvertType.TIME -> unitTimeList
+                    ConvertType.DATA -> unitDataList
+                },
+            select = { viewModel.sheet(false) },
+            close = { viewModel.sheet(false) },
+        )
+    }
 }
 
 @Composable
@@ -126,7 +164,10 @@ private fun ConvertScreen(
         Spacer(modifier = Modifier.height(20.dp))
         state.resultList.forEachIndexed { i, it ->
             Row(
-                modifier = Modifier.width(300.dp).height(50.dp),
+                modifier =
+                    Modifier
+                        .width(300.dp)
+                        .height(50.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -232,9 +273,77 @@ private fun KeyView(
                                 is ConvertKey.Backspace -> it.value.toInt() to 32.dp
                                 else -> null
                             },
+                        onClick = {
+                            when (it) {
+                                ConvertKey.Unit,
+                                ConvertKey.Result1,
+                                ConvertKey.Result2,
+                                ConvertKey.Result3,
+                                -> action?.sheet(true)
+                                else -> action?.inputKey(it)
+                            }
+                        },
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+fun SheetUnit(
+    unitList: List<String>,
+    select: (String) -> Unit = {},
+    close: () -> Unit = {},
+) {
+    BottomSheetDialog(
+        onDismissRequest = close,
+        properties = BottomSheetDialogProperties(),
+        content = {
+            Box(
+                modifier =
+                    Modifier
+                        .padding(horizontal = 7.dp)
+                        .padding(bottom = 20.dp)
+                        .clip(RoundedCornerShape(10.dp)),
+            ) {
+                Column(modifier = Modifier.background(ColorSet.button)) {
+                    unitList.forEach {
+                        Text(
+                            modifier =
+                                Modifier
+                                    .clickable { select(it) }
+                                    .fillMaxWidth()
+                                    .padding(vertical = 14.dp),
+                            text = it,
+                            style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                            textAlign = TextAlign.Center,
+                        )
+                        Box(
+                            modifier =
+                                Modifier
+                                    .padding(horizontal = 7.dp)
+                                    .fillMaxWidth()
+                                    .height(1.dp)
+                                    .background(ColorSet.text.copy(alpha = 0.1f)),
+                        )
+                    }
+                    Text(
+                        modifier =
+                            Modifier
+                                .background(
+                                    color = ColorSet.button,
+                                    shape = RoundedCornerShape(5.dp),
+                                )
+                                .clickable { close() }
+                                .fillMaxWidth()
+                                .padding(vertical = 14.dp),
+                        text = stringResource(id = R.string.close),
+                        style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+        },
+    )
 }

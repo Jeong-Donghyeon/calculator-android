@@ -7,6 +7,7 @@ import com.donghyeon.dev.calculator.calculate.unitLengthList
 
 data class ConvertState(
     val type: ConvertType = ConvertType.LENGTH,
+    val sheet: Boolean = false,
     val unit: String = unitLengthList[2],
     val unitValue: TextFieldValue = TextFieldValue(),
     val resultList: List<String> =

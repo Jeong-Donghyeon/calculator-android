@@ -16,6 +16,8 @@ import javax.inject.Inject
 interface ConvertAction {
     fun inputType(index: Int)
 
+    fun sheet(enable: Boolean)
+
     fun inputKey(key: ConvertKey)
 }
 
@@ -39,6 +41,10 @@ class ConvertViewModel
                         state.copy(type = it)
                     } ?: state
                 }
+        }
+
+        override fun sheet(enable: Boolean) {
+            _state.value = state.value.copy(sheet = enable)
         }
 
         override fun inputKey(key: ConvertKey) {}
