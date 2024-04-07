@@ -19,6 +19,5 @@ enum class Dest(
     PERCENT("Percent", R.string.percent, R.drawable.ic_percent_24px),
     RATIO("Ratio", R.string.ratio, R.drawable.ic_ratio_24px),
     CONVERT("Convert", R.string.convert, R.drawable.ic_convert_24px),
-    CURRENCY("Currency", R.string.currency, R.drawable.ic_currency_24px),
     DATE("Date", R.string.date, R.drawable.ic_date_24px),
 }

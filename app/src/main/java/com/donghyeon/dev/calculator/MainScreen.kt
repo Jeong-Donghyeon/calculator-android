@@ -163,7 +163,6 @@ private fun MainBottomMenu(
             Dest.PERCENT to 24.dp,
             Dest.RATIO to 24.dp,
             Dest.CONVERT to 26.dp,
-            Dest.CURRENCY to 24.dp,
             Dest.DATE to 24.dp,
         ).forEach {
             Button(
