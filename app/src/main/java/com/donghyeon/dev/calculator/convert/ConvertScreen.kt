@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,7 +55,6 @@ import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTextResult
-import com.donghyeon.dev.calculator.view.ViewTitle
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import kotlinx.coroutines.flow.collectLatest
@@ -114,7 +114,7 @@ fun ConvertScreen() {
 }
 
 @Composable
-private fun ConvertScreen(
+fun ConvertScreen(
     state: ConvertState,
     action: ConvertAction? = null,
     navDest: ((Dest) -> Unit)? = null,
@@ -125,13 +125,10 @@ private fun ConvertScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ViewTitle(
-            title = stringResource(id = Dest.CONVERT.title),
-            navDest = { navDest?.invoke(it) },
-        )
         Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier = Modifier.fillMaxWidth(),

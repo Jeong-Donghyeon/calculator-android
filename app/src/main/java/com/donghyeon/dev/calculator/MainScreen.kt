@@ -2,16 +2,20 @@ package com.donghyeon.dev.calculator
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,8 +35,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,12 +46,25 @@ import androidx.navigation.compose.rememberNavController
 import com.donghyeon.dev.calculator.common.LocalNavController
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.StartSceen
+import com.donghyeon.dev.calculator.convert.ConvertAction
 import com.donghyeon.dev.calculator.convert.ConvertScreen
+import com.donghyeon.dev.calculator.convert.ConvertState
+import com.donghyeon.dev.calculator.convert.ConvertViewModel
+import com.donghyeon.dev.calculator.general.GeneralAction
 import com.donghyeon.dev.calculator.general.GeneralScreen
+import com.donghyeon.dev.calculator.general.GeneralState
+import com.donghyeon.dev.calculator.general.GeneralViewModel
 import com.donghyeon.dev.calculator.info.InfoScreen
+import com.donghyeon.dev.calculator.percent.PercentAction
 import com.donghyeon.dev.calculator.percent.PercentScreen
+import com.donghyeon.dev.calculator.percent.PercentState
+import com.donghyeon.dev.calculator.percent.PercentViewModel
+import com.donghyeon.dev.calculator.ratio.RatioAction
 import com.donghyeon.dev.calculator.ratio.RatioScreen
+import com.donghyeon.dev.calculator.ratio.RatioState
+import com.donghyeon.dev.calculator.ratio.RatioViewModel
 import com.donghyeon.dev.calculator.theme.ColorSet
+import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
 private var toast: Toast? = null
@@ -61,7 +80,6 @@ fun MainScreen(viewModel: MainViewModel) {
         (LocalView.current.context as Activity).apply {
             window.statusBarColor = ColorSet.background.toArgb()
         }
-        val bottomMenu by viewModel.bottomMunu.collectAsState()
         LaunchedEffect(Unit) {
             viewModel.navFlow.collectLatest {
                 when (it.first) {
@@ -118,21 +136,12 @@ fun MainScreen(viewModel: MainViewModel) {
                             tween(100),
                         )
                     }
+                    composable(Dest.MAIN.route) { MainScreen() }
                     composable(
                         route = Dest.INFO.route,
                         enterTransition = pushEnterTransition,
                         popExitTransition = pushPopExitTransition,
                     ) { InfoScreen() }
-                    composable(Dest.GENERAL.route) { GeneralScreen() }
-                    composable(Dest.PERCENT.route) { PercentScreen() }
-                    composable(Dest.RATIO.route) { RatioScreen() }
-                    composable(Dest.CONVERT.route) { ConvertScreen() }
-                }
-                if (bottomMenu.first) {
-                    MainBottomMenu(
-                        dest = bottomMenu.second,
-                        nav = { viewModel.navigation(Nav.POP_PUSH, it) },
-                    )
                 }
             }
         }
@@ -141,14 +150,137 @@ fun MainScreen(viewModel: MainViewModel) {
 
 @Preview
 @Composable
-private fun Preview_MainBottomMenu() {
-    MainBottomMenu(dest = Dest.GENERAL)
+private fun Preview_MainScreen_General() =
+    MainScreen(
+        mainState = MainState(menu = Menu.GENERAL),
+        generalState = GeneralState(),
+    )
+
+@Preview
+@Composable
+private fun Preview_MainScreen_Percent() =
+    MainScreen(
+        mainState = MainState(menu = Menu.PERCENT),
+        percentState = PercentState(),
+    )
+
+@Preview
+@Composable
+private fun Preview_MainScreen_Ratio() =
+    MainScreen(
+        mainState = MainState(menu = Menu.RATIO),
+        ratioState = RatioState(),
+    )
+
+@Preview
+@Composable
+private fun Preview_MainScreen_Convert() =
+    MainScreen(
+        mainState = MainState(menu = Menu.CONVERT),
+        convertState = ConvertState(),
+    )
+
+@Composable
+private fun MainScreen() {
+    val mainViewModel = LocalViewModel.current
+    val generalViewModel: GeneralViewModel = hiltViewModel()
+    val percentViewModel: PercentViewModel = hiltViewModel()
+    val ratioViewModel: RatioViewModel = hiltViewModel()
+    val convertViewModel: ConvertViewModel = hiltViewModel()
+    val mainState by mainViewModel.state.collectAsState()
+    val generalState by generalViewModel.state.collectAsState()
+    val percentState by percentViewModel.state.collectAsState()
+    val ratioState by ratioViewModel.state.collectAsState()
+    val convertState by convertViewModel.state.collectAsState()
+    MainScreen(
+        mainState = mainState,
+        mainAction = mainViewModel,
+        generalState = generalState,
+        generalAction = generalViewModel,
+        percentState = percentState,
+        percentAction = percentViewModel,
+        ratioState = ratioState,
+        ratioAction = ratioViewModel,
+        convertState = convertState,
+        convertAction = convertViewModel,
+    )
+    BackHandler { mainViewModel.navigation(Nav.POP, null) }
 }
 
 @Composable
-private fun MainBottomMenu(
-    dest: Dest,
-    nav: ((Dest) -> Unit)? = null,
+private fun MainScreen(
+    mainState: MainState,
+    mainAction: MainAction? = null,
+    generalState: GeneralState? = null,
+    generalAction: GeneralAction? = null,
+    percentState: PercentState? = null,
+    percentAction: PercentAction? = null,
+    ratioState: RatioState? = null,
+    ratioAction: RatioAction? = null,
+    convertState: ConvertState? = null,
+    convertAction: ConvertAction? = null,
+) {
+    Column(
+        modifier =
+            Modifier
+                .background(ColorSet.background)
+                .fillMaxSize(),
+    ) {
+        mainState.menu?.let { menu ->
+            ViewTitle(
+                title = stringResource(id = menu.title),
+                navDest = { mainAction?.navigation(Nav.PUSH, Dest.INFO) },
+            )
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+            ) {
+                when (menu) {
+                    Menu.GENERAL ->
+                        generalState?.let {
+                            GeneralScreen(
+                                state = it,
+                                action = generalAction,
+                            )
+                        }
+                    Menu.PERCENT ->
+                        percentState?.let {
+                            PercentScreen(
+                                state = it,
+                                action = percentAction,
+                            )
+                        }
+                    Menu.RATIO ->
+                        ratioState?.let {
+                            RatioScreen(
+                                state = it,
+                                action = ratioAction,
+                            )
+                        }
+                    Menu.CONVERT ->
+                        convertState?.let {
+                            ConvertScreen(
+                                state = it,
+                                action = convertAction,
+                            )
+                        }
+                    Menu.DATE -> {}
+                }
+            }
+            BottomMenu(
+                currentMenu = menu,
+                menu = { mainAction?.menu(it) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomMenu(
+    currentMenu: Menu,
+    menu: (Menu) -> Unit,
 ) {
     Row(
         modifier =
@@ -158,15 +290,20 @@ private fun MainBottomMenu(
                 .padding(top = 1.dp, bottom = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
     ) {
-        listOf(
-            Dest.GENERAL to 26.dp,
-            Dest.PERCENT to 24.dp,
-            Dest.RATIO to 24.dp,
-            Dest.CONVERT to 26.dp,
-            Dest.DATE to 24.dp,
+        Menu.entries.zip(
+            listOf(
+                26.dp,
+                24.dp,
+                24.dp,
+                26.dp,
+                24.dp,
+            ),
         ).forEach {
             Button(
-                modifier = Modifier.weight(1f).height(40.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .height(40.dp),
                 shape = RoundedCornerShape(5.dp),
                 contentPadding = PaddingValues(),
                 colors =
@@ -174,7 +311,7 @@ private fun MainBottomMenu(
                         containerColor = ColorSet.button,
                     ),
                 elevation = null,
-                onClick = { nav?.invoke(it.first) },
+                onClick = { menu(it.first) },
             ) {
                 Icon(
                     modifier =
@@ -183,12 +320,12 @@ private fun MainBottomMenu(
                             .size(it.second),
                     painter = painterResource(id = it.first.icon),
                     tint =
-                        if (it.first == dest) {
+                        if (it.first == currentMenu) {
                             ColorSet.select
                         } else {
                             ColorSet.text
                         },
-                    contentDescription = "KeyIcon",
+                    contentDescription = "MenuIcon",
                 )
             }
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.PercentUnit
@@ -48,7 +48,6 @@ import com.donghyeon.dev.calculator.view.ViewButtonKeyValue
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTextResult
-import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
@@ -84,17 +83,15 @@ fun PercentScreen() {
     PercentScreen(
         state = state,
         action = viewModel,
-        navDest = { main.navigation(Nav.PUSH, it) },
         v1Focus = v1Focus,
         v2Focus = v2Focus,
     )
 }
 
 @Composable
-private fun PercentScreen(
+fun PercentScreen(
     state: PercentState,
     action: PercentAction? = null,
-    navDest: ((Dest) -> Unit)? = null,
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
 ) {
@@ -107,13 +104,10 @@ private fun PercentScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ViewTitle(
-            title = stringResource(id = Dest.PERCENT.title),
-            navDest = { navDest?.invoke(it) },
-        )
         Spacer(modifier = Modifier.weight(1f))
         PercentValue.entries.forEach { value ->
             val color = selectColor(calculate.select == value)

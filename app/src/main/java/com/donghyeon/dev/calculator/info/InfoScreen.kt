@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.donghyeon.dev.calculator.BuildConfig
-import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.LocalViewModel
@@ -115,7 +114,7 @@ private fun InfoScreen(
             }
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = Dest.INFO.title),
+                text = stringResource(id = R.string.info),
                 style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
                 textAlign = TextAlign.Center,
             )

@@ -31,13 +31,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.InputKeyHeight
@@ -49,7 +47,6 @@ import com.donghyeon.dev.calculator.view.FontSizeRange
 import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldGeneral
 import com.donghyeon.dev.calculator.view.ViewTextResult
-import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
@@ -77,16 +74,14 @@ fun GeneralScreen() {
     GeneralScreen(
         state = state,
         action = viewModel,
-        navDest = { main.navigation(Nav.PUSH, it) },
         focus = focus,
     )
 }
 
 @Composable
-private fun GeneralScreen(
+fun GeneralScreen(
     state: GeneralState,
     action: GeneralAction? = null,
-    navDest: ((Dest) -> Unit)? = null,
     focus: FocusRequester? = null,
 ) {
     Column(
@@ -96,10 +91,6 @@ private fun GeneralScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
     ) {
-        ViewTitle(
-            title = stringResource(id = Dest.GENERAL.title),
-            navDest = { navDest?.invoke(it) },
-        )
         Spacer(modifier = Modifier.weight(1f))
         ViewFieldGeneral(
             modifier =
@@ -132,7 +123,7 @@ private fun GeneralScreen(
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        KeyView(
+        GeneralKeyView(
             state = state,
             action = action,
         )
@@ -140,7 +131,7 @@ private fun GeneralScreen(
 }
 
 @Composable
-private fun KeyView(
+fun GeneralKeyView(
     state: GeneralState,
     action: GeneralAction? = null,
 ) {

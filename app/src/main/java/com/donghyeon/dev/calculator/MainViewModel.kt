@@ -12,22 +12,35 @@ import kotlinx.coroutines.launch
 import java.util.Stack
 import javax.inject.Inject
 
+interface MainAction {
+    fun menu(menu: Menu)
+
+    fun navigation(
+        nav: Nav,
+        dest: Dest?,
+    )
+}
+
 @HiltViewModel
 class MainViewModel
     @Inject
-    constructor() : BaseViewModel() {
+    constructor() : BaseViewModel(), MainAction {
         private val _toast = MutableSharedFlow<String>()
         val toast = _toast.asSharedFlow()
 
         private val _navFlow = MutableSharedFlow<Triple<Nav, Dest, Dest?>>()
         val navFlow = _navFlow.asSharedFlow()
 
-        private val _bottomMunu = MutableStateFlow(true to StartSceen)
-        val bottomMunu = _bottomMunu.asStateFlow()
-
         private val screenStack = Stack<Dest>().apply { push(StartSceen) }
 
-        fun navigation(
+        private val _state = MutableStateFlow(MainState())
+        val state = _state.asStateFlow()
+
+        init {
+            _state.value = state.value.copy(menu = Menu.GENERAL)
+        }
+
+        override fun navigation(
             nav: Nav,
             dest: Dest?,
         ) {
@@ -68,11 +81,8 @@ class MainViewModel
                     Nav.POP_PUSH -> {
                         dest?.let {
                             when (it) {
+                                Dest.MAIN,
                                 Dest.INFO,
-                                Dest.GENERAL,
-                                Dest.PERCENT,
-                                Dest.RATIO,
-                                Dest.CONVERT,
                                 -> {
                                     screenStack.pop()
                                     screenStack.push(it)
@@ -80,13 +90,6 @@ class MainViewModel
                                 else -> return@launch
                             }
                         }
-                    }
-                }
-                if (screenStack.isNotEmpty()) {
-                    if (screenStack.peek() == Dest.INFO) {
-                        _bottomMunu.value = bottomMunu.value.copy(false)
-                    } else {
-                        _bottomMunu.value = bottomMunu.value.copy(true, screenStack.peek())
                     }
                 }
                 _navFlow.emit(
@@ -103,5 +106,9 @@ class MainViewModel
             viewModelScope.launch {
                 _toast.emit(message)
             }
+        }
+
+        override fun menu(menu: Menu) {
+            _state.value = state.value.copy(menu = menu)
         }
     }

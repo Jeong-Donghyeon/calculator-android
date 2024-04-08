@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,13 +29,11 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.donghyeon.dev.calculator.Dest
 import com.donghyeon.dev.calculator.Nav
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.RatioType
@@ -47,7 +46,6 @@ import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewButtonKeyValue
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
-import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
 @Preview
@@ -92,10 +90,9 @@ fun RatioScreen() {
 }
 
 @Composable
-private fun RatioScreen(
+fun RatioScreen(
     state: RatioState,
     action: RatioAction? = null,
-    navDest: ((Dest) -> Unit)? = null,
     v1Focus: FocusRequester? = null,
     v2Focus: FocusRequester? = null,
     v3Focus: FocusRequester? = null,
@@ -111,13 +108,10 @@ private fun RatioScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ViewTitle(
-            title = stringResource(id = Dest.RATIO.title),
-            navDest = { navDest?.invoke(it) },
-        )
         Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(20.dp))
         Row(modifier = Modifier.width(300.dp)) {
