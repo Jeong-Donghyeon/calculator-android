@@ -19,6 +19,8 @@ interface MainAction {
         nav: Nav,
         dest: Dest?,
     )
+
+    fun showToast(msg: String)
 }
 
 @HiltViewModel
@@ -102,9 +104,9 @@ class MainViewModel
             }
         }
 
-        fun showToast(message: String) {
+        override fun showToast(msg: String) {
             viewModelScope.launch {
-                _toast.emit(message)
+                _toast.emit(msg)
             }
         }
 

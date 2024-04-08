@@ -13,6 +13,7 @@ import com.donghyeon.dev.calculator.data.entity.GeneralHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +22,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface GeneralAction {
+    val sideEffect: SharedFlow<SideEffect>
+
     fun inputKey(key: GeneralKey)
 
     fun history()
@@ -39,7 +42,7 @@ class GeneralViewModel
         val state: StateFlow<GeneralState> = _state.asStateFlow()
 
         private val _sideEffect = MutableSharedFlow<SideEffect>()
-        val sideEffect = _sideEffect.asSharedFlow()
+        override val sideEffect = _sideEffect.asSharedFlow()
 
         init {
             viewModelScope.launch {

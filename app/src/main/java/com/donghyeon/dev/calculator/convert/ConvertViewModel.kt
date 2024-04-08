@@ -8,12 +8,15 @@ import com.donghyeon.dev.calculator.common.SideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface ConvertAction {
+    val sideEffect: SharedFlow<SideEffect>
+
     fun inputType(index: Int)
 
     fun sheet(enable: Boolean)
@@ -31,7 +34,7 @@ class ConvertViewModel
         val state = _state.asStateFlow()
 
         private val _sideEffect = MutableSharedFlow<SideEffect>()
-        val sideEffect = _sideEffect.asSharedFlow()
+        override val sideEffect = _sideEffect.asSharedFlow()
 
         override fun inputType(index: Int) {
             _state.value =

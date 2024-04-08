@@ -1,6 +1,5 @@
 package com.donghyeon.dev.calculator.general
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,8 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,11 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.donghyeon.dev.calculator.Nav
+import com.donghyeon.dev.calculator.MainAction
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.common.InputKeyHeight
-import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
@@ -51,39 +46,27 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
-private fun Preview_GeneralScreen() {
+private fun Preview_GeneralScreen() =
     GeneralScreen(
         state = GeneralState(),
     )
-}
-
-@Composable
-fun GeneralScreen() {
-    val viewModel: GeneralViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState()
-    val main = LocalViewModel.current
-    val focus = remember { FocusRequester() }
-    val context = LocalContext.current
-    BackHandler { main.navigation(Nav.POP, null) }
-    LaunchedEffect(Unit) {
-        focus.requestFocus()
-        viewModel.sideEffect.collectLatest {
-            if (it is SideEffect.Toast) main.showToast(context.getString(it.id))
-        }
-    }
-    GeneralScreen(
-        state = state,
-        action = viewModel,
-        focus = focus,
-    )
-}
 
 @Composable
 fun GeneralScreen(
     state: GeneralState,
     action: GeneralAction? = null,
-    focus: FocusRequester? = null,
+    mainAction: MainAction? = null,
 ) {
+    val context = LocalContext.current
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focus.requestFocus()
+        action?.sideEffect?.collectLatest {
+            if (it is SideEffect.Toast) {
+                mainAction?.showToast(context.getString(it.id))
+            }
+        }
+    }
     Column(
         modifier =
             Modifier
@@ -131,7 +114,7 @@ fun GeneralScreen(
 }
 
 @Composable
-fun GeneralKeyView(
+private fun GeneralKeyView(
     state: GeneralState,
     action: GeneralAction? = null,
 ) {
@@ -266,9 +249,7 @@ fun GeneralKeyView(
                             }
                             Spacer(modifier = Modifier.height(30.dp))
                         }
-                        IconButton(
-                            onClick = { action?.clearHistory() },
-                        ) {
+                        IconButton(onClick = { action?.clearHistory() }) {
                             Icon(
                                 modifier = Modifier.size(24.dp),
                                 painter = painterResource(id = R.drawable.ic_cancel_24px),

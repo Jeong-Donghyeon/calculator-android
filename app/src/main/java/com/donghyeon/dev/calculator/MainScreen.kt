@@ -243,6 +243,7 @@ private fun MainScreen(
                             GeneralScreen(
                                 state = it,
                                 action = generalAction,
+                                mainAction = mainAction,
                             )
                         }
                     Menu.PERCENT ->
@@ -250,6 +251,7 @@ private fun MainScreen(
                             PercentScreen(
                                 state = it,
                                 action = percentAction,
+                                mainAction = mainAction,
                             )
                         }
                     Menu.RATIO ->
@@ -257,6 +259,7 @@ private fun MainScreen(
                             RatioScreen(
                                 state = it,
                                 action = ratioAction,
+                                mainAction = mainAction,
                             )
                         }
                     Menu.CONVERT ->
@@ -264,6 +267,7 @@ private fun MainScreen(
                             ConvertScreen(
                                 state = it,
                                 action = convertAction,
+                                mainAction = mainAction,
                             )
                         }
                     Menu.DATE -> {}

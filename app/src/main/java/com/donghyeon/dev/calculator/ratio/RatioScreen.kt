@@ -1,6 +1,5 @@
 package com.donghyeon.dev.calculator.ratio
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,12 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.donghyeon.dev.calculator.Nav
+import com.donghyeon.dev.calculator.MainAction
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.RatioType
 import com.donghyeon.dev.calculator.common.InputKeyHeight
-import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
@@ -50,27 +46,33 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
-private fun Preview_RatioScreen() {
+private fun Preview_RatioScreen() =
     RatioScreen(
         state = RatioState(),
     )
-}
 
 @Composable
-fun RatioScreen() {
-    val viewModel: RatioViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState()
-    val main = LocalViewModel.current
+fun RatioScreen(
+    state: RatioState,
+    action: RatioAction? = null,
+    mainAction: MainAction? = null,
+) {
+    val context = LocalContext.current
     val v1Focus = remember { FocusRequester() }
     val v2Focus = remember { FocusRequester() }
     val v3Focus = remember { FocusRequester() }
-    val context = LocalContext.current
-    BackHandler { main.navigation(Nav.POP, null) }
+    val calculate = state.getCalculate()
+    val selectColor: (Boolean) -> Color = {
+        if (it) ColorSet.select else ColorSet.text
+    }
+    val v1Color = selectColor(calculate.select == RatioValue.VALUE1)
+    val v2Color = selectColor(calculate.select == RatioValue.VALUE2)
+    val v3Color = selectColor(calculate.select == RatioValue.VALUE3)
     LaunchedEffect(Unit) {
         v1Focus.requestFocus()
-        viewModel.sideEffect.collectLatest {
+        action?.sideEffect?.collectLatest {
             when (it) {
-                is SideEffect.Toast -> main.showToast(context.getString(it.id))
+                is SideEffect.Toast -> mainAction?.showToast(context.getString(it.id))
                 is SideEffect.Focus ->
                     when (it.fieldName) {
                         RatioKey.Value1.value -> v1Focus.requestFocus()
@@ -80,30 +82,6 @@ fun RatioScreen() {
             }
         }
     }
-    RatioScreen(
-        state = state,
-        action = viewModel,
-        v1Focus = v1Focus,
-        v2Focus = v2Focus,
-        v3Focus = v3Focus,
-    )
-}
-
-@Composable
-fun RatioScreen(
-    state: RatioState,
-    action: RatioAction? = null,
-    v1Focus: FocusRequester? = null,
-    v2Focus: FocusRequester? = null,
-    v3Focus: FocusRequester? = null,
-) {
-    val calculate = state.getCalculate()
-    val selectColor: (Boolean) -> Color = {
-        if (it) ColorSet.select else ColorSet.text
-    }
-    val v1Color = selectColor(calculate.select == RatioValue.VALUE1)
-    val v2Color = selectColor(calculate.select == RatioValue.VALUE2)
-    val v3Color = selectColor(calculate.select == RatioValue.VALUE3)
     Column(
         modifier =
             Modifier
