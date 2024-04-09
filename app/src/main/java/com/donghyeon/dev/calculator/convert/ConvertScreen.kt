@@ -17,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +34,6 @@ import com.donghyeon.dev.calculator.MainAction
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.ConvertType
 import com.donghyeon.dev.calculator.calculate.unitAreaList
-import com.donghyeon.dev.calculator.calculate.unitDataList
 import com.donghyeon.dev.calculator.calculate.unitLengthList
 import com.donghyeon.dev.calculator.calculate.unitSppedList
 import com.donghyeon.dev.calculator.calculate.unitTimeList
@@ -181,7 +179,6 @@ fun ConvertScreen(
                     ConvertType.WEIGHT -> unitWeightList
                     ConvertType.SPEED -> unitSppedList
                     ConvertType.TIME -> unitTimeList
-                    ConvertType.DATA -> unitDataList
                 },
             select = { action?.sheet(false) },
             close = { action?.sheet(false) },

@@ -83,13 +83,10 @@ class MainViewModel
                     Nav.POP_PUSH -> {
                         dest?.let {
                             when (it) {
-                                Dest.MAIN,
-                                Dest.INFO,
-                                -> {
+                                Dest.MAIN, Dest.INFO -> {
                                     screenStack.pop()
                                     screenStack.push(it)
                                 }
-                                else -> return@launch
                             }
                         }
                     }

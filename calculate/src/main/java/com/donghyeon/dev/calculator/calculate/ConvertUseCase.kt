@@ -9,7 +9,6 @@ enum class ConvertType {
     WEIGHT,
     SPEED,
     TIME,
-    DATA,
 }
 
 val unitLengthList =
@@ -65,6 +64,9 @@ val unitTimeList =
         "min",
         "h",
         "d",
+        "w",
+        "m",
+        "y",
     )
 
 val unitSppedList =
@@ -79,16 +81,6 @@ val unitSppedList =
         "ft/h",
         "mi/s",
         "mi/h",
-    )
-
-val unitDataList =
-    listOf(
-        "bit",
-        "B",
-        "KB",
-        "MB",
-        "GB",
-        "TB",
     )
 
 class ConvertUseCase
