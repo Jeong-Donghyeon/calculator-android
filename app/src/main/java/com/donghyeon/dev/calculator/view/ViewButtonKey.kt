@@ -22,23 +22,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.donghyeon.dev.calculator.calculate.GenralOperator
+import com.donghyeon.dev.calculator.general.GeneralKey
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewButtonKey() {
+fun Preview_ViewButtonKey() =
     ViewButtonKey(
         text = "0",
     )
-}
 
 @Composable
 fun ViewButtonKey(
     modifier: Modifier = Modifier,
-    text: String,
+    text: String = "",
     icon: Pair<Int, Dp>? = null,
-    onClick: (() -> Unit)? = null,
+    onClick: (() -> Unit) = {},
 ) {
     val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
     val interactionSource = remember { MutableInteractionSource() }
@@ -58,7 +59,7 @@ fun ViewButtonKey(
             } else {
                 vibrator.vibrate(10)
             }
-            onClick?.invoke()
+            onClick()
         },
         contentPadding = PaddingValues(),
         colors =
@@ -69,10 +70,19 @@ fun ViewButtonKey(
         interactionSource = interactionSource,
     ) {
         if (icon == null) {
+            val operator =
+                GenralOperator.entries.any {
+                    it.value == text
+                } || GeneralKey.Equal.value == text
+            val fontSize =
+                if (operator) {
+                    32.sp
+                } else {
+                    26.sp
+                }
             Text(
-                modifier = Modifier.padding(bottom = 1.dp),
                 text = text,
-                style = TextSet.bold.copy(pressColor, 24.sp),
+                style = TextSet.bold.copy(pressColor, fontSize),
             )
         } else {
             Icon(

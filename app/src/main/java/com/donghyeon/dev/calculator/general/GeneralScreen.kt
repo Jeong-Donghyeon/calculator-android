@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -26,8 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,7 +53,29 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 private fun Preview_GeneralScreen() =
     GeneralScreen(
-        state = GeneralState(),
+        state =
+            GeneralState(
+                value = TextFieldValue("1+1", TextRange(3)),
+                result = "2",
+            ),
+    )
+
+@Preview
+@Composable
+private fun Preview_GeneralScreen_History() =
+    GeneralScreen(
+        state =
+            GeneralState(
+                history = true,
+                historyList =
+                    listOf(
+                        "1+1" to "2",
+                        "2+2" to "4",
+                        "3+3" to "6",
+                    ),
+                value = TextFieldValue("4+4", TextRange(3)),
+                result = "8",
+            ),
     )
 
 @Composable
@@ -80,16 +107,16 @@ fun GeneralScreen(
                 Modifier
                     .padding(horizontal = 5.dp)
                     .fillMaxWidth()
-                    .focusRequester(focus ?: FocusRequester()),
+                    .focusRequester(focus),
             value = state.value,
         )
         Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier =
                 Modifier
-                    .padding(horizontal = 10.dp)
+                    .padding(horizontal = 23.dp)
                     .fillMaxWidth(),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.CenterEnd,
         ) {
             ViewTextResult(
                 text =
@@ -105,8 +132,32 @@ fun GeneralScreen(
                     ),
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        GeneralKeyView(
+        Row(
+            modifier =
+                Modifier
+                    .padding(horizontal = 10.dp)
+                    .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(bottom = 7.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                IconButton(onClick = { action?.history() }) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        painter = painterResource(id = R.drawable.ic_history_24px),
+                        tint = ColorSet.text,
+                        contentDescription = "History",
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.weight(3f))
+        }
+        KeyView(
             state = state,
             action = action,
         )
@@ -114,10 +165,11 @@ fun GeneralScreen(
 }
 
 @Composable
-private fun GeneralKeyView(
+private fun KeyView(
     state: GeneralState,
     action: GeneralAction? = null,
 ) {
+    val clipboardManager = LocalClipboardManager.current
     val keyList1 =
         listOf(
             listOf(
@@ -127,9 +179,9 @@ private fun GeneralKeyView(
                 GeneralKey.Backspace,
             ),
             listOf(
-                GeneralKey.History,
-                GeneralKey.Open,
-                GeneralKey.Close,
+                GeneralKey.Paste(""),
+                GeneralKey.Copy,
+                GeneralKey.Bracket,
                 GeneralKey.Divide,
             ),
         )
@@ -175,13 +227,22 @@ private fun GeneralKeyView(
                 when (it) {
                     is GeneralKey.Left -> it.value.toInt() to 32.dp
                     is GeneralKey.Right -> it.value.toInt() to 32.dp
-                    is GeneralKey.History -> it.value.toInt() to 28.dp
                     is GeneralKey.Backspace -> it.value.toInt() to 32.dp
+                    is GeneralKey.Copy -> it.value.toInt() to 30.dp
+                    is GeneralKey.Paste -> it.value.toInt() to 28.dp
                     else -> null
                 },
             onClick = {
                 when (it) {
                     is GeneralKey.History -> action?.history()
+                    is GeneralKey.Copy -> {
+                        val copyStr = state.result.replace(",", "")
+                        clipboardManager.setText(AnnotatedString(copyStr))
+                    }
+                    is GeneralKey.Paste ->
+                        action?.inputKey(
+                            GeneralKey.Paste(clipboardManager.getText().toString()),
+                        )
                     else -> action?.inputKey(it)
                 }
             },
@@ -194,18 +255,25 @@ private fun GeneralKeyView(
                 .padding(bottom = 3.dp),
     ) {
         keyList1.forEach { keyList ->
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row {
                 keyList.forEach { viewButtonKey(it) }
             }
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.height(IntrinsicSize.Max)) {
             val scrollState = rememberScrollState()
             LaunchedEffect(key1 = state.history) {
                 scrollState.scrollTo(scrollState.maxValue)
             }
-            Column(modifier = Modifier.weight(3f)) {
+            Box(modifier = Modifier.weight(3f)) {
+                Column {
+                    keyList2.forEach { keyList ->
+                        Row {
+                            keyList.forEach { viewButtonKey(it) }
+                        }
+                    }
+                }
                 if (state.history) {
-                    val height = keyList2.count() * InputKeyHeight.value - 4
+                    val height = InputKeyHeight * keyList2.count() + 12.dp
                     Box(
                         modifier =
                             Modifier
@@ -213,30 +281,30 @@ private fun GeneralKeyView(
                                 .clip(RoundedCornerShape(5.dp))
                                 .background(ColorSet.button)
                                 .fillMaxWidth()
-                                .height(height.dp),
+                                .height(height),
                     ) {
                         Column(modifier = Modifier.verticalScroll(scrollState)) {
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(5.dp))
                             state.historyList.forEach {
                                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)) {
-                                    Text(
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .clickable {},
-                                        text = it.first,
-                                        textAlign = TextAlign.End,
-                                        style = TextSet.bold.copy(ColorSet.text, 18.sp),
-                                    )
-                                    Text(
-                                        modifier =
-                                            Modifier
-                                                .fillMaxWidth()
-                                                .clickable {},
-                                        text = it.second,
-                                        textAlign = TextAlign.End,
-                                        style = TextSet.bold.copy(ColorSet.result, 19.sp),
-                                    )
+                                    Row {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        Text(
+                                            modifier = Modifier.clickable {},
+                                            text = it.first,
+                                            textAlign = TextAlign.End,
+                                            style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                                        )
+                                    }
+                                    Row {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        Text(
+                                            modifier = Modifier.clickable {},
+                                            text = it.second,
+                                            textAlign = TextAlign.End,
+                                            style = TextSet.bold.copy(ColorSet.result, 19.sp),
+                                        )
+                                    }
                                 }
                                 Box(
                                     modifier =
@@ -247,21 +315,15 @@ private fun GeneralKeyView(
                                             .height(1.dp),
                                 )
                             }
-                            Spacer(modifier = Modifier.height(30.dp))
+                            Spacer(modifier = Modifier.height(20.dp))
                         }
                         IconButton(onClick = { action?.clearHistory() }) {
                             Icon(
                                 modifier = Modifier.size(24.dp),
                                 painter = painterResource(id = R.drawable.ic_cancel_24px),
                                 tint = ColorSet.text,
-                                contentDescription = "Delete",
+                                contentDescription = "Clear",
                             )
-                        }
-                    }
-                } else {
-                    keyList2.forEach { keyList ->
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            keyList.forEach { viewButtonKey(it) }
                         }
                     }
                 }

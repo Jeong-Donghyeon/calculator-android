@@ -72,6 +72,42 @@ class GeneralViewModel
                         val index = state.value.selection.start + 1
                         state.copy(value = state.value.copy(selection = TextRange(index)))
                     }
+                    is GeneralKey.Copy -> state
+                    is GeneralKey.Paste -> {
+                        val copyStrCheck =
+                            key.result.all { c ->
+                                listOf(
+                                    GeneralKey.Decimal.value,
+                                    GeneralKey.Zero.value,
+                                    GeneralKey.One.value,
+                                    GeneralKey.Two.value,
+                                    GeneralKey.Three.value,
+                                    GeneralKey.Four.value,
+                                    GeneralKey.Five.value,
+                                    GeneralKey.Six.value,
+                                    GeneralKey.Seven.value,
+                                    GeneralKey.Eight.value,
+                                    GeneralKey.Nine.value,
+                                ).any {
+                                    it == c.toString()
+                                }
+                            }
+                        if (copyStrCheck) {
+                            val text = state.value.text + key.result
+                            val selection =
+                                state.value.selection.let {
+                                    TextRange(it.start + key.result.count())
+                                }
+                            val textFieldValue =
+                                state.value.copy(
+                                    text = text,
+                                    selection = selection,
+                                )
+                            state.copy(value = textFieldValue)
+                        } else {
+                            state
+                        }
+                    }
                     is GeneralKey.Equal -> {
                         if (state.result == "") {
                             state

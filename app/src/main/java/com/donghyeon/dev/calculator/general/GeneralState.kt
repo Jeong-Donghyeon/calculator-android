@@ -12,6 +12,38 @@ data class GeneralState(
 )
 
 sealed class GeneralKey(val value: String) {
+    data object History : GeneralKey(R.drawable.ic_history_24px.toString())
+
+    data object Clear : GeneralKey("C")
+
+    data object Left : GeneralKey(R.drawable.ic_left_24px.toString())
+
+    data object Right : GeneralKey(R.drawable.ic_right_24px.toString())
+
+    data object Backspace : GeneralKey(R.drawable.ic_backspace_24px.toString())
+
+    data object Copy : GeneralKey(R.drawable.ic_copy_24px.toString())
+
+    data class Paste(val result: String) : GeneralKey(R.drawable.ic_paste_24px.toString())
+
+    data object Bracket : GeneralKey("( )")
+
+    data object Divide : GeneralKey(GenralOperator.DIVIDE.value)
+
+    data object Multiply : GeneralKey(GenralOperator.MULTIPLY.value)
+
+    data object Minus : GeneralKey(GenralOperator.MINUS.value)
+
+    data object Plus : GeneralKey(GenralOperator.PLUS.value)
+
+    data object Equal : GeneralKey("=")
+
+    data object ZeroZero : GeneralKey("00")
+
+    data object Zero : GeneralKey("0")
+
+    data object Decimal : GeneralKey(".")
+
     data object One : GeneralKey("1")
 
     data object Two : GeneralKey("2")
@@ -29,34 +61,4 @@ sealed class GeneralKey(val value: String) {
     data object Eight : GeneralKey("8")
 
     data object Nine : GeneralKey("9")
-
-    data object Zero : GeneralKey("0")
-
-    data object ZeroZero : GeneralKey("00")
-
-    data object Decimal : GeneralKey(".")
-
-    data object Equal : GeneralKey("=")
-
-    data object Clear : GeneralKey("C")
-
-    data object Backspace : GeneralKey(R.drawable.ic_backspace_24px.toString())
-
-    data object Left : GeneralKey(R.drawable.ic_left_24px.toString())
-
-    data object Right : GeneralKey(R.drawable.ic_right_24px.toString())
-
-    data object History : GeneralKey(R.drawable.ic_history_24px.toString())
-
-    data object Multiply : GeneralKey(GenralOperator.MULTIPLY.value)
-
-    data object Divide : GeneralKey(GenralOperator.DIVIDE.value)
-
-    data object Plus : GeneralKey(GenralOperator.PLUS.value)
-
-    data object Minus : GeneralKey(GenralOperator.MINUS.value)
-
-    data object Open : GeneralKey(GenralOperator.OPEN.value)
-
-    data object Close : GeneralKey(GenralOperator.CLOSE.value)
 }
