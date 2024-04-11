@@ -44,5 +44,5 @@ sealed class DateKey(val value: String) {
 
     data object Past : DateKey(R.drawable.ic_paste_24px.toString())
 
-    data object Next : DateKey(R.drawable.ic_next_24px.toString())
+    data object Enter : DateKey(R.drawable.ic_tab_24px.toString())
 }

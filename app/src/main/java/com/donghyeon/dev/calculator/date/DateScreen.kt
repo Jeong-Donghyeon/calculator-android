@@ -92,13 +92,13 @@ private fun KeyView(
             DateType.TIME_COMVERT ->
                 listOf(
                     DateKey.Past,
-                    DateKey.Next,
+                    DateKey.Enter,
                 )
             else ->
                 listOf(
                     DateKey.Past,
                     DateKey.Copy,
-                    DateKey.Next,
+                    DateKey.Enter,
                 )
         }
     val viewButtonKey: @Composable RowScope.(DateKey) -> Unit = {
@@ -116,7 +116,7 @@ private fun KeyView(
                     is DateKey.Backspace -> it.value.toInt() to 32.dp
                     is DateKey.Past -> it.value.toInt() to 32.dp
                     is DateKey.Copy -> it.value.toInt() to 32.dp
-                    is DateKey.Next -> it.value.toInt() to 32.dp
+                    is DateKey.Enter -> it.value.toInt() to 32.dp
                     else -> null
                 },
             onClick = {},
@@ -162,7 +162,7 @@ private fun KeyView(
                             when (it) {
                                 is DateKey.Past -> it.value.toInt() to 28.dp
                                 is DateKey.Copy -> it.value.toInt() to 30.dp
-                                is DateKey.Next -> it.value.toInt() to 36.dp
+                                is DateKey.Enter -> it.value.toInt() to 36.dp
                                 else -> null
                             },
                         onClick = {},
