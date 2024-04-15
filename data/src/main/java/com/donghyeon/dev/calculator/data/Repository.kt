@@ -28,8 +28,15 @@ class Repository
 
         suspend fun savePercentType(type: Int) =
             withContext(dispatcher.io) {
-                dataStoreService.savepercentType(type)
+                dataStoreService.savePercentType(type)
             }
 
         suspend fun loadPercentType() = dataStoreService.percentType.flowOn(dispatcher.io).first()
+
+        suspend fun saveRatioType(type: Int) =
+            withContext(dispatcher.io) {
+                dataStoreService.saveRatioType(type)
+            }
+
+        suspend fun loadRatioType() = dataStoreService.ratioType.flowOn(dispatcher.io).first()
     }

@@ -21,9 +21,8 @@ class DataStoreService
 
         private companion object DataStoreKey {
             val generalHistoryKey = stringPreferencesKey("GeneralHistory")
-            val percentTypeKey = intPreferencesKey("percentType")
-            val percentValue1Key = stringPreferencesKey("percentValue1")
-            val percentValue2Key = stringPreferencesKey("percentValue2")
+            val percentTypeKey = intPreferencesKey("PercentType")
+            val ratioTypeKey = intPreferencesKey("RatioType")
         }
 
         val generalHistory: Flow<GeneralHistory> =
@@ -56,7 +55,14 @@ class DataStoreService
         val percentType: Flow<Int> =
             dataStore.data.map { it[percentTypeKey] ?: 0 }
 
-        suspend fun savepercentType(type: Int) {
+        suspend fun savePercentType(type: Int) {
             dataStore.edit { it[percentTypeKey] = type }
+        }
+
+        val ratioType: Flow<Int> =
+            dataStore.data.map { it[ratioTypeKey] ?: 0 }
+
+        suspend fun saveRatioType(type: Int) {
+            dataStore.edit { it[ratioTypeKey] = type }
         }
     }

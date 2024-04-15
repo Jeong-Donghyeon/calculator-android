@@ -6,9 +6,9 @@ import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.pow
 
-enum class RatioType(val index: Int) {
-    RATIO(0),
-    SIMPLIFY(1),
+enum class RatioType {
+    RATIO,
+    SIMPLIFY,
 }
 
 class RatioUseCase

@@ -11,11 +11,9 @@ import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.data.Repository
 import com.donghyeon.dev.calculator.data.entity.GeneralHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,9 +38,6 @@ class GeneralViewModel
     ) : BaseViewModel(), GeneralAction {
         private val _state: MutableStateFlow<GeneralState> = MutableStateFlow(GeneralState())
         val state: StateFlow<GeneralState> = _state.asStateFlow()
-
-        private val _sideEffect = MutableSharedFlow<SideEffect>()
-        override val sideEffect = _sideEffect.asSharedFlow()
 
         init {
             viewModelScope.launch {
@@ -166,7 +161,7 @@ class GeneralViewModel
             val state = state.value
             viewModelScope.launch {
                 if (state.historyList.isEmpty()) {
-                    _sideEffect.emit(SideEffect.Toast(R.string.error_history))
+                    sideEffect.emit(SideEffect.Toast(R.string.error_history))
                 } else {
                     _state.value =
                         state.copy(

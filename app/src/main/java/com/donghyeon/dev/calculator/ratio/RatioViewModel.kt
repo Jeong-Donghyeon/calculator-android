@@ -1,19 +1,16 @@
 package com.donghyeon.dev.calculator.ratio
 
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
-import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.RatioType
 import com.donghyeon.dev.calculator.calculate.RatioUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
+import com.donghyeon.dev.calculator.data.Repository
+import com.donghyeon.dev.calculator.state.Calculate
+import com.donghyeon.dev.calculator.view.Keyboard
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,7 +20,13 @@ interface RatioAction {
 
     fun inputType(index: Int)
 
-    fun inputKey(key: RatioKey)
+    fun inputV1Focus()
+
+    fun inputV2Focus()
+
+    fun inputV3Focus()
+
+    fun inputKey(key: Keyboard)
 }
 
 @HiltViewModel
@@ -31,144 +34,89 @@ class RatioViewModel
     @Inject
     constructor(
         private val ratioUseCase: RatioUseCase,
+        private val repository: Repository,
     ) : BaseViewModel(), RatioAction {
         private val _state = MutableStateFlow(RatioState())
         val state = _state.asStateFlow()
 
-        private val _sideEffect = MutableSharedFlow<SideEffect>()
-        override val sideEffect = _sideEffect.asSharedFlow()
+        init {
+            viewModelScope.launch {
+                val type = RatioType.entries[repository.loadRatioType()]
+                _state.value = RatioState(type = type)
+            }
+        }
 
         override fun inputType(index: Int) {
-            _state.value =
-                state.value.let { state ->
-                    RatioType.entries.find { it.index == index }?.let {
-                        viewModelScope.launch {
-                            _sideEffect.emit(SideEffect.Focus(RatioValue.VALUE1.value))
-                        }
-                        state.copy(
-                            type = it,
-                            calculateList =
-                                state.calculateList.map { calculate ->
-                                    calculate.copy(select = RatioValue.VALUE1)
-                                },
-                        )
-                    } ?: state
-                }
-        }
-
-        override fun inputKey(key: RatioKey) {
-            _state.value =
-                state.value.let { state ->
-                    state.copy(
-                        calculateList =
-                            state.calculateList.mapIndexed { index, calculate ->
-                                if (index == state.type.index) {
-                                    input(key, calculate)
-                                } else {
-                                    calculate
-                                }
-                            },
-                    )
-                }
-        }
-
-        private fun input(
-            key: RatioKey,
-            calculate: RatioState.Calculate,
-        ): RatioState.Calculate {
-            val value = calculate.getValue()
-            val newValueList: (TextFieldValue) -> List<TextFieldValue> = {
-                calculate.valueList.mapIndexed { index, value ->
-                    if (index == calculate.select.index) it else value
-                }
+            viewModelScope.launch {
+                repository.saveRatioType(index)
             }
+            RatioType.entries.find { it.ordinal == index }?.let {
+                _state.value = state.value.copy(type = it)
+            }
+        }
+
+        override fun inputV1Focus() {
+            _state.value =
+                state.value.copy(
+                    v1Focus = true,
+                    v2Focus = false,
+                    v3Focus = false,
+                )
+        }
+
+        override fun inputV2Focus() {
+            _state.value =
+                state.value.copy(
+                    v1Focus = false,
+                    v2Focus = true,
+                    v3Focus = false,
+                )
+        }
+
+        override fun inputV3Focus() {
+            _state.value =
+                state.value.copy(
+                    v1Focus = false,
+                    v2Focus = false,
+                    v3Focus = true,
+                )
+        }
+
+        override fun inputKey(key: Keyboard) {
+            val state = state.value
+            _state.value =
+                state.copy(
+                    calculateList =
+                        state.calculateList.mapIndexed { index, calculate ->
+                            if (index == state.type?.ordinal) {
+                                input(key)
+                            } else {
+                                calculate
+                            }
+                        },
+                )
+        }
+
+        private fun input(key: Keyboard): Calculate {
+            val state = state.value
+            val calculate = state.getCalculate()
+            val type = state.type ?: return calculate
             val newCalculate =
-                when (key) {
-                    is RatioKey.Clear ->
-                        calculate.copy(
-                            valueList = newValueList(TextFieldValue()),
-                            result = "?",
-                        )
-                    is RatioKey.Left -> {
-                        val index =
-                            value.selection.start.let {
-                                if (it == 0) 0 else it - 1
-                            }
-                        calculate.copy(
-                            valueList =
-                                newValueList(
-                                    value.copy(selection = TextRange(index)),
-                                ),
-                        )
-                    }
-                    is RatioKey.Right -> {
-                        val index = value.selection.start + 1
-                        calculate.copy(
-                            valueList =
-                                newValueList(
-                                    value.copy(selection = TextRange(index)),
-                                ),
-                        )
-                    }
-                    is RatioKey.Value1, RatioKey.Value2, RatioKey.Value3 ->
-                        RatioValue.entries.find { it.value == key.value }?.let { select ->
-                            calculate.copy(select = select)
-                        } ?: calculate
-                    else -> {
-                        val decimalCheck = value.text.any { it == '.' }
-                        val digitsLimitCheck =
-                            value.text
-                                .replace(".", "")
-                                .count() >= 10
-                        if (key is RatioKey.Decimal && decimalCheck) {
-                            viewModelScope.launch {
-                                _sideEffect.emit(SideEffect.Toast(R.string.error_decimal))
-                            }
-                            calculate
-                        } else if (key.value.isDigitsOnly() && digitsLimitCheck) {
-                            viewModelScope.launch {
-                                _sideEffect.emit(SideEffect.Toast(R.string.error_digit))
-                            }
-                            calculate
-                        } else {
-                            val text =
-                                StringBuilder(value.text).let {
-                                    val index = value.selection.start
-                                    when (key) {
-                                        is RatioKey.Backspace -> {
-                                            if (index == 0) {
-                                                it.toString()
-                                            } else {
-                                                it.delete(index - 1, index).toString()
-                                            }
-                                        }
-                                        else -> it.insert(index, key.value).toString()
-                                    }
-                                }
-                            val index =
-                                value.selection.start.let {
-                                    if (key is RatioKey.Backspace) {
-                                        if (it == 0) 0 else it - 1
-                                    } else {
-                                        it + key.value.count()
-                                    }
-                                }
-                            calculate.copy(
-                                valueList =
-                                    newValueList(
-                                        value.copy(
-                                            text = text,
-                                            selection = TextRange(index),
-                                        ),
-                                    ),
-                            )
+                newCalculate(
+                    key = key,
+                    calculate = calculate,
+                    valueIndex = state.getValueIndex(),
+                    value = state.getValue(),
+                    error = {
+                        viewModelScope.launch {
+                            sideEffect.emit(SideEffect.Toast(it))
                         }
-                    }
-                }
+                    },
+                )
             return newCalculate.copy(
                 result =
                     ratioUseCase(
-                        type = state.value.type,
+                        type = type,
                         valueList = newCalculate.valueList.map { it.text },
                     ),
             )

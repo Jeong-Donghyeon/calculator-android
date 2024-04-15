@@ -6,10 +6,8 @@ import com.donghyeon.dev.calculator.calculate.ConvertUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,9 +30,6 @@ class ConvertViewModel
     ) : BaseViewModel(), ConvertAction {
         private val _state = MutableStateFlow(ConvertState())
         val state = _state.asStateFlow()
-
-        private val _sideEffect = MutableSharedFlow<SideEffect>()
-        override val sideEffect = _sideEffect.asSharedFlow()
 
         override fun inputType(index: Int) {
             _state.value =

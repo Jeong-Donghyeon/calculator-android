@@ -62,14 +62,14 @@ fun PercentScreen(
     mainAction: MainAction? = null,
 ) {
     val context = LocalContext.current
-    val focus = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val clipboardManager = LocalClipboardManager.current
     val guideStrArr = stringArrayResource(id = R.array.percent_guide)
+    val focus = remember { FocusRequester() }
     val calculate = state.getCalculate()
     val selectColor: (Boolean) -> Color = {
         if (it) ColorSet.select else ColorSet.text
     }
-    val clipboardManager = LocalClipboardManager.current
     LaunchedEffect(Unit) {
         focus.requestFocus()
         action?.sideEffect?.collectLatest {
@@ -141,7 +141,11 @@ fun PercentScreen(
                         .padding(bottom = 3.dp),
                 tabs = stringArrayResource(id = R.array.percent_type).toList(),
                 index = index,
-                onTab = { action?.inputType(it) },
+                onTab = {
+                    focusManager.clearFocus()
+                    focus.requestFocus()
+                    action?.inputType(it)
+                },
             )
         } ?: Spacer(modifier = Modifier.height(55.dp))
         ViewKeyboard {
@@ -149,7 +153,9 @@ fun PercentScreen(
                 is Keyboard.Enter -> focusManager.moveFocus(FocusDirection.Next)
                 is Keyboard.Copy -> {
                     val copyStr = calculate.result.replace(",", "")
-                    clipboardManager.setText(AnnotatedString(copyStr))
+                    if (copyStr != "" && copyStr != "?") {
+                        clipboardManager.setText(AnnotatedString(copyStr))
+                    }
                 }
                 is Keyboard.Paste ->
                     action?.inputKey(
