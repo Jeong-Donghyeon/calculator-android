@@ -26,10 +26,10 @@ class Repository
                 dataStoreService.clearGeneralHistory()
             }
 
-        suspend fun savePersentType(type: Int) =
+        suspend fun savePercentType(type: Int) =
             withContext(dispatcher.io) {
-                dataStoreService.savePersentType(type)
+                dataStoreService.savepercentType(type)
             }
 
-        suspend fun loadPersentType() = dataStoreService.persentType.flowOn(dispatcher.io).first()
+        suspend fun loadPercentType() = dataStoreService.percentType.flowOn(dispatcher.io).first()
     }

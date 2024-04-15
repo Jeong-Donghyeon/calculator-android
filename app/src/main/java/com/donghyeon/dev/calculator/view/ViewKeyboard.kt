@@ -19,9 +19,7 @@ import com.donghyeon.dev.calculator.common.InputKeyHeight
 fun Preview_ViewKeyboard() = ViewKeyboard()
 
 @Composable
-fun ViewKeyboard(
-    input: (Keyboard) -> Unit = {}
-) {
+fun ViewKeyboard(input: (Keyboard) -> Unit = {}) {
     val keyList1 =
         listOf(
             Keyboard.Clear,
@@ -67,16 +65,16 @@ fun ViewKeyboard(
                     .height(InputKeyHeight.value.dp),
             text = it.value,
             icon =
-            when (it) {
-                is Keyboard.Left -> it.value.toInt() to 32.dp
-                is Keyboard.Right -> it.value.toInt() to 32.dp
-                is Keyboard.Backspace -> it.value.toInt() to 32.dp
-                else -> null
-            },
+                when (it) {
+                    is Keyboard.Left -> it.value.toInt() to 32.dp
+                    is Keyboard.Right -> it.value.toInt() to 32.dp
+                    is Keyboard.Backspace -> it.value.toInt() to 32.dp
+                    else -> null
+                },
             onClick = { input(it) },
         )
     }
-    Column {
+    Column(modifier = Modifier.padding(horizontal = 10.dp)) {
         Row {
             keyList1.forEach {
                 viewButtonKey(it)
@@ -103,13 +101,13 @@ fun ViewKeyboard(
                                 .weight(weightList[i]),
                         text = it.value,
                         icon =
-                        when (it) {
-                            is Keyboard.Paste -> it.value.toInt() to 28.dp
-                            is Keyboard.Copy -> it.value.toInt() to 30.dp
-                            is Keyboard.Enter -> it.value.toInt() to 36.dp
-                            else -> null
-                        },
-                        onClick = {},
+                            when (it) {
+                                is Keyboard.Paste -> it.value.toInt() to 28.dp
+                                is Keyboard.Copy -> it.value.toInt() to 30.dp
+                                is Keyboard.Enter -> it.value.toInt() to 36.dp
+                                else -> null
+                            },
+                        onClick = { input(it) },
                     )
                 }
             }
@@ -117,9 +115,7 @@ fun ViewKeyboard(
     }
 }
 
-
 sealed class Keyboard(val value: String) {
-
     data object Clear : Keyboard("C")
 
     data object Left : Keyboard(R.drawable.ic_left_24px.toString())
