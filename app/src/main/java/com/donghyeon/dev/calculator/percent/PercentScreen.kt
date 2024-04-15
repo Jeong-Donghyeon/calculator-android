@@ -47,6 +47,16 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
+private fun Preview_PercentScreen_Null() =
+    PercentScreen(
+        state =
+        PercentState(
+            type = null,
+        ),
+    )
+
+@Preview
+@Composable
 private fun Preview_PercentScreen() =
     PercentScreen(
         state =
@@ -88,51 +98,49 @@ fun PercentScreen(
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-        ViewFieldNumber(
-            modifier =
-                Modifier
-                    .width(220.dp)
-                    .focusRequester(focus)
-                    .onFocusChanged {
-                        if (it.isFocused) action?.inputV1Focus()
-                    },
-            value = calculate.valueList[0],
-            color = selectColor(state.v1Focus),
-        )
-        ViewFieldNumber(
-            modifier =
-                Modifier
-                    .width(220.dp)
-                    .onFocusChanged {
-                        if (it.isFocused) action?.inputV2Focus()
-                    },
-            value = calculate.valueList[1],
-            color = selectColor(state.v2Focus),
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        ViewTextResult(
-            modifier = Modifier.width(300.dp),
-            text =
-                calculate.result
-                    .replace(PercentUnit.UP.value, stringResource(id = R.string.up))
-                    .replace(PercentUnit.DOWN.value, stringResource(id = R.string.down)),
-            fontSizeRange =
-                FontSizeRange(
-                    min = 1.sp,
-                    max = 30.sp,
-                ),
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text =
-                state.type?.ordinal?.let {
-                    guideStrArr[it]
-                } ?: "",
-            style = TextSet.bold.copy(ColorSet.text, 18.sp),
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        state.type?.ordinal?.let { index ->
+        state.type?.let { type ->
+            Spacer(modifier = Modifier.weight(1f))
+            ViewFieldNumber(
+                modifier =
+                    Modifier
+                        .width(220.dp)
+                        .focusRequester(focus)
+                        .onFocusChanged {
+                            if (it.isFocused) action?.inputV1Focus()
+                        },
+                value = calculate.valueList[0],
+                color = selectColor(state.v1Focus),
+            )
+            ViewFieldNumber(
+                modifier =
+                    Modifier
+                        .width(220.dp)
+                        .onFocusChanged {
+                            if (it.isFocused) action?.inputV2Focus()
+                        },
+                value = calculate.valueList[1],
+                color = selectColor(state.v2Focus),
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            ViewTextResult(
+                modifier = Modifier.width(300.dp),
+                text =
+                    calculate.result
+                        .replace(PercentUnit.UP.value, stringResource(id = R.string.up))
+                        .replace(PercentUnit.DOWN.value, stringResource(id = R.string.down)),
+                fontSizeRange =
+                    FontSizeRange(
+                        min = 1.sp,
+                        max = 30.sp,
+                    ),
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Text(
+                text = guideStrArr[type.ordinal],
+                style = TextSet.bold.copy(ColorSet.text, 18.sp),
+            )
+            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.weight(1f))
             ViewScrollTab(
                 modifier =
                     Modifier
@@ -140,14 +148,14 @@ fun PercentScreen(
                         .height(55.dp)
                         .padding(bottom = 3.dp),
                 tabs = stringArrayResource(id = R.array.percent_type).toList(),
-                index = index,
+                index = type.ordinal,
                 onTab = {
                     focusManager.clearFocus()
                     focus.requestFocus()
                     action?.inputType(it)
                 },
             )
-        } ?: Spacer(modifier = Modifier.height(55.dp))
+        } ?: Spacer(modifier = Modifier.weight(1f))
         ViewKeyboard {
             when (it) {
                 is Keyboard.Enter -> focusManager.moveFocus(FocusDirection.Next)

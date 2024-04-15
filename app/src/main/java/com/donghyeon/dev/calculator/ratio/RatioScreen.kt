@@ -209,6 +209,7 @@ fun RatioScreen(
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(15.dp))
             ViewScrollTab(
                 modifier =
                     Modifier
