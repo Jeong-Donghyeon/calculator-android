@@ -24,18 +24,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,7 +69,6 @@ import com.donghyeon.dev.calculator.ratio.RatioScreen
 import com.donghyeon.dev.calculator.ratio.RatioState
 import com.donghyeon.dev.calculator.ratio.RatioViewModel
 import com.donghyeon.dev.calculator.theme.ColorSet
-import com.donghyeon.dev.calculator.view.ViewTitle
 import kotlinx.coroutines.flow.collectLatest
 
 private var toast: Toast? = null
@@ -240,10 +240,21 @@ private fun MainScreen(
                 .fillMaxSize(),
     ) {
         mainState.menu?.let { menu ->
-            ViewTitle(
-                title = stringResource(id = menu.title),
-                navDest = { mainAction?.navigation(Nav.PUSH, Dest.INFO) },
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                IconButton(
+                    onClick = { mainAction?.navigation(Nav.PUSH, Dest.INFO) },
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(id = R.drawable.ic_info_24px),
+                        tint = ColorSet.text,
+                        contentDescription = "Info",
+                    )
+                }
+            }
             Box(
                 modifier =
                     Modifier

@@ -50,9 +50,9 @@ import kotlinx.coroutines.flow.collectLatest
 private fun Preview_PercentScreen_Null() =
     PercentScreen(
         state =
-        PercentState(
-            type = null,
-        ),
+            PercentState(
+                type = null,
+            ),
     )
 
 @Preview
