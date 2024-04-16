@@ -35,7 +35,7 @@ class ConvertViewModel
 
         init {
             viewModelScope.launch {
-                val type = ConvertType.entries[repository.loadRatioType()]
+                val type = ConvertType.entries[repository.loadConvertType()]
                 _state.value = ConvertState(type = type)
             }
         }

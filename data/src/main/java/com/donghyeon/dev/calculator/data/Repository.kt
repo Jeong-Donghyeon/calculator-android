@@ -46,4 +46,11 @@ class Repository
             }
 
         suspend fun loadConvertType() = dataStoreService.convertType.flowOn(dispatcher.io).first()
+
+        suspend fun saveDateType(type: Int) =
+            withContext(dispatcher.io) {
+                dataStoreService.saveDateType(type)
+            }
+
+        suspend fun loadDateType() = dataStoreService.dateType.flowOn(dispatcher.io).first()
     }

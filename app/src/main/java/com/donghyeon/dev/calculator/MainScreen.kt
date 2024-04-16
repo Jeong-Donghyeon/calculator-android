@@ -257,10 +257,13 @@ private fun MainScreen(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 IconButton(
+                    modifier =
+                        Modifier
+                            .padding(top = 7.dp, end = 10.dp)
+                            .size(24.dp),
                     onClick = { mainAction?.navigation(Nav.PUSH, Dest.INFO) },
                 ) {
                     Icon(
-                        modifier = Modifier.size(24.dp),
                         painter = painterResource(id = R.drawable.ic_info_24px),
                         tint = ColorSet.text,
                         contentDescription = "Info",

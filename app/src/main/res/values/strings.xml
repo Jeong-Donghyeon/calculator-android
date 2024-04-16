@@ -1,12 +1,5 @@
 <resources>
     <string name="app_name">계산기</string>
-    <string name="info">정보</string>
-    <string name="general">일반 계산</string>
-    <string name="percent">퍼센트 계산</string>
-    <string name="ratio">비율 계산</string>
-    <string name="convert">단위 계산</string>
-    <string name="currency">환율 계산</string>
-    <string name="date">날짜 계산</string>
     <string name="close">닫기</string>
 
     <string name="error_history">계산기록이 없습니다</string>
@@ -42,6 +35,19 @@
         <item>시간</item>
         <item>데이터</item>
     </string-array>
+
+    <string-array name="date_type">
+        <item>날짜</item>
+        <item>일수</item>
+        <item>변환</item>
+    </string-array>
+
+    <string name="before">전</string>
+    <string name="after">후</string>
+    <string name="second">초</string>
+    <string name="min">분</string>
+    <string name="hour">시간</string>
+    <string name="day">일</string>
 
     <string name="privacy_policy">개인정보 처리방침</string>
     <string name="open_source_license">오픈소스 라이선스</string>

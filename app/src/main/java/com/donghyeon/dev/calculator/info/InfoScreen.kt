@@ -97,7 +97,6 @@ private fun InfoScreen(
         Box(
             modifier =
                 Modifier
-                    .background(ColorSet.background)
                     .fillMaxWidth()
                     .height(50.dp),
             contentAlignment = Alignment.CenterStart,
@@ -112,12 +111,6 @@ private fun InfoScreen(
                     contentDescription = "Back",
                 )
             }
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.info),
-                style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
-                textAlign = TextAlign.Center,
-            )
         }
         Spacer(modifier = Modifier.height(70.dp))
         Box(contentAlignment = Alignment.Center) {

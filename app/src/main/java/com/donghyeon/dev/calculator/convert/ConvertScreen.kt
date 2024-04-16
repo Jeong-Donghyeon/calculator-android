@@ -14,10 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,8 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +57,16 @@ import com.holix.android.bottomsheetdialog.compose.BottomSheetBehaviorProperties
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import kotlinx.coroutines.flow.collectLatest
+
+@Preview
+@Composable
+private fun Preview_ConvertScreen_Null() =
+    ConvertScreen(
+        state =
+            ConvertState(
+                type = null,
+            ),
+    )
 
 @Preview
 @Composable
@@ -136,6 +149,9 @@ fun ConvertScreen(
                         style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
                     )
                 }
+                if (it == 3) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
             Spacer(modifier = Modifier.height(15.dp))
             Spacer(modifier = Modifier.weight(1.3f))
@@ -149,14 +165,14 @@ fun ConvertScreen(
                 index = type.ordinal,
                 onTab = { action?.inputType(it) },
             )
-            ViewConvertKey {
-                when (it) {
-                    is ConvertKey.Unit -> action?.sheet(true)
-                    else -> {}
-                }
+        } ?: Spacer(modifier = Modifier.weight(1f))
+        ViewConvertKey {
+            when (it) {
+                is ConvertKey.Unit -> action?.sheet(true)
+                else -> {}
             }
-            Spacer(modifier = Modifier.height(3.dp))
         }
+        Spacer(modifier = Modifier.height(3.dp))
     }
     if (state.sheet) {
         state.type?.let {
@@ -378,20 +394,20 @@ fun SheetUnit(
                             .height(1.dp)
                             .background(ColorSet.text.copy(alpha = 0.1f)),
                 )
-                Text(
+                IconButton(
                     modifier =
                         Modifier
-                            .background(
-                                color = ColorSet.button,
-                                shape = RoundedCornerShape(5.dp),
-                            )
-                            .clickable { close() }
                             .fillMaxWidth()
-                            .padding(vertical = 18.dp),
-                    text = stringResource(id = R.string.close),
-                    style = TextSet.bold.copy(ColorSet.text, 18.sp),
-                    textAlign = TextAlign.Center,
-                )
+                            .padding(vertical = 5.dp),
+                    onClick = { close() },
+                ) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        painter = painterResource(id = R.drawable.ic_close_24px),
+                        tint = ColorSet.text,
+                        contentDescription = "CloseIcon",
+                    )
+                }
             }
         },
     )
