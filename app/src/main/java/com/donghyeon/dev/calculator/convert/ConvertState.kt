@@ -6,7 +6,7 @@ import com.donghyeon.dev.calculator.calculate.ConvertType
 import com.donghyeon.dev.calculator.calculate.unitLengthList
 
 data class ConvertState(
-    val type: ConvertType = ConvertType.LENGTH,
+    val type: ConvertType? = null,
     val sheet: Boolean = false,
     val unit: String = unitLengthList[2],
     val unitValue: TextFieldValue = TextFieldValue(),
@@ -20,6 +20,28 @@ data class ConvertState(
 )
 
 sealed class ConvertKey(val value: String) {
+    data object Clear : ConvertKey("C")
+
+    data object Left : ConvertKey(R.drawable.ic_left_24px.toString())
+
+    data object Right : ConvertKey(R.drawable.ic_right_24px.toString())
+
+    data object Backspace : ConvertKey(R.drawable.ic_backspace_24px.toString())
+
+    data object Copy : ConvertKey(R.drawable.ic_copy_24px.toString())
+
+    data class Paste(val result: String) : ConvertKey(R.drawable.ic_paste_24px.toString())
+
+    data object Enter : ConvertKey(R.drawable.ic_tab_24px.toString())
+
+    data object Unit : ConvertKey(R.drawable.ic_checklist_24px.toString())
+
+    data object ZeroZero : ConvertKey("00")
+
+    data object Zero : ConvertKey("0")
+
+    data object Decimal : ConvertKey(".")
+
     data object One : ConvertKey("1")
 
     data object Two : ConvertKey("2")
@@ -37,26 +59,4 @@ sealed class ConvertKey(val value: String) {
     data object Eight : ConvertKey("8")
 
     data object Nine : ConvertKey("9")
-
-    data object Zero : ConvertKey("0")
-
-    data object ZeroZero : ConvertKey("00")
-
-    data object Decimal : ConvertKey(".")
-
-    data object Unit : ConvertKey("U")
-
-    data object Result1 : ConvertKey("R1")
-
-    data object Result2 : ConvertKey("R2")
-
-    data object Result3 : ConvertKey("R3")
-
-    data object Clear : ConvertKey("C")
-
-    data object Backspace : ConvertKey(R.drawable.ic_backspace_24px.toString())
-
-    data object Left : ConvertKey(R.drawable.ic_left_24px.toString())
-
-    data object Right : ConvertKey(R.drawable.ic_right_24px.toString())
 }

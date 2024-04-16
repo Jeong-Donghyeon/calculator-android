@@ -44,6 +44,9 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.donghyeon.dev.calculator.calculate.ConvertType
+import com.donghyeon.dev.calculator.calculate.PercentType
+import com.donghyeon.dev.calculator.calculate.RatioType
 import com.donghyeon.dev.calculator.common.LocalNavController
 import com.donghyeon.dev.calculator.common.LocalViewModel
 import com.donghyeon.dev.calculator.common.StartSceen
@@ -168,7 +171,10 @@ private fun Preview_MainScreen_General() =
 private fun Preview_MainScreen_Percent() =
     MainScreen(
         mainState = MainState(menu = Menu.PERCENT),
-        percentState = PercentState(),
+        percentState =
+            PercentState(
+                type = PercentType.RATIO_VALUE,
+            ),
     )
 
 @Preview
@@ -176,7 +182,10 @@ private fun Preview_MainScreen_Percent() =
 private fun Preview_MainScreen_Ratio() =
     MainScreen(
         mainState = MainState(menu = Menu.RATIO),
-        ratioState = RatioState(),
+        ratioState =
+            RatioState(
+                type = RatioType.RATIO,
+            ),
     )
 
 @Preview
@@ -184,7 +193,10 @@ private fun Preview_MainScreen_Ratio() =
 private fun Preview_MainScreen_Convert() =
     MainScreen(
         mainState = MainState(menu = Menu.CONVERT),
-        convertState = ConvertState(),
+        convertState =
+            ConvertState(
+                type = ConvertType.LENGTH,
+            ),
     )
 
 @Composable
@@ -330,8 +342,8 @@ private fun BottomMenu(
                 26.dp,
                 24.dp,
                 24.dp,
-                26.dp,
                 24.dp,
+                28.dp,
             ),
         ).forEach {
             Button(

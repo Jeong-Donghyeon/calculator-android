@@ -140,7 +140,7 @@ fun PercentScreen(
                 style = TextSet.bold.copy(ColorSet.text, 18.sp),
             )
             Spacer(modifier = Modifier.height(15.dp))
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1.3f))
             ViewScrollTab(
                 modifier =
                     Modifier

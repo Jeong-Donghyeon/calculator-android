@@ -2,10 +2,14 @@ package com.donghyeon.dev.calculator.convert
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,11 +47,10 @@ import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
-import com.donghyeon.dev.calculator.view.FontSizeRange
 import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
-import com.donghyeon.dev.calculator.view.ViewTextResult
+import com.holix.android.bottomsheetdialog.compose.BottomSheetBehaviorProperties
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialog
 import com.holix.android.bottomsheetdialog.compose.BottomSheetDialogProperties
 import kotlinx.coroutines.flow.collectLatest
@@ -56,7 +59,10 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 private fun Preview_ConvertScreen() =
     ConvertScreen(
-        state = ConvertState(),
+        state =
+            ConvertState(
+                type = ConvertType.LENGTH,
+            ),
     )
 
 @Preview
@@ -91,172 +97,177 @@ fun ConvertScreen(
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Spacer(modifier = Modifier.weight(1.5f))
-            Text(
-                modifier = Modifier.padding(top = 5.dp),
-                text = ConvertKey.Unit.value,
-                style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            ViewFieldNumber(
-                modifier =
-                    Modifier
-                        .width(200.dp)
-                        .focusRequester(focus),
-                value = state.unitValue,
-                color = ColorSet.select,
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                modifier = Modifier.width(50.dp),
-                text = state.unit,
-                style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
-            )
+        state.type?.let { type ->
             Spacer(modifier = Modifier.weight(1f))
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        state.resultList.forEachIndexed { i, it ->
-            Row(
+            repeat(4) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    val modifier =
+                        if (it == 0) {
+                            Modifier
+                                .padding(start = 50.dp)
+                                .width(200.dp)
+                                .focusRequester(focus)
+                        } else {
+                            Modifier
+                                .padding(start = 50.dp)
+                                .width(200.dp)
+                        }
+                    ViewFieldNumber(
+                        modifier = modifier,
+                        value = state.unitValue,
+                        color =
+                            if (it == 0) {
+                                ColorSet.select
+                            } else {
+                                ColorSet.text
+                            },
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        modifier =
+                            Modifier
+                                .padding(bottom = 10.dp)
+                                .width(50.dp),
+                        text = state.unit,
+                        style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.weight(1.3f))
+            ViewScrollTab(
                 modifier =
                     Modifier
-                        .width(300.dp)
-                        .height(50.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier.width(45.dp),
-                    text = "R${i + 1}",
-                    style = TextSet.extraBold.copy(ColorSet.text, 24.sp),
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                ViewTextResult(
-                    text = state.resultValueList[i],
-                    fontSizeRange =
-                        FontSizeRange(
-                            min = 1.sp,
-                            max = 24.sp,
-                        ),
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    modifier = Modifier.width(50.dp),
-                    text = it,
-                    style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
-                )
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .padding(bottom = 3.dp),
+                tabs = stringArrayResource(id = R.array.convert_type).toList(),
+                index = type.ordinal,
+                onTab = { action?.inputType(it) },
+            )
+            ViewConvertKey {
+                when (it) {
+                    is ConvertKey.Unit -> action?.sheet(true)
+                    else -> {}
+                }
             }
+            Spacer(modifier = Modifier.height(3.dp))
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        Spacer(modifier = Modifier.weight(1f))
-        ViewScrollTab(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-                    .padding(bottom = 3.dp),
-            tabs = stringArrayResource(id = R.array.convert_type).toList(),
-            index = state.type.ordinal,
-            onTab = { action?.inputType(it) },
-        )
-        KeyView(
-            state = state,
-            action = action,
-        )
     }
     if (state.sheet) {
-        SheetUnit(
-            unitList =
-                when (state.type) {
-                    ConvertType.LENGTH -> unitLengthList
-                    ConvertType.AREA -> unitAreaList
-                    ConvertType.VOLUME -> unitVolumeList
-                    ConvertType.WEIGHT -> unitWeightList
-                    ConvertType.SPEED -> unitSppedList
-                    ConvertType.TIME -> unitTimeList
-                },
-            select = { action?.sheet(false) },
-            close = { action?.sheet(false) },
-        )
+        state.type?.let {
+            SheetUnit(
+                unitList =
+                    when (it) {
+                        ConvertType.LENGTH -> unitLengthList
+                        ConvertType.AREA -> unitAreaList
+                        ConvertType.VOLUME -> unitVolumeList
+                        ConvertType.WEIGHT -> unitWeightList
+                        ConvertType.SPEED -> unitSppedList
+                        ConvertType.TIME -> unitTimeList
+                    },
+                select = { action?.sheet(false) },
+                close = { action?.sheet(false) },
+            )
+        }
     }
 }
 
 @Composable
-private fun KeyView(
-    state: ConvertState,
-    action: ConvertAction? = null,
-) {
-    val keyList =
+private fun ViewConvertKey(input: (ConvertKey) -> Unit = {}) {
+    val keyList1 =
         listOf(
-            listOf(
-                ConvertKey.Clear,
-                ConvertKey.Left,
-                ConvertKey.Right,
-                ConvertKey.Backspace,
-            ),
+            ConvertKey.Clear,
+            ConvertKey.Left,
+            ConvertKey.Right,
+            ConvertKey.Backspace,
+        )
+    val keyList2 =
+        listOf(
             listOf(
                 ConvertKey.Seven,
                 ConvertKey.Eight,
                 ConvertKey.Nine,
-                ConvertKey.Unit,
             ),
             listOf(
                 ConvertKey.Four,
                 ConvertKey.Five,
                 ConvertKey.Six,
-                ConvertKey.Result1,
             ),
             listOf(
                 ConvertKey.One,
                 ConvertKey.Two,
                 ConvertKey.Three,
-                ConvertKey.Result2,
             ),
             listOf(
                 ConvertKey.ZeroZero,
                 ConvertKey.Zero,
                 ConvertKey.Decimal,
-                ConvertKey.Result3,
             ),
         )
-    Column(
-        modifier =
-            Modifier
-                .padding(horizontal = 10.dp)
-                .padding(bottom = 3.dp),
-    ) {
-        keyList.forEach {
-            Row {
-                it.forEach {
+    val keyList3 =
+        listOf(
+            ConvertKey.Copy,
+            ConvertKey.Paste(""),
+            ConvertKey.Enter,
+            ConvertKey.Unit,
+        )
+    val viewButtonKey: @Composable RowScope.(ConvertKey) -> Unit = {
+        ViewButtonKey(
+            modifier =
+                Modifier
+                    .padding(2.dp)
+                    .weight(1f)
+                    .height(InputKeyHeight.value.dp),
+            text = it.value,
+            icon =
+                when (it) {
+                    is ConvertKey.Left -> it.value.toInt() to 32.dp
+                    is ConvertKey.Right -> it.value.toInt() to 32.dp
+                    is ConvertKey.Backspace -> it.value.toInt() to 32.dp
+                    else -> null
+                },
+            onClick = { input(it) },
+        )
+    }
+    Column(modifier = Modifier.padding(horizontal = 10.dp)) {
+        Row {
+            keyList1.forEach {
+                viewButtonKey(it)
+            }
+        }
+        Row(modifier = Modifier.height(IntrinsicSize.Max)) {
+            Column(modifier = Modifier.weight(3f)) {
+                keyList2.forEach {
+                    Row {
+                        it.forEach {
+                            viewButtonKey(it)
+                        }
+                    }
+                }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                keyList3.forEach { key ->
                     ViewButtonKey(
                         modifier =
                             Modifier
                                 .padding(2.dp)
-                                .weight(1f)
-                                .height(InputKeyHeight),
-                        text = it.value,
+                                .fillMaxWidth()
+                                .weight(1f),
+                        text = key.value,
                         icon =
-                            when (it) {
-                                is ConvertKey.Left -> it.value.toInt() to 32.dp
-                                is ConvertKey.Right -> it.value.toInt() to 32.dp
-                                is ConvertKey.Backspace -> it.value.toInt() to 32.dp
+                            when (key) {
+                                is ConvertKey.Paste -> key.value.toInt() to 28.dp
+                                is ConvertKey.Copy -> key.value.toInt() to 30.dp
+                                is ConvertKey.Unit -> key.value.toInt() to 36.dp
+                                is ConvertKey.Enter -> key.value.toInt() to 36.dp
                                 else -> null
                             },
-                        onClick = {
-                            when (it) {
-                                ConvertKey.Unit,
-                                ConvertKey.Result1,
-                                ConvertKey.Result2,
-                                ConvertKey.Result3,
-                                -> action?.sheet(true)
-                                else -> action?.inputKey(it)
-                            }
-                        },
+                        onClick = { input(key) },
                     )
                 }
             }
@@ -272,51 +283,115 @@ fun SheetUnit(
 ) {
     BottomSheetDialog(
         onDismissRequest = close,
-        properties = BottomSheetDialogProperties(),
+        properties =
+            BottomSheetDialogProperties(
+                behaviorProperties =
+                    BottomSheetBehaviorProperties(
+                        isDraggable = false,
+                        peekHeight = BottomSheetBehaviorProperties.PeekHeight(Int.MAX_VALUE),
+                    ),
+            ),
         content = {
-            Box(
+            Column(
                 modifier =
                     Modifier
                         .padding(horizontal = 7.dp)
                         .padding(bottom = 20.dp)
-                        .clip(RoundedCornerShape(10.dp)),
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(ColorSet.button)
+                        .height(460.dp)
+                        .padding(top = 7.dp),
             ) {
-                Column(modifier = Modifier.background(ColorSet.button)) {
-                    unitList.forEach {
-                        Text(
-                            modifier =
-                                Modifier
-                                    .clickable { select(it) }
-                                    .fillMaxWidth()
-                                    .padding(vertical = 14.dp),
-                            text = it,
-                            style = TextSet.bold.copy(ColorSet.text, 18.sp),
-                            textAlign = TextAlign.Center,
-                        )
-                        Box(
-                            modifier =
-                                Modifier
-                                    .padding(horizontal = 7.dp)
-                                    .fillMaxWidth()
-                                    .height(1.dp)
-                                    .background(ColorSet.text.copy(alpha = 0.1f)),
-                        )
-                    }
-                    Text(
+                Row(modifier = Modifier.weight(1f)) {
+                    Column(
                         modifier =
                             Modifier
-                                .background(
-                                    color = ColorSet.button,
-                                    shape = RoundedCornerShape(5.dp),
-                                )
-                                .clickable { close() }
-                                .fillMaxWidth()
-                                .padding(vertical = 14.dp),
-                        text = stringResource(id = R.string.close),
-                        style = TextSet.bold.copy(ColorSet.text, 18.sp),
-                        textAlign = TextAlign.Center,
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState()),
+                    ) {
+                        unitList.subList(0, 4).forEach {
+                            Text(
+                                modifier =
+                                    Modifier
+                                        .clickable { select(it) }
+                                        .fillMaxWidth()
+                                        .padding(vertical = 18.dp),
+                                text = it,
+                                style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                                textAlign = TextAlign.Center,
+                            )
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .padding(horizontal = 7.dp)
+                                        .fillMaxWidth()
+                                        .height(1.dp)
+                                        .background(ColorSet.text.copy(alpha = 0.1f)),
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(50.dp))
+                    }
+                    Box(
+                        modifier =
+                            Modifier
+                                .padding(vertical = 7.dp)
+                                .width(1.dp)
+                                .height(400.dp)
+                                .background(ColorSet.text.copy(alpha = 0.1f)),
                     )
+                    Column(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState()),
+                    ) {
+                        unitList.forEach {
+                            Text(
+                                modifier =
+                                    Modifier
+                                        .clickable { select(it) }
+                                        .fillMaxWidth()
+                                        .padding(vertical = 18.dp),
+                                text = it,
+                                style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                                textAlign = TextAlign.Center,
+                            )
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .padding(horizontal = 7.dp)
+                                        .fillMaxWidth()
+                                        .height(1.dp)
+                                        .background(ColorSet.text.copy(alpha = 0.1f)),
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(50.dp))
+                    }
                 }
+                Box(
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 10.dp)
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(ColorSet.text.copy(alpha = 0.1f)),
+                )
+                Text(
+                    modifier =
+                        Modifier
+                            .background(
+                                color = ColorSet.button,
+                                shape = RoundedCornerShape(5.dp),
+                            )
+                            .clickable { close() }
+                            .fillMaxWidth()
+                            .padding(vertical = 18.dp),
+                    text = stringResource(id = R.string.close),
+                    style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                    textAlign = TextAlign.Center,
+                )
             }
         },
     )

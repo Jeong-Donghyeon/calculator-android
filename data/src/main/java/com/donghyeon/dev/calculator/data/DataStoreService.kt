@@ -23,6 +23,7 @@ class DataStoreService
             val generalHistoryKey = stringPreferencesKey("GeneralHistory")
             val percentTypeKey = intPreferencesKey("PercentType")
             val ratioTypeKey = intPreferencesKey("RatioType")
+            val convertTypeKey = intPreferencesKey("ConvertType")
         }
 
         val generalHistory: Flow<GeneralHistory> =
@@ -64,5 +65,12 @@ class DataStoreService
 
         suspend fun saveRatioType(type: Int) {
             dataStore.edit { it[ratioTypeKey] = type }
+        }
+
+        val convertType: Flow<Int> =
+            dataStore.data.map { it[convertTypeKey] ?: 0 }
+
+        suspend fun saveConvertType(type: Int) {
+            dataStore.edit { it[convertTypeKey] = type }
         }
     }

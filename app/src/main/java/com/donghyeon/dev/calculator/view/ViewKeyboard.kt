@@ -52,8 +52,8 @@ fun ViewKeyboard(input: (Keyboard) -> Unit = {}) {
         )
     val keyList3 =
         listOf(
-            Keyboard.Paste(""),
             Keyboard.Copy,
+            Keyboard.Paste(""),
             Keyboard.Enter,
         )
     val viewButtonKey: @Composable RowScope.(Keyboard) -> Unit = {

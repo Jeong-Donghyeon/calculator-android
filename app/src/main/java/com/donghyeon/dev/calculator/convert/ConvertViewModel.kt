@@ -5,6 +5,7 @@ import com.donghyeon.dev.calculator.calculate.ConvertType
 import com.donghyeon.dev.calculator.calculate.ConvertUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
+import com.donghyeon.dev.calculator.data.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -27,18 +28,25 @@ class ConvertViewModel
     @Inject
     constructor(
         private val convertUseCase: ConvertUseCase,
+        private val repository: Repository,
     ) : BaseViewModel(), ConvertAction {
         private val _state = MutableStateFlow(ConvertState())
         val state = _state.asStateFlow()
 
+        init {
+            viewModelScope.launch {
+                val type = ConvertType.entries[repository.loadRatioType()]
+                _state.value = ConvertState(type = type)
+            }
+        }
+
         override fun inputType(index: Int) {
-            _state.value =
-                state.value.let { state ->
-                    ConvertType.entries.find { it.ordinal == index }?.let {
-                        viewModelScope.launch {}
-                        state.copy(type = it)
-                    } ?: state
-                }
+            viewModelScope.launch {
+                repository.saveConvertType(index)
+            }
+            ConvertType.entries.find { it.ordinal == index }?.let {
+                _state.value = state.value.copy(type = it)
+            }
         }
 
         override fun sheet(enable: Boolean) {

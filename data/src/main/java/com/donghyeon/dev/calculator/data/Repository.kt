@@ -39,4 +39,11 @@ class Repository
             }
 
         suspend fun loadRatioType() = dataStoreService.ratioType.flowOn(dispatcher.io).first()
+
+        suspend fun saveConvertType(type: Int) =
+            withContext(dispatcher.io) {
+                dataStoreService.saveConvertType(type)
+            }
+
+        suspend fun loadConvertType() = dataStoreService.convertType.flowOn(dispatcher.io).first()
     }
