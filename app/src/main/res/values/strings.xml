@@ -42,8 +42,8 @@
         <item>변환</item>
     </string-array>
 
-    <string name="before">전</string>
-    <string name="after">후</string>
+    <string name="ago">전</string>
+    <string name="later">후</string>
     <string name="second">초</string>
     <string name="min">분</string>
     <string name="hour">시간</string>

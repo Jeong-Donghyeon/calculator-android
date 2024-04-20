@@ -1,5 +1,7 @@
 package com.donghyeon.dev.calculator.date
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewModelScope
 import com.donghyeon.dev.calculator.calculate.DateType
 import com.donghyeon.dev.calculator.common.BaseViewModel
@@ -10,6 +12,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 interface DateAction {
@@ -30,7 +35,18 @@ class DateViewModel
         init {
             viewModelScope.launch {
                 val type = DateType.entries[repository.loadRatioType()]
-                _state.value = DateState(type = type)
+                val date =
+                    SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+                        .format(Calendar.getInstance().time)
+                _state.value =
+                    DateState(
+                        type = type,
+                        date =
+                            TextFieldValue(
+                                date,
+                                TextRange(date.length),
+                            ),
+                    )
             }
         }
 
