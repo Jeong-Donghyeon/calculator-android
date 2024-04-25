@@ -83,6 +83,4 @@ val unitSppedList =
         "mi/h",
     )
 
-class ConvertUseCase
-    @Inject
-    constructor()
+class ConvertUseCase @Inject constructor()

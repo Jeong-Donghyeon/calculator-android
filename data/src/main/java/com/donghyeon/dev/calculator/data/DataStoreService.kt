@@ -12,73 +12,71 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class DataStoreService
-    @Inject
-    constructor(
-        private val dataStore: DataStore<Preferences>,
-    ) {
-        private val gson = Gson()
+class DataStoreService @Inject constructor(
+    private val dataStore: DataStore<Preferences>,
+) {
+    private val gson = Gson()
 
-        private companion object DataStoreKey {
-            val generalHistoryKey = stringPreferencesKey("GeneralHistory")
-            val percentTypeKey = intPreferencesKey("PercentType")
-            val ratioTypeKey = intPreferencesKey("RatioType")
-            val convertTypeKey = intPreferencesKey("ConvertType")
-            val dateTypeKey = intPreferencesKey("DateType")
+    private companion object DataStoreKey {
+        val generalHistoryKey = stringPreferencesKey("GeneralHistory")
+        val percentTypeKey = intPreferencesKey("PercentType")
+        val ratioTypeKey = intPreferencesKey("RatioType")
+        val convertTypeKey = intPreferencesKey("ConvertType")
+        val dateTypeKey = intPreferencesKey("DateType")
+    }
+
+    val generalHistory: Flow<GeneralHistory> =
+        dataStore.data.map { pref ->
+            pref[generalHistoryKey]?.let {
+                try {
+                    gson.fromJson(it, GeneralHistory::class.java)
+                } catch (e: Exception) {
+                    GeneralHistory(emptyList())
+                }
+            } ?: GeneralHistory(emptyList())
         }
 
-        val generalHistory: Flow<GeneralHistory> =
-            dataStore.data.map { pref ->
-                pref[generalHistoryKey]?.let {
-                    try {
-                        gson.fromJson(it, GeneralHistory::class.java)
-                    } catch (e: Exception) {
-                        GeneralHistory(emptyList())
-                    }
-                } ?: GeneralHistory(emptyList())
-            }
-
-        suspend fun saveGeneralHistory(history: GeneralHistory.History) {
-            dataStore.edit { pref ->
-                val historyList =
-                    generalHistory.firstOrNull()?.historyList?.let {
-                        it + listOf(history)
-                    } ?: listOf(history)
-                pref[generalHistoryKey] = gson.toJson(GeneralHistory(historyList))
-            }
-        }
-
-        suspend fun clearGeneralHistory() {
-            dataStore.edit { pref ->
-                pref[generalHistoryKey] = ""
-            }
-        }
-
-        val percentType: Flow<Int> =
-            dataStore.data.map { it[percentTypeKey] ?: 0 }
-
-        suspend fun savePercentType(type: Int) {
-            dataStore.edit { it[percentTypeKey] = type }
-        }
-
-        val ratioType: Flow<Int> =
-            dataStore.data.map { it[ratioTypeKey] ?: 0 }
-
-        suspend fun saveRatioType(type: Int) {
-            dataStore.edit { it[ratioTypeKey] = type }
-        }
-
-        val convertType: Flow<Int> =
-            dataStore.data.map { it[convertTypeKey] ?: 0 }
-
-        suspend fun saveConvertType(type: Int) {
-            dataStore.edit { it[convertTypeKey] = type }
-        }
-
-        val dateType: Flow<Int> =
-            dataStore.data.map { it[dateTypeKey] ?: 0 }
-
-        suspend fun saveDateType(type: Int) {
-            dataStore.edit { it[dateTypeKey] = type }
+    suspend fun saveGeneralHistory(history: GeneralHistory.History) {
+        dataStore.edit { pref ->
+            val historyList =
+                generalHistory.firstOrNull()?.historyList?.let {
+                    it + listOf(history)
+                } ?: listOf(history)
+            pref[generalHistoryKey] = gson.toJson(GeneralHistory(historyList))
         }
     }
+
+    suspend fun clearGeneralHistory() {
+        dataStore.edit { pref ->
+            pref[generalHistoryKey] = ""
+        }
+    }
+
+    val percentType: Flow<Int> =
+        dataStore.data.map { it[percentTypeKey] ?: 0 }
+
+    suspend fun savePercentType(type: Int) {
+        dataStore.edit { it[percentTypeKey] = type }
+    }
+
+    val ratioType: Flow<Int> =
+        dataStore.data.map { it[ratioTypeKey] ?: 0 }
+
+    suspend fun saveRatioType(type: Int) {
+        dataStore.edit { it[ratioTypeKey] = type }
+    }
+
+    val convertType: Flow<Int> =
+        dataStore.data.map { it[convertTypeKey] ?: 0 }
+
+    suspend fun saveConvertType(type: Int) {
+        dataStore.edit { it[convertTypeKey] = type }
+    }
+
+    val dateType: Flow<Int> =
+        dataStore.data.map { it[dateTypeKey] ?: 0 }
+
+    suspend fun saveDateType(type: Int) {
+        dataStore.edit { it[dateTypeKey] = type }
+    }
+}

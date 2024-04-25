@@ -8,6 +8,4 @@ enum class DateType {
     TIME_COMVERT,
 }
 
-class DateUseCase
-    @Inject
-    constructor()
+class DateUseCase @Inject constructor()

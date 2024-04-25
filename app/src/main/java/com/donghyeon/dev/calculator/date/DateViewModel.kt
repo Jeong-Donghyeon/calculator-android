@@ -24,38 +24,36 @@ interface DateAction {
 }
 
 @HiltViewModel
-class DateViewModel
-    @Inject
-    constructor(
-        private val repository: Repository,
-    ) : BaseViewModel(), DateAction {
-        private val _state = MutableStateFlow(DateState())
-        val state = _state.asStateFlow()
+class DateViewModel @Inject constructor(
+    private val repository: Repository,
+) : BaseViewModel(), DateAction {
+    private val _state = MutableStateFlow(DateState())
+    val state = _state.asStateFlow()
 
-        init {
-            viewModelScope.launch {
-                val type = DateType.entries[repository.loadRatioType()]
-                val date =
-                    SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-                        .format(Calendar.getInstance().time)
-                _state.value =
-                    DateState(
-                        type = type,
-                        date =
-                            TextFieldValue(
-                                date,
-                                TextRange(date.length),
-                            ),
-                    )
-            }
-        }
-
-        override fun inputType(index: Int) {
-            viewModelScope.launch {
-                repository.saveConvertType(index)
-            }
-            DateType.entries.find { it.ordinal == index }?.let {
-                _state.value = state.value.copy(type = it)
-            }
+    init {
+        viewModelScope.launch {
+            val type = DateType.entries[repository.loadRatioType()]
+            val date =
+                SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+                    .format(Calendar.getInstance().time)
+            _state.value =
+                DateState(
+                    type = type,
+                    date =
+                        TextFieldValue(
+                            date,
+                            TextRange(date.length),
+                        ),
+                )
         }
     }
+
+    override fun inputType(index: Int) {
+        viewModelScope.launch {
+            repository.saveConvertType(index)
+        }
+        DateType.entries.find { it.ordinal == index }?.let {
+            _state.value = state.value.copy(type = it)
+        }
+    }
+}

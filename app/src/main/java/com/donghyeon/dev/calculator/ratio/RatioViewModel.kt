@@ -30,95 +30,93 @@ interface RatioAction {
 }
 
 @HiltViewModel
-class RatioViewModel
-    @Inject
-    constructor(
-        private val ratioUseCase: RatioUseCase,
-        private val repository: Repository,
-    ) : BaseViewModel(), RatioAction {
-        private val _state = MutableStateFlow(RatioState())
-        val state = _state.asStateFlow()
+class RatioViewModel @Inject constructor(
+    private val ratioUseCase: RatioUseCase,
+    private val repository: Repository,
+) : BaseViewModel(), RatioAction {
+    private val _state = MutableStateFlow(RatioState())
+    val state = _state.asStateFlow()
 
-        init {
-            viewModelScope.launch {
-                val type = RatioType.entries[repository.loadRatioType()]
-                _state.value = RatioState(type = type)
-            }
-        }
-
-        override fun inputType(index: Int) {
-            viewModelScope.launch {
-                repository.saveRatioType(index)
-            }
-            RatioType.entries.find { it.ordinal == index }?.let {
-                _state.value = state.value.copy(type = it)
-            }
-        }
-
-        override fun inputV1Focus() {
-            _state.value =
-                state.value.copy(
-                    v1Focus = true,
-                    v2Focus = false,
-                    v3Focus = false,
-                )
-        }
-
-        override fun inputV2Focus() {
-            _state.value =
-                state.value.copy(
-                    v1Focus = false,
-                    v2Focus = true,
-                    v3Focus = false,
-                )
-        }
-
-        override fun inputV3Focus() {
-            _state.value =
-                state.value.copy(
-                    v1Focus = false,
-                    v2Focus = false,
-                    v3Focus = true,
-                )
-        }
-
-        override fun inputKey(key: Keyboard) {
-            val state = state.value
-            _state.value =
-                state.copy(
-                    calculateList =
-                        state.calculateList.mapIndexed { index, calculate ->
-                            if (index == state.type?.ordinal) {
-                                input(key)
-                            } else {
-                                calculate
-                            }
-                        },
-                )
-        }
-
-        private fun input(key: Keyboard): Calculate {
-            val state = state.value
-            val calculate = state.getCalculate()
-            val type = state.type ?: return calculate
-            val newCalculate =
-                newCalculate(
-                    key = key,
-                    calculate = calculate,
-                    valueIndex = state.getValueIndex(),
-                    value = state.getValue(),
-                    error = {
-                        viewModelScope.launch {
-                            sideEffect.emit(SideEffect.Toast(it))
-                        }
-                    },
-                )
-            return newCalculate.copy(
-                result =
-                    ratioUseCase(
-                        type = type,
-                        valueList = newCalculate.valueList.map { it.text },
-                    ),
-            )
+    init {
+        viewModelScope.launch {
+            val type = RatioType.entries[repository.loadRatioType()]
+            _state.value = RatioState(type = type)
         }
     }
+
+    override fun inputType(index: Int) {
+        viewModelScope.launch {
+            repository.saveRatioType(index)
+        }
+        RatioType.entries.find { it.ordinal == index }?.let {
+            _state.value = state.value.copy(type = it)
+        }
+    }
+
+    override fun inputV1Focus() {
+        _state.value =
+            state.value.copy(
+                v1Focus = true,
+                v2Focus = false,
+                v3Focus = false,
+            )
+    }
+
+    override fun inputV2Focus() {
+        _state.value =
+            state.value.copy(
+                v1Focus = false,
+                v2Focus = true,
+                v3Focus = false,
+            )
+    }
+
+    override fun inputV3Focus() {
+        _state.value =
+            state.value.copy(
+                v1Focus = false,
+                v2Focus = false,
+                v3Focus = true,
+            )
+    }
+
+    override fun inputKey(key: Keyboard) {
+        val state = state.value
+        _state.value =
+            state.copy(
+                calculateList =
+                    state.calculateList.mapIndexed { index, calculate ->
+                        if (index == state.type?.ordinal) {
+                            input(key)
+                        } else {
+                            calculate
+                        }
+                    },
+            )
+    }
+
+    private fun input(key: Keyboard): Calculate {
+        val state = state.value
+        val calculate = state.getCalculate()
+        val type = state.type ?: return calculate
+        val newCalculate =
+            newCalculate(
+                key = key,
+                calculate = calculate,
+                valueIndex = state.getValueIndex(),
+                value = state.getValue(),
+                error = {
+                    viewModelScope.launch {
+                        sideEffect.emit(SideEffect.Toast(it))
+                    }
+                },
+            )
+        return newCalculate.copy(
+            result =
+                ratioUseCase(
+                    type = type,
+                    valueList = newCalculate.valueList.map { it.text },
+                ),
+        )
+    }
+}

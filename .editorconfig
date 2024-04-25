@@ -20,3 +20,6 @@ trim_trailing_whitespace = true
 
 # Composable 함수에서 네이밍 규칙 예외
 ktlint_function_naming_ignore_when_annotated_with = Composable
+
+# Annotation Rule 적용하지 않음
+ktlint_standard_annotation = disabled
