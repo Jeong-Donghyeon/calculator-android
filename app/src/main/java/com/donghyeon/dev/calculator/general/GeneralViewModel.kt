@@ -101,6 +101,48 @@ class GeneralViewModel @Inject constructor(
                         state
                     }
                 }
+                is GeneralKey.Bracket -> {
+                    val inputText = state.value.text.substring(0, state.value.selection.start)
+                    val endText =
+                        if (state.value.selection.start - 1 == state.value.text.lastIndex) {
+                            ""
+                        } else {
+                            state.value.text.substring(
+                                state.value.selection.start,
+                                state.value.text.lastIndex + 1,
+                            )
+                        }
+                    val operator =
+                        listOf(
+                            GenralOperator.PLUS,
+                            GenralOperator.MINUS,
+                            GenralOperator.MULTIPLY,
+                            GenralOperator.DIVIDE,
+                        )
+                    val (text, count) =
+                        if (operator.any { it.value == inputText.last().toString() }) {
+                            "(" to 1
+                        } else {
+                            val open = inputText.count { it.toString() == "(" }
+                            val close = inputText.count { it.toString() == ")" }
+                            if (open - close == 0) {
+                                GenralOperator.MULTIPLY.value + "(" to 2
+                            } else {
+                                ")" to 1
+                            }
+                        }
+                    val index =
+                        state.value.selection.start.let {
+                            it + count
+                        }
+                    state.copy(
+                        value =
+                            state.value.copy(
+                                text = inputText + text + endText,
+                                selection = TextRange(index),
+                            ),
+                    )
+                }
                 is GeneralKey.Equal -> {
                     if (state.result == "") {
                         state
