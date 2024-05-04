@@ -6,8 +6,31 @@ import com.donghyeon.dev.calculator.calculate.DateType
 
 data class DateState(
     val type: DateType? = null,
-    val date: TextFieldValue = TextFieldValue(""),
-)
+    val dateSearch: DateSearch = DateSearch(),
+    val dateConvert: DateConvert = DateConvert(),
+    val timeConvert: TimeConvert = TimeConvert(),
+) {
+    data class DateSearch(
+        val date: TextFieldValue = TextFieldValue(),
+        val day: TextFieldValue = TextFieldValue(),
+        val agoLater: Boolean = false,
+        val result: String = "?",
+    )
+
+    data class DateConvert(
+        val date1: TextFieldValue = TextFieldValue(),
+        val date2: TextFieldValue = TextFieldValue(),
+        val result: String = "?",
+    )
+
+    data class TimeConvert(
+        val second: TextFieldValue = TextFieldValue(),
+        val minute: TextFieldValue = TextFieldValue(),
+        val hour: TextFieldValue = TextFieldValue(),
+        val day: TextFieldValue = TextFieldValue(),
+        val result: String = "?",
+    )
+}
 
 sealed class DateKey(val value: String) {
     data object Clear : DateKey("C")

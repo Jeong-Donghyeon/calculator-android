@@ -39,10 +39,13 @@ class DateViewModel @Inject constructor(
             _state.value =
                 DateState(
                     type = type,
-                    date =
-                        TextFieldValue(
-                            date,
-                            TextRange(date.length),
+                    dateSearch =
+                        DateState.DateSearch(
+                            date =
+                                TextFieldValue(
+                                    date,
+                                    TextRange(date.length),
+                                ),
                         ),
                 )
         }

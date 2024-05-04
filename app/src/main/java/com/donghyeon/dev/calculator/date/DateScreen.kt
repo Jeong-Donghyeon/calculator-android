@@ -1,6 +1,7 @@
 package com.donghyeon.dev.calculator.date
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -40,16 +41,6 @@ import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTextResult
-
-@Preview
-@Composable
-private fun Preview_DateScreen_Null() =
-    DateScreen(
-        state =
-            DateState(
-                type = null,
-            ),
-    )
 
 @Preview
 @Composable
@@ -105,7 +96,7 @@ fun DateScreen(
                 DateType.DATE_SEARCH -> {
                     ViewFieldNumber(
                         modifier = Modifier.width(230.dp),
-                        value = state.date,
+                        value = state.dateSearch.date,
                         color = ColorSet.select,
                         align = TextAlign.Center,
                     )
@@ -115,11 +106,14 @@ fun DateScreen(
                     ) {
                         ViewFieldNumber(
                             modifier = Modifier.weight(1f),
-                            value = TextFieldValue(),
+                            value = state.dateSearch.day,
                             color = ColorSet.text,
                         )
                         Text(
-                            modifier = Modifier.width(50.dp).padding(bottom = 15.dp),
+                            modifier =
+                                Modifier
+                                    .width(50.dp)
+                                    .padding(bottom = 15.dp),
                             text = stringResource(id = R.string.day),
                             style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
                             textAlign = TextAlign.Center,
@@ -129,27 +123,48 @@ fun DateScreen(
                         modifier = Modifier.height(100.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.ago),
-                            style =
+                        val (ago, later) =
+                            if (state.dateSearch.agoLater) {
                                 TextSet.extraBold.copy(
                                     ColorSet.text.copy(alpha = 0.5f),
                                     22.sp,
-                                ),
-                        )
-                        Spacer(modifier = Modifier.width(30.dp))
-                        Text(
-                            text = stringResource(id = R.string.later),
-                            style =
+                                ) to
+                                    TextSet.extraBold.copy(
+                                        ColorSet.select,
+                                        30.sp,
+                                    )
+                            } else {
                                 TextSet.extraBold.copy(
                                     ColorSet.select,
                                     30.sp,
-                                ),
-                        )
+                                ) to
+                                    TextSet.extraBold.copy(
+                                        ColorSet.text.copy(alpha = 0.5f),
+                                        22.sp,
+                                    )
+                            }
+                        Box(
+                            modifier = Modifier.width(80.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.ago),
+                                style = ago,
+                            )
+                        }
+                        Box(
+                            modifier = Modifier.width(80.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.later),
+                                style = later,
+                            )
+                        }
                     }
                     ViewTextResult(
                         modifier = Modifier.width(300.dp),
-                        text = "?",
+                        text = state.dateSearch.result,
                         fontSizeRange =
                             FontSizeRange(
                                 min = 1.sp,
@@ -160,18 +175,18 @@ fun DateScreen(
                 DateType.DATE_CONVERT -> {
                     ViewFieldNumber(
                         modifier = Modifier.width(230.dp),
-                        value = TextFieldValue(),
+                        value = state.dateConvert.date1,
                         color = ColorSet.select,
                     )
                     ViewFieldNumber(
                         modifier = Modifier.width(230.dp),
-                        value = TextFieldValue(),
+                        value = state.dateConvert.date2,
                         color = ColorSet.text,
                     )
                     Spacer(modifier = Modifier.height(50.dp))
                     ViewTextResult(
                         modifier = Modifier.width(300.dp),
-                        text = "?",
+                        text = state.dateConvert.result,
                         fontSizeRange =
                             FontSizeRange(
                                 min = 1.sp,
@@ -194,13 +209,19 @@ fun DateScreen(
                             }
                         Row(verticalAlignment = Alignment.Bottom) {
                             ViewFieldNumber(
-                                modifier = Modifier.padding(start = 50.dp).width(200.dp),
+                                modifier =
+                                    Modifier
+                                        .padding(start = 50.dp)
+                                        .width(200.dp),
                                 value = TextFieldValue(),
                                 color = color,
                             )
                             Spacer(modifier = Modifier.width(7.dp))
                             Text(
-                                modifier = Modifier.padding(bottom = 10.dp).width(50.dp),
+                                modifier =
+                                    Modifier
+                                        .padding(bottom = 10.dp)
+                                        .width(50.dp),
                                 text = it,
                                 style = TextSet.extraBold.copy(color, 20.sp),
                             )
@@ -242,8 +263,8 @@ fun DateScreen(
                 index = type.ordinal,
                 onTab = { action?.inputType(it) },
             )
-            KeyView {}
         } ?: Spacer(modifier = Modifier.weight(1f))
+        KeyView {}
         Spacer(modifier = Modifier.height(3.dp))
     }
 }
