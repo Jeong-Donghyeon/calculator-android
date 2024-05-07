@@ -51,7 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
-private fun Preview_GeneralScreen() =
+private fun Preview_GeneralScreen() {
     GeneralScreen(
         state =
             GeneralState(
@@ -59,10 +59,11 @@ private fun Preview_GeneralScreen() =
                 result = "2",
             ),
     )
+}
 
 @Preview
 @Composable
-private fun Preview_GeneralScreen_History() =
+private fun Preview_GeneralScreen_History() {
     GeneralScreen(
         state =
             GeneralState(
@@ -77,6 +78,7 @@ private fun Preview_GeneralScreen_History() =
                 result = "8",
             ),
     )
+}
 
 @Composable
 fun GeneralScreen(

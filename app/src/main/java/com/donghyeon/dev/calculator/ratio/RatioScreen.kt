@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,33 +46,25 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
-private fun Preview_RatioScreen_Null() =
-    RatioScreen(
-        state =
-            RatioState(
-                type = null,
-            ),
-    )
-
-@Preview
-@Composable
-private fun Preview_RatioScreen_Ratio() =
+private fun Preview_RatioScreen_Ratio() {
     RatioScreen(
         state =
             RatioState(
                 type = RatioType.RATIO,
             ),
     )
+}
 
 @Preview
 @Composable
-private fun Preview_RatioScreen_Simplify() =
+private fun Preview_RatioScreen_Simplify() {
     RatioScreen(
         state =
             RatioState(
                 type = RatioType.SIMPLIFY,
             ),
     )
+}
 
 @Composable
 fun RatioScreen(
@@ -123,7 +114,6 @@ fun RatioScreen(
                             },
                     value = state.getCalculate().valueList[0],
                     color = selectColor(state.v1Focus),
-                    align = TextAlign.Center,
                 )
                 Text(
                     modifier = Modifier.width(30.dp),
@@ -140,7 +130,6 @@ fun RatioScreen(
                             },
                     value = state.getCalculate().valueList[1],
                     color = selectColor(state.v2Focus),
-                    align = TextAlign.Center,
                 )
             }
             when (type) {
@@ -158,7 +147,6 @@ fun RatioScreen(
                                     },
                             value = state.getCalculate().valueList[2],
                             color = selectColor(state.v3Focus),
-                            align = TextAlign.Center,
                         )
                         Text(
                             modifier = Modifier.width(30.dp),

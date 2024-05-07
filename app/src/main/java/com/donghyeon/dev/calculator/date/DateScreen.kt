@@ -16,10 +16,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -44,33 +46,36 @@ import com.donghyeon.dev.calculator.view.ViewTextResult
 
 @Preview
 @Composable
-private fun Preview_DateScreen_DateSearch() =
+private fun Preview_DateScreen_DateSearch() {
     DateScreen(
         state =
             DateState(
                 type = DateType.DATE_SEARCH,
             ),
     )
+}
 
 @Preview
 @Composable
-private fun Preview_DateScreen_DateConvert() =
+private fun Preview_DateScreen_DateConvert() {
     DateScreen(
         state =
             DateState(
                 type = DateType.DATE_CONVERT,
             ),
     )
+}
 
 @Preview
 @Composable
-private fun Preview_DateScreen_TimeConvert() =
+private fun Preview_DateScreen_TimeConvert() {
     DateScreen(
         state =
             DateState(
                 type = DateType.TIME_COMVERT,
             ),
     )
+}
 
 @Composable
 fun DateScreen(
@@ -82,6 +87,9 @@ fun DateScreen(
     val focusManager = LocalFocusManager.current
     val clipboardManager = LocalClipboardManager.current
     val focus = remember { FocusRequester() }
+    LaunchedEffect(state.type) {
+        focus.requestFocus()
+    }
     Column(
         modifier =
             Modifier
@@ -95,7 +103,10 @@ fun DateScreen(
             when (type) {
                 DateType.DATE_SEARCH -> {
                     ViewFieldNumber(
-                        modifier = Modifier.width(230.dp),
+                        modifier =
+                            Modifier
+                                .width(230.dp)
+                                .focusRequester(focus),
                         value = state.dateSearch.date,
                         color = ColorSet.select,
                         align = TextAlign.Center,
@@ -174,7 +185,10 @@ fun DateScreen(
                 }
                 DateType.DATE_CONVERT -> {
                     ViewFieldNumber(
-                        modifier = Modifier.width(230.dp),
+                        modifier =
+                            Modifier
+                                .width(230.dp)
+                                .focusRequester(focus),
                         value = state.dateConvert.date1,
                         color = ColorSet.select,
                     )
@@ -201,18 +215,21 @@ fun DateScreen(
                         stringResource(id = R.string.hour),
                         stringResource(id = R.string.day),
                     ).forEachIndexed { i, it ->
-                        val color =
+                        val defaultModifier =
+                            Modifier
+                                .padding(start = 50.dp)
+                                .width(200.dp)
+                        val (modifier, color) =
                             if (i == 0) {
-                                ColorSet.select
+                                defaultModifier.then(
+                                    Modifier.focusRequester(focus),
+                                ) to ColorSet.select
                             } else {
-                                ColorSet.text
+                                defaultModifier to ColorSet.text
                             }
                         Row(verticalAlignment = Alignment.Bottom) {
                             ViewFieldNumber(
-                                modifier =
-                                    Modifier
-                                        .padding(start = 50.dp)
-                                        .width(200.dp),
+                                modifier = modifier,
                                 value = TextFieldValue(),
                                 color = color,
                             )

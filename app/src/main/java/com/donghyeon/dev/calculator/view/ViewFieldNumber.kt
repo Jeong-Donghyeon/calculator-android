@@ -28,7 +28,7 @@ fun ViewFieldNumber(
     modifier: Modifier = Modifier,
     value: TextFieldValue,
     color: Color,
-    align: TextAlign = TextAlign.End,
+    align: TextAlign = TextAlign.Center,
 ) {
     CompositionLocalProvider(
         LocalTextInputService provides null,

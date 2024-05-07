@@ -47,23 +47,14 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Preview
 @Composable
-private fun Preview_PercentScreen_Null() =
-    PercentScreen(
-        state =
-            PercentState(
-                type = null,
-            ),
-    )
-
-@Preview
-@Composable
-private fun Preview_PercentScreen() =
+private fun Preview_PercentScreen() {
     PercentScreen(
         state =
             PercentState(
                 type = PercentType.RATIO_VALUE,
             ),
     )
+}
 
 @Composable
 fun PercentScreen(
