@@ -182,8 +182,8 @@ private fun KeyView(
             ),
             listOf(
                 GeneralKey.Paste(""),
-                GeneralKey.Copy,
-                GeneralKey.Bracket,
+                GeneralKey.Open,
+                GeneralKey.Close,
                 GeneralKey.Divide,
             ),
         )
@@ -205,7 +205,7 @@ private fun KeyView(
                 GeneralKey.Three,
             ),
             listOf(
-                GeneralKey.ZeroZero,
+                GeneralKey.Copy,
                 GeneralKey.Zero,
                 GeneralKey.Decimal,
             ),

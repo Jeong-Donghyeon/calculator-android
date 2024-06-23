@@ -71,8 +71,13 @@ fun ViewButtonKey(
     ) {
         if (icon == null) {
             val operator =
-                GenralOperator.entries.any {
-                    it.value == text
+                listOf(
+                    GenralOperator.MULTIPLY.value,
+                    GenralOperator.DIVIDE.value,
+                    GenralOperator.PLUS.value,
+                    GenralOperator.MINUS,
+                ).any {
+                    it == text
                 } || GeneralKey.Equal.value == text
             val fontSize =
                 if (operator) {

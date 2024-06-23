@@ -26,7 +26,9 @@ sealed class GeneralKey(val value: String) {
 
     data class Paste(val result: String) : GeneralKey(R.drawable.ic_paste_24px.toString())
 
-    data object Bracket : GeneralKey("( )")
+    data object Open : GeneralKey(GenralOperator.OPEN.value)
+
+    data object Close : GeneralKey(GenralOperator.CLOSE.value)
 
     data object Divide : GeneralKey(GenralOperator.DIVIDE.value)
 
@@ -37,8 +39,6 @@ sealed class GeneralKey(val value: String) {
     data object Plus : GeneralKey(GenralOperator.PLUS.value)
 
     data object Equal : GeneralKey("=")
-
-    data object ZeroZero : GeneralKey("00")
 
     data object Zero : GeneralKey("0")
 
