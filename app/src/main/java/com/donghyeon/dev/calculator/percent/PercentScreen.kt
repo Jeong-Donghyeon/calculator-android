@@ -151,7 +151,10 @@ fun PercentScreen(
             when (it) {
                 is Keyboard.Enter -> focusManager.moveFocus(FocusDirection.Next)
                 is Keyboard.Copy -> {
-                    val copyStr = calculate.result.replace(",", "")
+                    val copyStr =
+                        calculate.result
+                            .replace(",", "")
+                            .replace(PercentUnit.PERCENT.value, "")
                     if (copyStr != "" && copyStr != "?") {
                         clipboardManager.setText(AnnotatedString(copyStr))
                     }
