@@ -3,7 +3,9 @@ package com.donghyeon.dev.calculator.ratio
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,12 +37,12 @@ import androidx.compose.ui.unit.sp
 import com.donghyeon.dev.calculator.MainAction
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.RatioType
+import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
-import com.donghyeon.dev.calculator.view.Keyboard
+import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
-import com.donghyeon.dev.calculator.view.ViewKeyboard
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import kotlinx.coroutines.flow.collectLatest
 
@@ -213,10 +215,10 @@ fun RatioScreen(
                 },
             )
         } ?: Spacer(modifier = Modifier.weight(1f))
-        ViewKeyboard {
+        KeyView {
             when (it) {
-                is Keyboard.Enter -> focusManager.moveFocus(FocusDirection.Next)
-                is Keyboard.Copy -> {
+                is RatioKey.Enter -> focusManager.moveFocus(FocusDirection.Next)
+                is RatioKey.Copy -> {
                     state.type?.let { type ->
                         val copyStr =
                             when (type) {
@@ -231,13 +233,110 @@ fun RatioScreen(
                         }
                     }
                 }
-                is Keyboard.Paste ->
+                is RatioKey.Paste ->
                     action?.inputKey(
-                        Keyboard.Paste(clipboardManager.getText().toString()),
+                        RatioKey.Paste(clipboardManager.getText().toString()),
                     )
                 else -> action?.inputKey(it)
             }
         }
         Spacer(modifier = Modifier.height(3.dp))
+    }
+}
+
+@Composable
+private fun KeyView(input: (RatioKey) -> Unit = {}) {
+    val keyList1 =
+        listOf(
+            RatioKey.Clear,
+            RatioKey.Left,
+            RatioKey.Right,
+            RatioKey.Backspace,
+        )
+    val keyList2 =
+        listOf(
+            listOf(
+                RatioKey.Seven,
+                RatioKey.Eight,
+                RatioKey.Nine,
+            ),
+            listOf(
+                RatioKey.Four,
+                RatioKey.Five,
+                RatioKey.Six,
+            ),
+            listOf(
+                RatioKey.One,
+                RatioKey.Two,
+                RatioKey.Three,
+            ),
+            listOf(
+                RatioKey.ZeroZero,
+                RatioKey.Zero,
+                RatioKey.Decimal,
+            ),
+        )
+    val keyList3 =
+        listOf(
+            RatioKey.Copy,
+            RatioKey.Paste(""),
+            RatioKey.Enter,
+        )
+    val viewButtonKey: @Composable RowScope.(RatioKey) -> Unit = {
+        ViewButtonKey(
+            modifier =
+            Modifier
+                .padding(2.dp)
+                .weight(1f)
+                .height(InputKeyHeight.value.dp),
+            text = it.value,
+            icon =
+            when (it) {
+                is RatioKey.Left -> it.value.toInt() to 32.dp
+                is RatioKey.Right -> it.value.toInt() to 32.dp
+                is RatioKey.Backspace -> it.value.toInt() to 32.dp
+                else -> null
+            },
+            onClick = { input(it) },
+        )
+    }
+    Column(modifier = Modifier.padding(horizontal = 10.dp)) {
+        Row {
+            keyList1.forEach {
+                viewButtonKey(it)
+            }
+        }
+        Row(modifier = Modifier.height(IntrinsicSize.Max)) {
+            Column(modifier = Modifier.weight(3f)) {
+                keyList2.forEach {
+                    Row {
+                        it.forEach {
+                            viewButtonKey(it)
+                        }
+                    }
+                }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                val weightList = listOf(1f, 1f, 2f)
+                keyList3.forEachIndexed { i, it ->
+                    ViewButtonKey(
+                        modifier =
+                        Modifier
+                            .padding(2.dp)
+                            .fillMaxWidth()
+                            .weight(weightList[i]),
+                        text = it.value,
+                        icon =
+                        when (it) {
+                            is RatioKey.Paste -> it.value.toInt() to 28.dp
+                            is RatioKey.Copy -> it.value.toInt() to 30.dp
+                            is RatioKey.Enter -> it.value.toInt() to 36.dp
+                            else -> null
+                        },
+                        onClick = { input(it) },
+                    )
+                }
+            }
+        }
     }
 }

@@ -2,6 +2,9 @@ package com.donghyeon.dev.calculator.percent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,13 +37,13 @@ import com.donghyeon.dev.calculator.MainAction
 import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.calculate.PercentType
 import com.donghyeon.dev.calculator.calculate.PercentUnit
+import com.donghyeon.dev.calculator.common.InputKeyHeight
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
 import com.donghyeon.dev.calculator.view.FontSizeRange
-import com.donghyeon.dev.calculator.view.Keyboard
+import com.donghyeon.dev.calculator.view.ViewButtonKey
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
-import com.donghyeon.dev.calculator.view.ViewKeyboard
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTextResult
 import kotlinx.coroutines.flow.collectLatest
@@ -147,10 +150,10 @@ fun PercentScreen(
                 },
             )
         } ?: Spacer(modifier = Modifier.weight(1f))
-        ViewKeyboard {
+        KeyView {
             when (it) {
-                is Keyboard.Enter -> focusManager.moveFocus(FocusDirection.Next)
-                is Keyboard.Copy -> {
+                is PercentKey.Enter -> focusManager.moveFocus(FocusDirection.Next)
+                is PercentKey.Copy -> {
                     val copyStr =
                         calculate.result
                             .replace(",", "")
@@ -159,13 +162,110 @@ fun PercentScreen(
                         clipboardManager.setText(AnnotatedString(copyStr))
                     }
                 }
-                is Keyboard.Paste ->
+                is PercentKey.Paste ->
                     action?.inputKey(
-                        Keyboard.Paste(clipboardManager.getText().toString()),
+                        PercentKey.Paste(clipboardManager.getText().toString()),
                     )
                 else -> action?.inputKey(it)
             }
         }
         Spacer(modifier = Modifier.height(3.dp))
+    }
+}
+
+@Composable
+private fun KeyView(input: (PercentKey) -> Unit = {}) {
+    val keyList1 =
+        listOf(
+            PercentKey.Clear,
+            PercentKey.Left,
+            PercentKey.Right,
+            PercentKey.Backspace,
+        )
+    val keyList2 =
+        listOf(
+            listOf(
+                PercentKey.Seven,
+                PercentKey.Eight,
+                PercentKey.Nine,
+            ),
+            listOf(
+                PercentKey.Four,
+                PercentKey.Five,
+                PercentKey.Six,
+            ),
+            listOf(
+                PercentKey.One,
+                PercentKey.Two,
+                PercentKey.Three,
+            ),
+            listOf(
+                PercentKey.ZeroZero,
+                PercentKey.Zero,
+                PercentKey.Decimal,
+            ),
+        )
+    val keyList3 =
+        listOf(
+            PercentKey.Copy,
+            PercentKey.Paste(""),
+            PercentKey.Enter,
+        )
+    val viewButtonKey: @Composable RowScope.(PercentKey) -> Unit = {
+        ViewButtonKey(
+            modifier =
+            Modifier
+                .padding(2.dp)
+                .weight(1f)
+                .height(InputKeyHeight.value.dp),
+            text = it.value,
+            icon =
+            when (it) {
+                is PercentKey.Left -> it.value.toInt() to 32.dp
+                is PercentKey.Right -> it.value.toInt() to 32.dp
+                is PercentKey.Backspace -> it.value.toInt() to 32.dp
+                else -> null
+            },
+            onClick = { input(it) },
+        )
+    }
+    Column(modifier = Modifier.padding(horizontal = 10.dp)) {
+        Row {
+            keyList1.forEach {
+                viewButtonKey(it)
+            }
+        }
+        Row(modifier = Modifier.height(IntrinsicSize.Max)) {
+            Column(modifier = Modifier.weight(3f)) {
+                keyList2.forEach {
+                    Row {
+                        it.forEach {
+                            viewButtonKey(it)
+                        }
+                    }
+                }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                val weightList = listOf(1f, 1f, 2f)
+                keyList3.forEachIndexed { i, it ->
+                    ViewButtonKey(
+                        modifier =
+                        Modifier
+                            .padding(2.dp)
+                            .fillMaxWidth()
+                            .weight(weightList[i]),
+                        text = it.value,
+                        icon =
+                        when (it) {
+                            is PercentKey.Paste -> it.value.toInt() to 28.dp
+                            is PercentKey.Copy -> it.value.toInt() to 30.dp
+                            is PercentKey.Enter -> it.value.toInt() to 36.dp
+                            else -> null
+                        },
+                        onClick = { input(it) },
+                    )
+                }
+            }
+        }
     }
 }
