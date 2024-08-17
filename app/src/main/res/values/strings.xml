@@ -5,10 +5,10 @@
     <string name="error_history">계산기록이 없습니다</string>
 
     <string-array name="percent_type">
-        <item>비율값</item>
-        <item>백분율</item>
-        <item>증감율</item>
-        <item>증가값</item>
+        <item>N of % = N</item>
+        <item>N of N = %</item>
+        <item>N as N = %</item>
+        <item>N as % = N</item>
     </string-array>
     <string-array name="percent_guide">
         <item>예) 100 의 10% 는 10</item>
@@ -22,8 +22,8 @@
     <string name="error_digit">10 자리까지 입력 가능 합니다</string>
 
     <string-array name="ratio_type">
-        <item>동등 비율</item>
-        <item>비율 단순화</item>
+        <item>N : N N = : N</item>
+        <item>N : N = N : N</item>
     </string-array>
 
     <string-array name="convert_type">
@@ -37,9 +37,9 @@
     </string-array>
 
     <string-array name="date_type">
-        <item>날짜</item>
-        <item>일수</item>
-        <item>변환</item>
+        <item>D N = D</item>
+        <item>D D = N</item>
+        <item>N N N N = T</item>
     </string-array>
 
     <string name="ago">전</string>

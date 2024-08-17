@@ -33,12 +33,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.donghyeon.dev.calculator.R
 import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
 
@@ -47,7 +49,7 @@ import com.donghyeon.dev.calculator.theme.TextSet
 fun Preview_ViewScrollTab() {
     ViewScrollTab(
         modifier = Modifier.background(ColorSet.background),
-        tabs = listOf("비율값", "일부값", "증감값", "증감율"),
+        tabs = stringArrayResource(id = R.array.percent_type).toList(),
     )
 }
 
@@ -90,9 +92,9 @@ fun ViewScrollTab(
                             textAlign = TextAlign.Center,
                             style =
                                 if (value) {
-                                    TextSet.bold.copy(ColorSet.select, 20.sp)
+                                    TextSet.bold.copy(ColorSet.select, 18.sp)
                                 } else {
-                                    TextSet.semiBold.copy(ColorSet.text, 20.sp)
+                                    TextSet.semiBold.copy(ColorSet.text, 18.sp)
                                 },
                         )
                     },
