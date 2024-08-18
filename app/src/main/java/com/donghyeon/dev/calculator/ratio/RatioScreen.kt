@@ -285,18 +285,18 @@ private fun KeyView(input: (RatioKey) -> Unit = {}) {
     val viewButtonKey: @Composable RowScope.(RatioKey) -> Unit = {
         ViewButtonKey(
             modifier =
-            Modifier
-                .padding(2.dp)
-                .weight(1f)
-                .height(InputKeyHeight.value.dp),
+                Modifier
+                    .padding(2.dp)
+                    .weight(1f)
+                    .height(InputKeyHeight.value.dp),
             text = it.value,
             icon =
-            when (it) {
-                is RatioKey.Left -> it.value.toInt() to 32.dp
-                is RatioKey.Right -> it.value.toInt() to 32.dp
-                is RatioKey.Backspace -> it.value.toInt() to 32.dp
-                else -> null
-            },
+                when (it) {
+                    is RatioKey.Left -> it.value.toInt() to 32.dp
+                    is RatioKey.Right -> it.value.toInt() to 32.dp
+                    is RatioKey.Backspace -> it.value.toInt() to 32.dp
+                    else -> null
+                },
             onClick = { input(it) },
         )
     }
@@ -321,18 +321,18 @@ private fun KeyView(input: (RatioKey) -> Unit = {}) {
                 keyList3.forEachIndexed { i, it ->
                     ViewButtonKey(
                         modifier =
-                        Modifier
-                            .padding(2.dp)
-                            .fillMaxWidth()
-                            .weight(weightList[i]),
+                            Modifier
+                                .padding(2.dp)
+                                .fillMaxWidth()
+                                .weight(weightList[i]),
                         text = it.value,
                         icon =
-                        when (it) {
-                            is RatioKey.Paste -> it.value.toInt() to 28.dp
-                            is RatioKey.Copy -> it.value.toInt() to 30.dp
-                            is RatioKey.Enter -> it.value.toInt() to 36.dp
-                            else -> null
-                        },
+                            when (it) {
+                                is RatioKey.Paste -> it.value.toInt() to 28.dp
+                                is RatioKey.Copy -> it.value.toInt() to 30.dp
+                                is RatioKey.Enter -> it.value.toInt() to 36.dp
+                                else -> null
+                            },
                         onClick = { input(it) },
                     )
                 }

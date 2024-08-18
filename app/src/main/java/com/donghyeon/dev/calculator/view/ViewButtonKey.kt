@@ -29,10 +29,19 @@ import com.donghyeon.dev.calculator.theme.TextSet
 
 @Preview
 @Composable
-fun Preview_ViewButtonKey() =
+fun Preview_ViewButtonKey() {
     ViewButtonKey(
         text = "0",
     )
+}
+
+@Preview
+@Composable
+fun Preview_ViewButtonKey_Icon() {
+    ViewButtonKey(
+        icon = GeneralKey.Backspace.value.toInt() to 32.dp,
+    )
+}
 
 @Composable
 fun ViewButtonKey(

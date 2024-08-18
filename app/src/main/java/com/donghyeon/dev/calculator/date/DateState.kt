@@ -6,31 +6,30 @@ import com.donghyeon.dev.calculator.calculate.DateType
 
 data class DateState(
     val type: DateType? = null,
-    val dateSearch: DateSearch = DateSearch(),
-    val dateConvert: DateConvert = DateConvert(),
-    val timeConvert: TimeConvert = TimeConvert(),
+    val hint: String = "",
+)
+
+data class DateDayDateState(
+    val focus: Focus = Focus.DATE,
+    val date: TextFieldValue = TextFieldValue(),
+    val day: TextFieldValue = TextFieldValue(),
+    val agoLater: Boolean = true,
+    val result: String = "?",
 ) {
-    data class DateSearch(
-        val date: TextFieldValue = TextFieldValue(),
-        val day: TextFieldValue = TextFieldValue(),
-        val agoLater: Boolean = false,
-        val result: String = "?",
-    )
-
-    data class DateConvert(
-        val date1: TextFieldValue = TextFieldValue(),
-        val date2: TextFieldValue = TextFieldValue(),
-        val result: String = "?",
-    )
-
-    data class TimeConvert(
-        val second: TextFieldValue = TextFieldValue(),
-        val minute: TextFieldValue = TextFieldValue(),
-        val hour: TextFieldValue = TextFieldValue(),
-        val day: TextFieldValue = TextFieldValue(),
-        val result: String = "?",
-    )
+    enum class Focus {
+        DATE,
+        DAY,
+        AGO_LATER,
+    }
 }
+
+data class DateDateDayState(
+    val date1: TextFieldValue = TextFieldValue(),
+    val date1Focus: Boolean = false,
+    val date2: TextFieldValue = TextFieldValue(),
+    val date2Focus: Boolean = false,
+    val result: String = "?",
+)
 
 sealed class DateKey(val value: String) {
     data object Clear : DateKey("C")
@@ -47,7 +46,7 @@ sealed class DateKey(val value: String) {
 
     data object Enter : DateKey(R.drawable.ic_tab_24px.toString())
 
-    data object Unit : DateKey(R.drawable.ic_code_24px.toString())
+    data object Today : DateKey(R.drawable.ic_today_24px.toString())
 
     data object ZeroZero : DateKey("00")
 

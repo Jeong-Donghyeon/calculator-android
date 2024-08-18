@@ -55,6 +55,8 @@ import com.donghyeon.dev.calculator.convert.ConvertScreen
 import com.donghyeon.dev.calculator.convert.ConvertState
 import com.donghyeon.dev.calculator.convert.ConvertViewModel
 import com.donghyeon.dev.calculator.date.DateAction
+import com.donghyeon.dev.calculator.date.DateDateDayState
+import com.donghyeon.dev.calculator.date.DateDayDateState
 import com.donghyeon.dev.calculator.date.DateScreen
 import com.donghyeon.dev.calculator.date.DateState
 import com.donghyeon.dev.calculator.date.DateViewModel
@@ -205,14 +207,16 @@ private fun MainScreen() {
     val generalViewModel: GeneralViewModel = hiltViewModel()
     val percentViewModel: PercentViewModel = hiltViewModel()
     val ratioViewModel: RatioViewModel = hiltViewModel()
-    val convertViewModel: ConvertViewModel = hiltViewModel()
     val dateViewModel: DateViewModel = hiltViewModel()
+    val convertViewModel: ConvertViewModel = hiltViewModel()
     val mainState by mainViewModel.state.collectAsState()
     val generalState by generalViewModel.state.collectAsState()
     val percentState by percentViewModel.state.collectAsState()
     val ratioState by ratioViewModel.state.collectAsState()
-    val convertState by convertViewModel.state.collectAsState()
     val dateState by dateViewModel.state.collectAsState()
+    val dateDayDateState by dateViewModel.dateDayDateState.collectAsState()
+    val dateDateDayState by dateViewModel.dateDateDayState.collectAsState()
+    val convertState by convertViewModel.state.collectAsState()
     MainScreen(
         mainState = mainState,
         mainAction = mainViewModel,
@@ -222,10 +226,12 @@ private fun MainScreen() {
         percentAction = percentViewModel,
         ratioState = ratioState,
         ratioAction = ratioViewModel,
+        dateState = dateState,
+        dateDayDateState = dateDayDateState,
+        dateDateDayState = dateDateDayState,
+        dateAction = dateViewModel,
         convertState = convertState,
         convertAction = convertViewModel,
-        dateState = dateState,
-        dateAction = dateViewModel,
     )
     BackHandler { mainViewModel.navigation(Nav.POP, null) }
 }
@@ -240,10 +246,12 @@ private fun MainScreen(
     percentAction: PercentAction? = null,
     ratioState: RatioState? = null,
     ratioAction: RatioAction? = null,
+    dateState: DateState? = null,
+    dateDayDateState: DateDayDateState? = null,
+    dateDateDayState: DateDateDayState? = null,
+    dateAction: DateAction? = null,
     convertState: ConvertState? = null,
     convertAction: ConvertAction? = null,
-    dateState: DateState? = null,
-    dateAction: DateAction? = null,
 ) {
     Column(
         modifier =
@@ -302,9 +310,11 @@ private fun MainScreen(
                             )
                         }
                     Menu.DATE ->
-                        dateState?.let {
+                        if (dateState != null && dateDayDateState != null && dateDateDayState != null) {
                             DateScreen(
                                 state = dateState,
+                                dateDayDateState = dateDayDateState,
+                                dateDateDayState = dateDateDayState,
                                 action = dateAction,
                                 mainAction = mainAction,
                             )

@@ -22,8 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +38,7 @@ import com.donghyeon.dev.calculator.theme.ColorSet
 import com.donghyeon.dev.calculator.theme.TextSet
 import com.donghyeon.dev.calculator.view.FontSizeRange
 import com.donghyeon.dev.calculator.view.ViewButtonKey
+import com.donghyeon.dev.calculator.view.ViewFieldDate
 import com.donghyeon.dev.calculator.view.ViewFieldNumber
 import com.donghyeon.dev.calculator.view.ViewScrollTab
 import com.donghyeon.dev.calculator.view.ViewTextResult
@@ -50,8 +49,10 @@ private fun Preview_DateScreen_DateSearch() {
     DateScreen(
         state =
             DateState(
-                type = DateType.DATE_SEARCH,
+                type = DateType.DATE_DAY_DATE,
             ),
+        dateDayDateState = DateDayDateState(),
+        dateDateDayState = DateDateDayState(),
     )
 }
 
@@ -61,8 +62,10 @@ private fun Preview_DateScreen_DateConvert() {
     DateScreen(
         state =
             DateState(
-                type = DateType.DATE_CONVERT,
+                type = DateType.DATE_DATE_DAY,
             ),
+        dateDayDateState = DateDayDateState(),
+        dateDateDayState = DateDateDayState(),
     )
 }
 
@@ -74,21 +77,28 @@ private fun Preview_DateScreen_TimeConvert() {
             DateState(
                 type = DateType.TIME_COMVERT,
             ),
+        dateDayDateState = DateDayDateState(),
+        dateDateDayState = DateDateDayState(),
     )
 }
 
 @Composable
 fun DateScreen(
     state: DateState,
+    dateDayDateState: DateDayDateState,
+    dateDateDayState: DateDateDayState,
     action: DateAction? = null,
     mainAction: MainAction? = null,
 ) {
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-    val clipboardManager = LocalClipboardManager.current
-    val focus = remember { FocusRequester() }
-    LaunchedEffect(state.type) {
-        focus.requestFocus()
+    val focusDateDayDateDate = remember { FocusRequester() }
+    val focusDateDayDateDay = remember { FocusRequester() }
+    LaunchedEffect(dateDayDateState.focus) {
+        when (dateDayDateState.focus) {
+            DateDayDateState.Focus.DATE -> focusDateDayDateDate.requestFocus()
+            DateDayDateState.Focus.DAY -> focusDateDayDateDay.requestFocus()
+            DateDayDateState.Focus.AGO_LATER -> focusManager.clearFocus()
+        }
     }
     Column(
         modifier =
@@ -101,24 +111,34 @@ fun DateScreen(
         state.type?.let { type ->
             Spacer(modifier = Modifier.weight(1f))
             when (type) {
-                DateType.DATE_SEARCH -> {
-                    ViewFieldNumber(
-                        modifier =
-                            Modifier
-                                .width(230.dp)
-                                .focusRequester(focus),
-                        value = state.dateSearch.date,
-                        color = ColorSet.select,
-                        align = TextAlign.Center,
+                DateType.DATE_DAY_DATE -> {
+                    ViewFieldDate(
+                        focus = focusDateDayDateDate,
+                        value = dateDayDateState.date,
+                        hint = state.hint,
+                        color =
+                            if (dateDayDateState.focus == DateDayDateState.Focus.DATE) {
+                                ColorSet.select
+                            } else {
+                                ColorSet.text
+                            },
                     )
                     Row(
-                        modifier = Modifier.width(230.dp),
+                        modifier = Modifier.width(210.dp),
                         verticalAlignment = Alignment.Bottom,
                     ) {
                         ViewFieldNumber(
-                            modifier = Modifier.weight(1f),
-                            value = state.dateSearch.day,
-                            color = ColorSet.text,
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .focusRequester(focusDateDayDateDay),
+                            value = dateDayDateState.day,
+                            color =
+                                if (dateDayDateState.focus == DateDayDateState.Focus.DAY) {
+                                    ColorSet.select
+                                } else {
+                                    ColorSet.text
+                                },
                         )
                         Text(
                             modifier =
@@ -126,56 +146,73 @@ fun DateScreen(
                                     .width(50.dp)
                                     .padding(bottom = 15.dp),
                             text = stringResource(id = R.string.day),
-                            style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+                            style = TextSet.bold.copy(ColorSet.text, 20.sp),
                             textAlign = TextAlign.Center,
                         )
                     }
-                    Row(
-                        modifier = Modifier.height(100.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val (ago, later) =
-                            if (state.dateSearch.agoLater) {
-                                TextSet.extraBold.copy(
-                                    ColorSet.text.copy(alpha = 0.5f),
-                                    22.sp,
-                                ) to
+                    Column {
+                        Spacer(modifier = Modifier.height(30.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            val (ago, later) =
+                                if (dateDayDateState.agoLater) {
+                                    TextSet.extraBold.copy(
+                                        ColorSet.hint,
+                                        24.sp,
+                                    ) to
+                                        TextSet.extraBold.copy(
+                                            ColorSet.select,
+                                            26.sp,
+                                        )
+                                } else {
                                     TextSet.extraBold.copy(
                                         ColorSet.select,
-                                        30.sp,
-                                    )
-                            } else {
-                                TextSet.extraBold.copy(
-                                    ColorSet.select,
-                                    30.sp,
-                                ) to
-                                    TextSet.extraBold.copy(
-                                        ColorSet.text.copy(alpha = 0.5f),
-                                        22.sp,
-                                    )
+                                        26.sp,
+                                    ) to
+                                        TextSet.extraBold.copy(
+                                            ColorSet.hint,
+                                            24.sp,
+                                        )
+                                }
+                            Box(
+                                modifier = Modifier.width(105.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.ago),
+                                    style = ago,
+                                )
                             }
-                        Box(
-                            modifier = Modifier.width(80.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.ago),
-                                style = ago,
-                            )
+                            Box(
+                                modifier = Modifier.width(105.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.later),
+                                    style = later,
+                                )
+                            }
                         }
+                        Spacer(modifier = Modifier.height(14.dp))
                         Box(
-                            modifier = Modifier.width(80.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.later),
-                                style = later,
-                            )
-                        }
+                            modifier =
+                                Modifier
+                                    .background(
+                                        if (dateDayDateState.focus == DateDayDateState.Focus.AGO_LATER) {
+                                            ColorSet.select
+                                        } else {
+                                            ColorSet.text
+                                        },
+                                    )
+                                    .width(210.dp)
+                                    .height(1.dp),
+                        )
+                        Spacer(modifier = Modifier.height(50.dp))
                     }
                     ViewTextResult(
                         modifier = Modifier.width(300.dp),
-                        text = state.dateSearch.result,
+                        text = dateDayDateState.result,
                         fontSizeRange =
                             FontSizeRange(
                                 min = 1.sp,
@@ -183,24 +220,23 @@ fun DateScreen(
                             ),
                     )
                 }
-                DateType.DATE_CONVERT -> {
+                DateType.DATE_DATE_DAY -> {
                     ViewFieldNumber(
                         modifier =
                             Modifier
-                                .width(230.dp)
-                                .focusRequester(focus),
-                        value = state.dateConvert.date1,
+                                .width(230.dp),
+                        value = dateDateDayState.date1,
                         color = ColorSet.select,
                     )
                     ViewFieldNumber(
                         modifier = Modifier.width(230.dp),
-                        value = state.dateConvert.date2,
+                        value = dateDateDayState.date2,
                         color = ColorSet.text,
                     )
                     Spacer(modifier = Modifier.height(50.dp))
                     ViewTextResult(
                         modifier = Modifier.width(300.dp),
-                        text = state.dateConvert.result,
+                        text = dateDateDayState.result,
                         fontSizeRange =
                             FontSizeRange(
                                 min = 1.sp,
@@ -221,9 +257,7 @@ fun DateScreen(
                                 .width(200.dp)
                         val (modifier, color) =
                             if (i == 0) {
-                                defaultModifier.then(
-                                    Modifier.focusRequester(focus),
-                                ) to ColorSet.select
+                                defaultModifier to ColorSet.select
                             } else {
                                 defaultModifier to ColorSet.text
                             }
@@ -281,7 +315,7 @@ fun DateScreen(
                 onTab = { action?.inputType(it) },
             )
         } ?: Spacer(modifier = Modifier.weight(1f))
-        KeyView {}
+        KeyView { action?.inputKey(it) }
         Spacer(modifier = Modifier.height(3.dp))
     }
 }
@@ -315,7 +349,7 @@ private fun KeyView(input: (DateKey) -> Unit = {}) {
             listOf(
                 DateKey.ZeroZero,
                 DateKey.Zero,
-                DateKey.Unit,
+                DateKey.Today,
             ),
         )
     val keyList3 =
@@ -337,7 +371,7 @@ private fun KeyView(input: (DateKey) -> Unit = {}) {
                     is DateKey.Left -> it.value.toInt() to 32.dp
                     is DateKey.Right -> it.value.toInt() to 32.dp
                     is DateKey.Backspace -> it.value.toInt() to 32.dp
-                    is DateKey.Unit -> it.value.toInt() to 36.dp
+                    is DateKey.Today -> it.value.toInt() to 30.dp
                     else -> null
                 },
             onClick = { input(it) },
