@@ -3,6 +3,7 @@ package com.donghyeon.dev.calculator.date
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.viewModelScope
 import com.donghyeon.dev.calculator.calculate.DateType
+import com.donghyeon.dev.calculator.calculate.DateUseCase
 import com.donghyeon.dev.calculator.common.BaseViewModel
 import com.donghyeon.dev.calculator.common.SideEffect
 import com.donghyeon.dev.calculator.data.Repository
@@ -27,6 +28,7 @@ interface DateAction {
 @HiltViewModel
 class DateViewModel @Inject constructor(
     private val repository: Repository,
+    private val dateUseCase: DateUseCase,
 ) : BaseViewModel(), DateAction {
     private val _state = MutableStateFlow(DateState())
     val state = _state.asStateFlow()
@@ -228,7 +230,13 @@ class DateViewModel @Inject constructor(
                     }
                 }
             }
-        _dateDayDateState.value = inputState
+        val result =
+            dateUseCase.date(
+                date = inputState.date.text,
+                day = inputState.day.text,
+                agoLater = inputState.agoLater,
+            )
+        _dateDayDateState.value = inputState.copy(result = result)
     }
 
     private fun getToday(): String {
