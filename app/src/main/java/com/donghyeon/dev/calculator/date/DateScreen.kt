@@ -93,12 +93,22 @@ fun DateScreen(
     val focusManager = LocalFocusManager.current
     val focusDateDayDateDate = remember { FocusRequester() }
     val focusDateDayDateDay = remember { FocusRequester() }
-    LaunchedEffect(dateDayDateState.focus) {
-        when (dateDayDateState.focus) {
-            DateDayDateState.Focus.DATE -> focusDateDayDateDate.requestFocus()
-            DateDayDateState.Focus.DAY -> focusDateDayDateDay.requestFocus()
-            DateDayDateState.Focus.AGO_LATER -> focusManager.clearFocus()
+    val focusDateDayDate = {
+        state.type?.let {
+            if (it == DateType.DATE_DAY_DATE) {
+                when (dateDayDateState.focus) {
+                    DateDayDateState.Focus.DATE -> focusDateDayDateDate.requestFocus()
+                    DateDayDateState.Focus.DAY -> focusDateDayDateDay.requestFocus()
+                    DateDayDateState.Focus.AGO_LATER -> focusManager.clearFocus()
+                }
+            }
         }
+    }
+    LaunchedEffect(dateDayDateState.focus) {
+        focusDateDayDate()
+    }
+    LaunchedEffect(state.type) {
+        focusDateDayDate()
     }
     Column(
         modifier =
