@@ -25,7 +25,7 @@ data class DateDayDateState(
 
 data class DateDateDayState(
     val date1: TextFieldValue = TextFieldValue(),
-    val date1Focus: Boolean = false,
+    val date1Focus: Boolean = true,
     val date2: TextFieldValue = TextFieldValue(),
     val date2Focus: Boolean = false,
     val result: String = "?",

@@ -63,6 +63,7 @@ class DateViewModel @Inject constructor(
         val state = state.value
         when (state.type) {
             DateType.DATE_DAY_DATE -> inputDateDayDate(key)
+            DateType.DATE_DATE_DAY -> inputDateDateDay(key)
             else -> {}
         }
     }
@@ -237,6 +238,167 @@ class DateViewModel @Inject constructor(
                 agoLater = inputState.agoLater,
             )
         _dateDayDateState.value = inputState.copy(result = result)
+    }
+
+    private fun inputDateDateDay(key: DateKey) {
+        val state = dateDateDayState.value
+        val inputState =
+            when (key) {
+                is DateKey.Clear -> DateDateDayState()
+                is DateKey.Left -> {
+                    if (state.date1Focus) {
+                        val index =
+                            state.date1.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
+                        state.copy(date1 = state.date1.copy(selection = TextRange(index)))
+                    } else if (state.date2Focus) {
+                        val index =
+                            state.date2.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
+                        state.copy(date2 = state.date2.copy(selection = TextRange(index)))
+                    } else {
+                        state
+                    }
+                }
+                is DateKey.Right -> {
+                    if (state.date1Focus) {
+                        val index = state.date1.selection.start + 1
+                        state.copy(date1 = state.date1.copy(selection = TextRange(index)))
+                    } else if (state.date2Focus) {
+                        val index = state.date2.selection.start + 1
+                        state.copy(date2 = state.date2.copy(selection = TextRange(index)))
+                    } else {
+                        state
+                    }
+                }
+                is DateKey.Backspace -> {
+                    if (state.date1Focus) {
+                        val text =
+                            StringBuilder(state.date1.text).let {
+                                val index = state.date1.selection.start
+                                if (index == 0) {
+                                    it.toString()
+                                } else {
+                                    it.delete(index - 1, index).toString()
+                                }
+                            }
+                        val index =
+                            state.date1.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
+                        state.copy(date1 = state.date1.copy(text = text, selection = TextRange(index)))
+                    } else if (state.date2Focus) {
+                        val text =
+                            StringBuilder(state.date2.text).let {
+                                val index = state.date2.selection.start
+                                if (index == 0) {
+                                    it.toString()
+                                } else {
+                                    it.delete(index - 1, index).toString()
+                                }
+                            }
+                        val index =
+                            state.date2.selection.start.let {
+                                if (it == 0) 0 else it - 1
+                            }
+                        state.copy(date2 = state.date2.copy(text = text, selection = TextRange(index)))
+                    } else {
+                        state
+                    }
+                }
+                is DateKey.Copy -> state
+                is DateKey.Paste -> {
+                    val result = key.result.replace(",", "")
+                    if (state.date1Focus) {
+                        state.copy(date1 = state.date1.copy(text = result, selection = TextRange(result.length)))
+                    } else if (state.date2Focus) {
+                        state.copy(date2 = state.date2.copy(text = result, selection = TextRange(result.length)))
+                    } else {
+                        state
+                    }
+                }
+                is DateKey.Enter -> {
+                    if (state.date1Focus) {
+                        state.copy(date1Focus = false, date2Focus = true)
+                    } else if (state.date2Focus){
+                        state.copy(date1Focus = true, date2Focus = false)
+                    } else {
+                        state
+                    }
+                }
+                is DateKey.Today -> {
+                    val today = getToday()
+                    this._state.value = this.state.value.copy(hint = today)
+                    if (state.date1Focus) {
+                        state.copy(date1 = state.date1.copy(text = today, selection = TextRange(today.length)))
+                    } else if (state.date2Focus) {
+                        state.copy(date2 = state.date2.copy(text = today, selection = TextRange(today.length)))
+                    } else {
+                        state
+                    }
+                }
+                is DateKey.ZeroZero, DateKey.Zero,
+                DateKey.One, DateKey.Two, DateKey.Three,
+                DateKey.Four, DateKey.Five, DateKey.Six,
+                DateKey.Seven, DateKey.Eight, DateKey.Nine,
+                -> {
+                    if (state.date1Focus) {
+                        val valueCount = state.date1.text.count()
+                        val digitsLimitCheck =
+                            if (key == DateKey.ZeroZero) {
+                                valueCount >= 7
+                            } else {
+                                valueCount >= 8
+                            }
+                        if (digitsLimitCheck) {
+                            state
+                        } else {
+                            val text =
+                                StringBuilder(state.date1.text).let {
+                                    val index = state.date1.selection.start
+                                    it.insert(index, key.value).toString()
+                                }
+                            val index =
+                                state.date1.selection.start.let {
+                                    it + key.value.count()
+                                }
+                            state.copy(date1 = state.date1.copy(text = text, selection = TextRange(index)))
+                        }
+                    } else if (state.date2Focus) {
+                        val valueCount = state.date2.text.count()
+                        val digitsLimitCheck =
+                            if (key == DateKey.ZeroZero) {
+                                valueCount >= 7
+                            } else {
+                                valueCount >= 8
+                            }
+                        if (digitsLimitCheck) {
+                            state
+                        } else {
+                            val text =
+                                StringBuilder(state.date2.text).let {
+                                    val index = state.date2.selection.start
+                                    it.insert(index, key.value).toString()
+                                }
+                            val index =
+                                state.date2.selection.start.let {
+                                    it + key.value.count()
+                                }
+                            state.copy(date2 = state.date2.copy(text = text, selection = TextRange(index)))
+                        }
+                    } else {
+                        state
+                    }
+                }
+            }
+        val result =
+            dateUseCase.day(
+                date1 = inputState.date1.text,
+                date2 = inputState.date2.text,
+            )
+        _dateDateDayState.value = inputState.copy(result = result)
     }
 
     private fun getToday(): String {

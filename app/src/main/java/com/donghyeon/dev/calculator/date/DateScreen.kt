@@ -104,11 +104,28 @@ fun DateScreen(
             }
         }
     }
-    LaunchedEffect(dateDayDateState.focus) {
-        focusDateDayDate()
+    val focusDateDateDayDate1 = remember { FocusRequester() }
+    val focusDateDateDayDate2 = remember { FocusRequester() }
+    val focusDateDateDay = {
+        state.type?.let {
+            if (it == DateType.DATE_DATE_DAY) {
+                if (dateDateDayState.date1Focus) {
+                    focusDateDateDayDate1.requestFocus()
+                } else if (dateDateDayState.date2Focus) {
+                    focusDateDateDayDate2.requestFocus()
+                }
+            }
+        }
+    }
+    LaunchedEffect(dateDateDayState.date1Focus) {
+        focusDateDateDay()
+    }
+    LaunchedEffect(dateDateDayState.date2Focus) {
+        focusDateDateDay()
     }
     LaunchedEffect(state.type) {
         focusDateDayDate()
+        focusDateDateDay()
     }
     Column(
         modifier =
@@ -231,17 +248,26 @@ fun DateScreen(
                     )
                 }
                 DateType.DATE_DATE_DAY -> {
+                    val (color1, color2) =
+                        if (dateDateDayState.date1Focus) {
+                            ColorSet.select to ColorSet.text
+                        } else {
+                            ColorSet.text to ColorSet.select
+                        }
                     ViewFieldNumber(
                         modifier =
                             Modifier
-                                .width(230.dp),
+                                .width(230.dp)
+                                .focusRequester(focusDateDateDayDate1),
                         value = dateDateDayState.date1,
-                        color = ColorSet.select,
+                        color = color1,
                     )
                     ViewFieldNumber(
-                        modifier = Modifier.width(230.dp),
+                        modifier = Modifier
+                            .width(230.dp)
+                            .focusRequester(focusDateDateDayDate2),
                         value = dateDateDayState.date2,
-                        color = ColorSet.text,
+                        color = color2,
                     )
                     Spacer(modifier = Modifier.height(50.dp))
                     ViewTextResult(
