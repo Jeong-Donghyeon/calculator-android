@@ -47,7 +47,7 @@ class DateUseCase @Inject constructor() {
     ): String {
         val date1Time = dateToLong(date1) ?: return failReturn
         val date2Time = dateToLong(date2) ?: return failReturn
-        return ((date2Time - date1Time) / 86400000).toString()
+        return ((date2Time - date1Time) / 86400000).toString() + " 일"
     }
 
     fun time(

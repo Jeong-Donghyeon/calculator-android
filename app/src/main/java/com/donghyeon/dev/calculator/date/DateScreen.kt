@@ -254,19 +254,16 @@ fun DateScreen(
                         } else {
                             ColorSet.text to ColorSet.select
                         }
-                    ViewFieldNumber(
-                        modifier =
-                            Modifier
-                                .width(230.dp)
-                                .focusRequester(focusDateDateDayDate1),
+                    ViewFieldDate(
+                        focus = focusDateDateDayDate1,
                         value = dateDateDayState.date1,
+                        hint = state.hint,
                         color = color1,
                     )
-                    ViewFieldNumber(
-                        modifier = Modifier
-                            .width(230.dp)
-                            .focusRequester(focusDateDateDayDate2),
+                    ViewFieldDate(
+                        focus = focusDateDateDayDate2,
                         value = dateDateDayState.date2,
+                        hint = state.hint,
                         color = color2,
                     )
                     Spacer(modifier = Modifier.height(50.dp))
