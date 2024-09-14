@@ -39,7 +39,6 @@
     <string-array name="date_type">
         <item>D N = D</item>
         <item>D D = N</item>
-        <item>N N N N = T</item>
     </string-array>
 
     <string name="ago">전</string>

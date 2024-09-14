@@ -7,14 +7,6 @@ import javax.inject.Inject
 enum class DateType {
     DATE_DAY_DATE,
     DATE_DATE_DAY,
-    TIME_COMVERT,
-}
-
-enum class TimeType {
-    SECOND,
-    MIN,
-    HOUR,
-    DAY,
 }
 
 class DateUseCase @Inject constructor() {
@@ -48,16 +40,6 @@ class DateUseCase @Inject constructor() {
         val date1Time = dateToLong(date1) ?: return failReturn
         val date2Time = dateToLong(date2) ?: return failReturn
         return ((date2Time - date1Time) / 86400000).toString() + " 일"
-    }
-
-    fun time(
-        type: TimeType,
-        second: String,
-        min: String,
-        hour: String,
-        day: String,
-    ): String {
-        return failReturn
     }
 
     private fun dateToCalendar(date: String): Calendar? {

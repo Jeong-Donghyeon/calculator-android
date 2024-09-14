@@ -25,7 +25,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,19 +62,6 @@ private fun Preview_DateScreen_DateConvert() {
         state =
             DateState(
                 type = DateType.DATE_DATE_DAY,
-            ),
-        dateDayDateState = DateDayDateState(),
-        dateDateDayState = DateDateDayState(),
-    )
-}
-
-@Preview
-@Composable
-private fun Preview_DateScreen_TimeConvert() {
-    DateScreen(
-        state =
-            DateState(
-                type = DateType.TIME_COMVERT,
             ),
         dateDayDateState = DateDayDateState(),
         dateDateDayState = DateDateDayState(),
@@ -276,64 +262,6 @@ fun DateScreen(
                                 max = 30.sp,
                             ),
                     )
-                }
-                DateType.TIME_COMVERT -> {
-                    listOf(
-                        stringResource(id = R.string.second),
-                        stringResource(id = R.string.min),
-                        stringResource(id = R.string.hour),
-                        stringResource(id = R.string.day),
-                    ).forEachIndexed { i, it ->
-                        val defaultModifier =
-                            Modifier
-                                .padding(start = 50.dp)
-                                .width(200.dp)
-                        val (modifier, color) =
-                            if (i == 0) {
-                                defaultModifier to ColorSet.select
-                            } else {
-                                defaultModifier to ColorSet.text
-                            }
-                        Row(verticalAlignment = Alignment.Bottom) {
-                            ViewFieldNumber(
-                                modifier = modifier,
-                                value = TextFieldValue(),
-                                color = color,
-                            )
-                            Spacer(modifier = Modifier.width(7.dp))
-                            Text(
-                                modifier =
-                                    Modifier
-                                        .padding(bottom = 10.dp)
-                                        .width(50.dp),
-                                text = it,
-                                style = TextSet.extraBold.copy(color, 20.sp),
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(15.dp))
-                    Row(
-                        modifier =
-                            Modifier
-                                .padding(start = 50.dp)
-                                .padding(vertical = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        ViewTextResult(
-                            text = "?",
-                            fontSizeRange =
-                                FontSizeRange(
-                                    min = 1.sp,
-                                    max = 30.sp,
-                                ),
-                        )
-                        Spacer(modifier = Modifier.width(7.dp))
-                        Text(
-                            modifier = Modifier.width(50.dp),
-                            text = "",
-                            style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
-                        )
-                    }
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
