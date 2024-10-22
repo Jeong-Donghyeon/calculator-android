@@ -103,6 +103,9 @@ fun DateScreen(
             }
         }
     }
+    LaunchedEffect(dateDayDateState.focus) {
+        focusDateDayDate()
+    }
     LaunchedEffect(dateDateDayState.date1Focus) {
         focusDateDateDay()
     }
@@ -168,6 +171,12 @@ fun DateScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
+                            val selectColor =
+                                if (dateDayDateState.focus == DateDayDateState.Focus.AGO_LATER) {
+                                    ColorSet.select
+                                } else {
+                                    ColorSet.text
+                                }
                             val (ago, later) =
                                 if (dateDayDateState.agoLater) {
                                     TextSet.extraBold.copy(
@@ -175,12 +184,12 @@ fun DateScreen(
                                         24.sp,
                                     ) to
                                         TextSet.extraBold.copy(
-                                            ColorSet.select,
+                                            selectColor,
                                             26.sp,
                                         )
                                 } else {
                                     TextSet.extraBold.copy(
-                                        ColorSet.select,
+                                        selectColor,
                                         26.sp,
                                     ) to
                                         TextSet.extraBold.copy(
