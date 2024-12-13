@@ -4,6 +4,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.composeCcompiler)
     alias(libs.plugins.googleDevtoolsKsp)
     alias(libs.plugins.googleDaggerHiltAndroid)
     alias(libs.plugins.jlleitschuhGradleKtlint)
@@ -14,12 +15,12 @@ plugins {
 android {
 
     namespace = "com.donghyeon.dev.calculator"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.donghyeon.dev.calculator"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "0.0.1"
         vectorDrawables {
@@ -73,6 +74,11 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.13"
+    }
+
+    composeCompiler {
+        enableStrongSkippingMode = true
+        includeSourceInformation = true
     }
 
     packaging {
