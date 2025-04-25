@@ -106,66 +106,73 @@ fun ConvertScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        state.type?.let { type ->
-            Spacer(modifier = Modifier.weight(1f))
-            repeat(4) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    val modifier =
-                        if (it == 0) {
-                            Modifier
-                                .padding(start = 50.dp)
-                                .width(200.dp)
-                                .focusRequester(focus)
-                        } else {
-                            Modifier
-                                .padding(start = 50.dp)
-                                .width(200.dp)
-                        }
-                    ViewFieldNumber(
-                        modifier = modifier,
-                        value = state.unitValue,
-                        color =
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+        ) {
+            state.type?.let { type ->
+                Spacer(modifier = Modifier.weight(1f))
+                repeat(4) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        val modifier =
                             if (it == 0) {
-                                ColorSet.select
+                                Modifier
+                                    .padding(start = 50.dp)
+                                    .width(200.dp)
+                                    .focusRequester(focus)
                             } else {
-                                ColorSet.text
-                            },
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        modifier =
-                            Modifier
-                                .padding(bottom = 10.dp)
-                                .width(50.dp),
-                        text = state.unit,
-                        style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
-                    )
+                                Modifier
+                                    .padding(start = 50.dp)
+                                    .width(200.dp)
+                            }
+                        ViewFieldNumber(
+                            modifier = modifier,
+                            value = state.unitValue,
+                            color =
+                                if (it == 0) {
+                                    ColorSet.select
+                                } else {
+                                    ColorSet.text
+                                },
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            modifier =
+                                Modifier
+                                    .padding(bottom = 10.dp)
+                                    .width(50.dp),
+                            text = state.unit,
+                            style = TextSet.extraBold.copy(ColorSet.text, 20.sp),
+                        )
+                    }
+                    if (it == 3) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
                 }
-                if (it == 3) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-            Spacer(modifier = Modifier.weight(1.3f))
-            ViewScrollTab(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(55.dp)
-                        .padding(bottom = 3.dp),
-                tabs = stringArrayResource(id = R.array.convert_type).toList(),
-                index = type.ordinal,
-                onTab = { action?.inputType(it) },
-            )
-        } ?: Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.weight(1.3f))
+                ViewScrollTab(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(55.dp)
+                            .padding(bottom = 3.dp),
+                    tabs = stringArrayResource(id = R.array.convert_type).toList(),
+                    index = type.ordinal,
+                    onTab = { action?.inputType(it) },
+                )
+            } ?: Spacer(modifier = Modifier.weight(1f))
+        }
         ViewConvertKey {
             when (it) {
                 is ConvertKey.Unit -> action?.sheet(true)

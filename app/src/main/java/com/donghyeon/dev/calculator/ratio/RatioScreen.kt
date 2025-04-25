@@ -95,126 +95,133 @@ fun RatioScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxSize(),
     ) {
-        state.type?.let { type ->
-            Spacer(modifier = Modifier.weight(1f))
-            val modifier = Modifier.width(300.dp).height(90.dp)
-            Row(
-                modifier = modifier,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                ViewFieldNumber(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .focusRequester(focus)
-                            .onFocusChanged {
-                                if (it.isFocused) action?.inputV1Focus()
-                            },
-                    value = state.getCalculate().valueList[0],
-                    color = selectColor(state.v1Focus),
-                )
-                Text(
-                    modifier = Modifier.width(30.dp),
-                    text = ":",
-                    style = TextSet.bold.copy(ColorSet.text, 20.sp),
-                    textAlign = TextAlign.Center,
-                )
-                ViewFieldNumber(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .onFocusChanged {
-                                if (it.isFocused) action?.inputV2Focus()
-                            },
-                    value = state.getCalculate().valueList[1],
-                    color = selectColor(state.v2Focus),
-                )
-            }
-            when (type) {
-                RatioType.RATIO -> {
-                    Row(
-                        modifier = modifier,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        ViewFieldNumber(
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .onFocusChanged {
-                                        if (it.isFocused) action?.inputV3Focus()
-                                    },
-                            value = state.getCalculate().valueList[2],
-                            color = selectColor(state.v3Focus),
-                        )
-                        Text(
-                            modifier = Modifier.width(30.dp),
-                            text = ":",
-                            style = TextSet.bold.copy(ColorSet.text, 20.sp),
-                            textAlign = TextAlign.Center,
-                        )
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = calculate.result,
-                            style = TextSet.bold.copy(ColorSet.result, 28.sp),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            state.type?.let { type ->
+                Spacer(modifier = Modifier.weight(1f))
+                val modifier = Modifier.width(300.dp).height(90.dp)
+                Row(
+                    modifier = modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    ViewFieldNumber(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .focusRequester(focus)
+                                .onFocusChanged {
+                                    if (it.isFocused) action?.inputV1Focus()
+                                },
+                        value = state.getCalculate().valueList[0],
+                        color = selectColor(state.v1Focus),
+                    )
+                    Text(
+                        modifier = Modifier.width(30.dp),
+                        text = ":",
+                        style = TextSet.bold.copy(ColorSet.text, 20.sp),
+                        textAlign = TextAlign.Center,
+                    )
+                    ViewFieldNumber(
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .onFocusChanged {
+                                    if (it.isFocused) action?.inputV2Focus()
+                                },
+                        value = state.getCalculate().valueList[1],
+                        color = selectColor(state.v2Focus),
+                    )
                 }
-                RatioType.SIMPLIFY -> {
-                    val result = calculate.result.split(":")
-                    val (result1, result2) =
-                        if (result.count() == 2) {
-                            result[0] to result[1]
-                        } else {
-                            "?" to "?"
+                when (type) {
+                    RatioType.RATIO -> {
+                        Row(
+                            modifier = modifier,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            ViewFieldNumber(
+                                modifier =
+                                    Modifier
+                                        .weight(1f)
+                                        .onFocusChanged {
+                                            if (it.isFocused) action?.inputV3Focus()
+                                        },
+                                value = state.getCalculate().valueList[2],
+                                color = selectColor(state.v3Focus),
+                            )
+                            Text(
+                                modifier = Modifier.width(30.dp),
+                                text = ":",
+                                style = TextSet.bold.copy(ColorSet.text, 20.sp),
+                                textAlign = TextAlign.Center,
+                            )
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = calculate.result,
+                                style = TextSet.bold.copy(ColorSet.result, 28.sp),
+                                textAlign = TextAlign.Center,
+                            )
                         }
-                    Row(
-                        modifier = modifier,
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = result1,
-                            style = TextSet.bold.copy(ColorSet.result, 28.sp),
-                            textAlign = TextAlign.Center,
-                        )
-                        Text(
-                            modifier = Modifier.width(30.dp),
-                            text = ":",
-                            style = TextSet.bold.copy(ColorSet.result, 28.sp),
-                            textAlign = TextAlign.Center,
-                        )
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = result2,
-                            style = TextSet.bold.copy(ColorSet.result, 28.sp),
-                            textAlign = TextAlign.Center,
-                        )
+                    }
+                    RatioType.SIMPLIFY -> {
+                        val result = calculate.result.split(":")
+                        val (result1, result2) =
+                            if (result.count() == 2) {
+                                result[0] to result[1]
+                            } else {
+                                "?" to "?"
+                            }
+                        Row(
+                            modifier = modifier,
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = result1,
+                                style = TextSet.bold.copy(ColorSet.result, 28.sp),
+                                textAlign = TextAlign.Center,
+                            )
+                            Text(
+                                modifier = Modifier.width(30.dp),
+                                text = ":",
+                                style = TextSet.bold.copy(ColorSet.result, 28.sp),
+                                textAlign = TextAlign.Center,
+                            )
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = result2,
+                                style = TextSet.bold.copy(ColorSet.result, 28.sp),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
                 }
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-            Spacer(modifier = Modifier.weight(1.3f))
-            ViewScrollTab(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(55.dp)
-                        .padding(bottom = 3.dp),
-                tabs = stringArrayResource(id = R.array.ratio_type).toList(),
-                index = type.ordinal,
-                onTab = {
-                    focusManager.clearFocus()
-                    focus.requestFocus()
-                    action?.inputType(it)
-                },
-            )
-        } ?: Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.weight(1.3f))
+                ViewScrollTab(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(55.dp)
+                            .padding(bottom = 3.dp),
+                    tabs = stringArrayResource(id = R.array.ratio_type).toList(),
+                    index = type.ordinal,
+                    onTab = {
+                        focusManager.clearFocus()
+                        focus.requestFocus()
+                        action?.inputType(it)
+                    },
+                )
+            } ?: Spacer(modifier = Modifier.weight(1f))
+        }
         KeyView {
             when (it) {
                 is RatioKey.Enter -> focusManager.moveFocus(FocusDirection.Next)

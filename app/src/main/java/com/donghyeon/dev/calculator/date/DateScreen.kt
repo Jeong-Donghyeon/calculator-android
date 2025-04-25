@@ -120,171 +120,178 @@ fun DateScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxSize(),
     ) {
-        state.type?.let { type ->
-            Spacer(modifier = Modifier.weight(1f))
-            when (type) {
-                DateType.DATE_DAY_DATE -> {
-                    ViewFieldDate(
-                        focus = focusDateDayDateDate,
-                        value = dateDayDateState.date,
-                        hint = state.hint,
-                        color =
-                            if (dateDayDateState.focus == DateDayDateState.Focus.DATE) {
-                                ColorSet.select
-                            } else {
-                                ColorSet.text
-                            },
-                    )
-                    Row(
-                        modifier = Modifier.width(210.dp),
-                        verticalAlignment = Alignment.Bottom,
-                    ) {
-                        ViewFieldNumber(
-                            modifier =
-                                Modifier
-                                    .weight(1f)
-                                    .focusRequester(focusDateDayDateDay),
-                            value = dateDayDateState.day,
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            state.type?.let { type ->
+                Spacer(modifier = Modifier.weight(1f))
+                when (type) {
+                    DateType.DATE_DAY_DATE -> {
+                        ViewFieldDate(
+                            focus = focusDateDayDateDate,
+                            value = dateDayDateState.date,
+                            hint = state.hint,
                             color =
-                                if (dateDayDateState.focus == DateDayDateState.Focus.DAY) {
+                                if (dateDayDateState.focus == DateDayDateState.Focus.DATE) {
                                     ColorSet.select
                                 } else {
                                     ColorSet.text
                                 },
                         )
-                        Text(
-                            modifier =
-                                Modifier
-                                    .width(50.dp)
-                                    .padding(bottom = 15.dp),
-                            text = stringResource(id = R.string.day),
-                            style = TextSet.bold.copy(ColorSet.text, 20.sp),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                    Column {
-                        Spacer(modifier = Modifier.height(30.dp))
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.width(210.dp),
+                            verticalAlignment = Alignment.Bottom,
                         ) {
-                            val selectColor =
-                                if (dateDayDateState.focus == DateDayDateState.Focus.AGO_LATER) {
-                                    ColorSet.select
-                                } else {
-                                    ColorSet.text
-                                }
-                            val (ago, later) =
-                                if (dateDayDateState.agoLater) {
-                                    TextSet.extraBold.copy(
-                                        ColorSet.hint,
-                                        24.sp,
-                                    ) to
-                                        TextSet.extraBold.copy(
-                                            selectColor,
-                                            26.sp,
-                                        )
-                                } else {
-                                    TextSet.extraBold.copy(
-                                        selectColor,
-                                        26.sp,
-                                    ) to
+                            ViewFieldNumber(
+                                modifier =
+                                    Modifier
+                                        .weight(1f)
+                                        .focusRequester(focusDateDayDateDay),
+                                value = dateDayDateState.day,
+                                color =
+                                    if (dateDayDateState.focus == DateDayDateState.Focus.DAY) {
+                                        ColorSet.select
+                                    } else {
+                                        ColorSet.text
+                                    },
+                            )
+                            Text(
+                                modifier =
+                                    Modifier
+                                        .width(50.dp)
+                                        .padding(bottom = 15.dp),
+                                text = stringResource(id = R.string.day),
+                                style = TextSet.bold.copy(ColorSet.text, 20.sp),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                        Column {
+                            Spacer(modifier = Modifier.height(30.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                val selectColor =
+                                    if (dateDayDateState.focus == DateDayDateState.Focus.AGO_LATER) {
+                                        ColorSet.select
+                                    } else {
+                                        ColorSet.text
+                                    }
+                                val (ago, later) =
+                                    if (dateDayDateState.agoLater) {
                                         TextSet.extraBold.copy(
                                             ColorSet.hint,
                                             24.sp,
-                                        )
-                                }
-                            Box(
-                                modifier = Modifier.width(105.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.ago),
-                                    style = ago,
-                                )
-                            }
-                            Box(
-                                modifier = Modifier.width(105.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Text(
-                                    text = stringResource(id = R.string.later),
-                                    style = later,
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(14.dp))
-                        Box(
-                            modifier =
-                                Modifier
-                                    .background(
-                                        if (dateDayDateState.focus == DateDayDateState.Focus.AGO_LATER) {
-                                            ColorSet.select
-                                        } else {
-                                            ColorSet.text
-                                        },
+                                        ) to
+                                            TextSet.extraBold.copy(
+                                                selectColor,
+                                                26.sp,
+                                            )
+                                    } else {
+                                        TextSet.extraBold.copy(
+                                            selectColor,
+                                            26.sp,
+                                        ) to
+                                            TextSet.extraBold.copy(
+                                                ColorSet.hint,
+                                                24.sp,
+                                            )
+                                    }
+                                Box(
+                                    modifier = Modifier.width(105.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.ago),
+                                        style = ago,
                                     )
-                                    .width(210.dp)
-                                    .height(1.dp),
+                                }
+                                Box(
+                                    modifier = Modifier.width(105.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.later),
+                                        style = later,
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .background(
+                                            if (dateDayDateState.focus == DateDayDateState.Focus.AGO_LATER) {
+                                                ColorSet.select
+                                            } else {
+                                                ColorSet.text
+                                            },
+                                        )
+                                        .width(210.dp)
+                                        .height(1.dp),
+                            )
+                            Spacer(modifier = Modifier.height(50.dp))
+                        }
+                        ViewTextResult(
+                            modifier = Modifier.width(300.dp),
+                            text = dateDayDateState.result,
+                            fontSizeRange =
+                                FontSizeRange(
+                                    min = 1.sp,
+                                    max = 30.sp,
+                                ),
+                        )
+                    }
+                    DateType.DATE_DATE_DAY -> {
+                        val (color1, color2) =
+                            if (dateDateDayState.date1Focus) {
+                                ColorSet.select to ColorSet.text
+                            } else {
+                                ColorSet.text to ColorSet.select
+                            }
+                        ViewFieldDate(
+                            focus = focusDateDateDayDate1,
+                            value = dateDateDayState.date1,
+                            hint = state.hint,
+                            color = color1,
+                        )
+                        ViewFieldDate(
+                            focus = focusDateDateDayDate2,
+                            value = dateDateDayState.date2,
+                            hint = state.hint,
+                            color = color2,
                         )
                         Spacer(modifier = Modifier.height(50.dp))
+                        ViewTextResult(
+                            modifier = Modifier.width(300.dp),
+                            text = dateDateDayState.result,
+                            fontSizeRange =
+                                FontSizeRange(
+                                    min = 1.sp,
+                                    max = 30.sp,
+                                ),
+                        )
                     }
-                    ViewTextResult(
-                        modifier = Modifier.width(300.dp),
-                        text = dateDayDateState.result,
-                        fontSizeRange =
-                            FontSizeRange(
-                                min = 1.sp,
-                                max = 30.sp,
-                            ),
-                    )
                 }
-                DateType.DATE_DATE_DAY -> {
-                    val (color1, color2) =
-                        if (dateDateDayState.date1Focus) {
-                            ColorSet.select to ColorSet.text
-                        } else {
-                            ColorSet.text to ColorSet.select
-                        }
-                    ViewFieldDate(
-                        focus = focusDateDateDayDate1,
-                        value = dateDateDayState.date1,
-                        hint = state.hint,
-                        color = color1,
-                    )
-                    ViewFieldDate(
-                        focus = focusDateDateDayDate2,
-                        value = dateDateDayState.date2,
-                        hint = state.hint,
-                        color = color2,
-                    )
-                    Spacer(modifier = Modifier.height(50.dp))
-                    ViewTextResult(
-                        modifier = Modifier.width(300.dp),
-                        text = dateDateDayState.result,
-                        fontSizeRange =
-                            FontSizeRange(
-                                min = 1.sp,
-                                max = 30.sp,
-                            ),
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            ViewScrollTab(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(55.dp)
-                        .padding(bottom = 3.dp),
-                tabs = stringArrayResource(id = R.array.date_type).toList(),
-                index = type.ordinal,
-                onTab = { action?.inputType(it) },
-            )
-        } ?: Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
+                ViewScrollTab(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(55.dp)
+                            .padding(bottom = 3.dp),
+                    tabs = stringArrayResource(id = R.array.date_type).toList(),
+                    index = type.ordinal,
+                    onTab = { action?.inputType(it) },
+                )
+            } ?: Spacer(modifier = Modifier.weight(1f))
+        }
         KeyView { action?.inputKey(it) }
         Spacer(modifier = Modifier.height(3.dp))
     }

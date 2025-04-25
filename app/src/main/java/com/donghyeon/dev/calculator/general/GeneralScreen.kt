@@ -100,64 +100,71 @@ fun GeneralScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxSize(),
     ) {
-        Spacer(modifier = Modifier.weight(1f))
-        ViewFieldGeneral(
+        Column(
             modifier =
                 Modifier
-                    .padding(horizontal = 5.dp)
                     .fillMaxWidth()
-                    .focusRequester(focus),
-            value = state.value,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Box(
-            modifier =
-                Modifier
-                    .padding(horizontal = 23.dp)
-                    .fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd,
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
         ) {
-            ViewTextResult(
-                text =
-                    if (state.value.text == "") {
-                        ""
-                    } else {
-                        state.result
-                    },
-                fontSizeRange =
-                    FontSizeRange(
-                        min = 1.sp,
-                        max = 30.sp,
-                    ),
+            Spacer(modifier = Modifier.weight(1f))
+            ViewFieldGeneral(
+                modifier =
+                    Modifier
+                        .padding(horizontal = 5.dp)
+                        .fillMaxWidth()
+                        .focusRequester(focus),
+                value = state.value,
             )
-        }
-        Row(
-            modifier =
-                Modifier
-                    .padding(horizontal = 10.dp)
-                    .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+            Spacer(modifier = Modifier.weight(1f))
             Box(
                 modifier =
                     Modifier
-                        .weight(1f)
-                        .padding(bottom = 7.dp),
-                contentAlignment = Alignment.Center,
+                        .padding(horizontal = 23.dp)
+                        .fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd,
             ) {
-                IconButton(onClick = { action?.history() }) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        painter = painterResource(id = R.drawable.ic_history_24px),
-                        tint = ColorSet.text,
-                        contentDescription = "History",
-                    )
-                }
+                ViewTextResult(
+                    text =
+                        if (state.value.text == "") {
+                            ""
+                        } else {
+                            state.result
+                        },
+                    fontSizeRange =
+                        FontSizeRange(
+                            min = 1.sp,
+                            max = 30.sp,
+                        ),
+                )
             }
-            Spacer(modifier = Modifier.weight(3f))
+            Row(
+                modifier =
+                    Modifier
+                        .padding(horizontal = 10.dp)
+                        .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(bottom = 7.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    IconButton(onClick = { action?.history() }) {
+                        Icon(
+                            modifier = Modifier.size(30.dp),
+                            painter = painterResource(id = R.drawable.ic_history_24px),
+                            tint = ColorSet.text,
+                            contentDescription = "History",
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.weight(3f))
+            }
         }
         KeyView(
             state = state,

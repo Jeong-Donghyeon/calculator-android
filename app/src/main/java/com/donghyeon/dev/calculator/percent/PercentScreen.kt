@@ -88,68 +88,75 @@ fun PercentScreen(
         modifier =
             Modifier
                 .background(ColorSet.background)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxSize(),
     ) {
-        state.type?.let { type ->
-            Spacer(modifier = Modifier.weight(1f))
-            ViewFieldNumber(
-                modifier =
-                    Modifier
-                        .width(220.dp)
-                        .focusRequester(focus)
-                        .onFocusChanged {
-                            if (it.isFocused) action?.inputV1Focus()
-                        },
-                value = calculate.valueList[0],
-                color = selectColor(state.v1Focus),
-            )
-            ViewFieldNumber(
-                modifier =
-                    Modifier
-                        .width(220.dp)
-                        .onFocusChanged {
-                            if (it.isFocused) action?.inputV2Focus()
-                        },
-                value = calculate.valueList[1],
-                color = selectColor(state.v2Focus),
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            ViewTextResult(
-                modifier = Modifier.width(300.dp),
-                text =
-                    calculate.result
-                        .replace(PercentUnit.UP.value, stringResource(id = R.string.up))
-                        .replace(PercentUnit.DOWN.value, stringResource(id = R.string.down)),
-                fontSizeRange =
-                    FontSizeRange(
-                        min = 1.sp,
-                        max = 30.sp,
-                    ),
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Text(
-                text = guideStrArr[type.ordinal],
-                style = TextSet.bold.copy(ColorSet.text, 18.sp),
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-            Spacer(modifier = Modifier.weight(1.3f))
-            ViewScrollTab(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(55.dp)
-                        .padding(bottom = 3.dp),
-                tabs = stringArrayResource(id = R.array.percent_type).toList(),
-                index = type.ordinal,
-                onTab = {
-                    focusManager.clearFocus()
-                    focus.requestFocus()
-                    action?.inputType(it)
-                },
-            )
-        } ?: Spacer(modifier = Modifier.weight(1f))
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            state.type?.let { type ->
+                Spacer(modifier = Modifier.weight(1f))
+                ViewFieldNumber(
+                    modifier =
+                        Modifier
+                            .width(220.dp)
+                            .focusRequester(focus)
+                            .onFocusChanged {
+                                if (it.isFocused) action?.inputV1Focus()
+                            },
+                    value = calculate.valueList[0],
+                    color = selectColor(state.v1Focus),
+                )
+                ViewFieldNumber(
+                    modifier =
+                        Modifier
+                            .width(220.dp)
+                            .onFocusChanged {
+                                if (it.isFocused) action?.inputV2Focus()
+                            },
+                    value = calculate.valueList[1],
+                    color = selectColor(state.v2Focus),
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                ViewTextResult(
+                    modifier = Modifier.width(300.dp),
+                    text =
+                        calculate.result
+                            .replace(PercentUnit.UP.value, stringResource(id = R.string.up))
+                            .replace(PercentUnit.DOWN.value, stringResource(id = R.string.down)),
+                    fontSizeRange =
+                        FontSizeRange(
+                            min = 1.sp,
+                            max = 30.sp,
+                        ),
+                )
+                Spacer(modifier = Modifier.height(15.dp))
+                Text(
+                    text = guideStrArr[type.ordinal],
+                    style = TextSet.bold.copy(ColorSet.text, 18.sp),
+                )
+                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.weight(1.3f))
+                ViewScrollTab(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(55.dp)
+                            .padding(bottom = 3.dp),
+                    tabs = stringArrayResource(id = R.array.percent_type).toList(),
+                    index = type.ordinal,
+                    onTab = {
+                        focusManager.clearFocus()
+                        focus.requestFocus()
+                        action?.inputType(it)
+                    },
+                )
+            } ?: Spacer(modifier = Modifier.weight(1f))
+        }
         KeyView {
             when (it) {
                 is PercentKey.Enter -> focusManager.moveFocus(FocusDirection.Next)
